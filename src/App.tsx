@@ -173,7 +173,7 @@ export default function App() {
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-stone-200 pb-3">
                 <div>
                   <h2 className="text-xl sm:text-2xl font-bold text-stone-900 tracking-tight flex items-center gap-2">
-                    <span>{selectedCategory === 'Semua' ? 'Seluruh Section & Entitas Warga' : `Section: ${selectedCategory}`}</span>
+                    <span className="font-bold not-italic text-right">{selectedCategory === 'Semua' ? 'Seluruh Section & Entitas Warga' : `Section: ${selectedCategory}`}</span>
                     <span className="text-xs font-semibold bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full">
                       {totalFilteredCount} Card
                     </span>
