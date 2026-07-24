@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, ArrowUpRight, CheckCircle2, Globe, HeartHandshake } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 
 interface HeroProps {
   onOpenCMS: () => void;
@@ -27,27 +27,7 @@ export const Hero: React.FC<HeroProps> = ({ totalEntities }) => {
             Selamat datang di portal informasi terpadu RW 11 Bintara Jaya Permai.
           </p>
 
-          {/* Badges / Stats Bar */}
-          <div className="pt-2 flex flex-wrap gap-3 text-xs text-stone-300">
-            <div className="flex items-center gap-1.5 bg-stone-800/80 px-3 py-1.5 rounded-lg border border-stone-700">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-              <span><strong>{totalEntities} Unit/Entitas</strong> Terdaftar</span>
-            </div>
-            <div className="flex items-center gap-1.5 bg-stone-800/80 px-3 py-1.5 rounded-lg border border-stone-700">
-              <HeartHandshake className="w-4 h-4 text-emerald-400" />
-              <span>Pengurus & Warga RW 11</span>
-            </div>
-            <a
-              href="https://sites.google.com/view/bjp-hub/home"
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center gap-1.5 bg-stone-800/80 hover:bg-stone-700 px-3 py-1.5 rounded-lg border border-stone-700 text-stone-200 transition-colors"
-            >
-              <Globe className="w-4 h-4 text-emerald-400" />
-              <span>Web Lama (Google Sites)</span>
-              <ArrowUpRight className="w-3 h-3 text-stone-400" />
-            </a>
-          </div>
+
         </div>
       </div>
     </div>

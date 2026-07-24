@@ -1,19 +1,18 @@
 import React from 'react';
-import { Heart, Globe, Shield, Instagram, ArrowUpRight } from 'lucide-react';
+import { Heart, Instagram } from 'lucide-react';
 
 interface FooterProps {
-  onOpenCMS: () => void;
-  isCMSActive: boolean;
+  onOpenCMS?: () => void;
+  isCMSActive?: boolean;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onOpenCMS, isCMSActive }) => {
+export const Footer: React.FC<FooterProps> = () => {
   return (
     <footer className="bg-stone-900 text-stone-300 border-t border-stone-800 text-xs sm:text-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
-          
-          {/* Column 1: Info */}
-          <div className="md:col-span-6 space-y-3">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          {/* Main Info */}
+          <div className="space-y-3">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-emerald-600 text-white font-bold text-base flex items-center justify-center">
                 BJP
@@ -24,66 +23,23 @@ export const Footer: React.FC<FooterProps> = ({ onOpenCMS, isCMSActive }) => {
               </div>
             </div>
 
-            <p className="text-stone-400 text-xs leading-relaxed max-w-md">
+            <p className="text-stone-400 text-xs leading-relaxed max-w-xl">
               Pusat ekosistem dan informasi terpadu yang menyatukan seluruh unit keagamaan, pemerintahan RT/RW, UMKM, lingkungan, kesehatan, kepemudaan, dan olahraga warga komplek Bintara Jaya Permai.
             </p>
-
-            <div className="pt-2 flex items-center gap-3">
-              <a
-                href="https://www.instagram.com/bintarajayapermai.ofc/"
-                target="_blank"
-                rel="noreferrer"
-                className="p-2 bg-stone-800 hover:bg-stone-700 text-stone-200 rounded-lg transition-colors inline-flex items-center gap-1.5 text-xs font-medium"
-              >
-                <Instagram className="w-4 h-4 text-pink-400" />
-                <span>Instagram RW 11</span>
-              </a>
-
-              <a
-                href="https://sites.google.com/view/bjp-hub/home"
-                target="_blank"
-                rel="noreferrer"
-                className="p-2 bg-stone-800 hover:bg-stone-700 text-stone-200 rounded-lg transition-colors inline-flex items-center gap-1.5 text-xs font-medium"
-              >
-                <Globe className="w-4 h-4 text-emerald-400" />
-                <span>Google Sites BJP HUB</span>
-                <ArrowUpRight className="w-3 h-3 text-stone-500" />
-              </a>
-            </div>
           </div>
 
-          {/* Column 2: Quick Links */}
-          <div className="md:col-span-3 space-y-2">
-            <h4 className="font-bold text-white text-xs uppercase tracking-wider text-stone-400">
-              Akses Pengurus
-            </h4>
-            <p className="text-xs text-stone-400">
-              Pengurus dapat mengedit daftar entitas dan pengumuman dengan menekan tombol CMS.
-            </p>
-
-            <button
-              onClick={onOpenCMS}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all shadow-2xs mt-1 ${
-                isCMSActive
-                  ? 'bg-amber-500 hover:bg-amber-600 text-stone-950'
-                  : 'bg-emerald-800 hover:bg-emerald-700 text-white border border-emerald-700/60'
-              }`}
+          {/* Social Links */}
+          <div className="flex items-center gap-3">
+            <a
+              href="https://www.instagram.com/bintarajayapermai.ofc/"
+              target="_blank"
+              rel="noreferrer"
+              className="p-2.5 bg-stone-800 hover:bg-stone-700 text-stone-200 rounded-xl transition-colors inline-flex items-center gap-2 text-xs font-medium border border-stone-700/60"
             >
-              <Shield className="w-3.5 h-3.5 text-amber-300" />
-              <span>Akses CMS</span>
-            </button>
+              <Instagram className="w-4 h-4 text-pink-400" />
+              <span>Instagram Resmi RW 11</span>
+            </a>
           </div>
-
-          {/* Column 3: Hosting & Vercel Info */}
-          <div className="md:col-span-3 space-y-2">
-            <h4 className="font-bold text-white text-xs uppercase tracking-wider text-stone-400">
-              Publish & Vercel
-            </h4>
-            <p className="text-xs text-stone-400 leading-relaxed">
-              Siap di-publish ke Vercel atau Google Sites. Seluruh data dapat di-export/import dengan format file JSON sederhana.
-            </p>
-          </div>
-
         </div>
 
         {/* Bottom Bar */}

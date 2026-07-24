@@ -46,19 +46,6 @@ export const EntityCard: React.FC<EntityCardProps> = ({
           )}
         </div>
 
-        {/* CMS Edit Quick Trigger */}
-        {isCMSActive && onEdit && (
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onEdit(entity);
-            }}
-            className="absolute top-3 right-3 bg-white/90 hover:bg-white text-stone-800 p-2 rounded-xl shadow-md border border-stone-200 hover:text-emerald-700 transition-all z-20"
-            title="Edit Entitas Ini"
-          >
-            <Edit2 className="w-4 h-4" />
-          </button>
-        )}
 
         {/* Bottom Title Overlay on Image */}
         <div className="absolute bottom-3 left-3 right-3 text-white">
