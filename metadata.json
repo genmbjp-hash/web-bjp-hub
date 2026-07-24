@@ -1,0 +1,6 @@
+{
+  "name": "Portal BJP HUB - Bintara Jaya Permai",
+  "description": "Website Portal Informasi Kegiatan & Entitas Warga Komplek Bintara Jaya Permai dengan CMS Simpel",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
