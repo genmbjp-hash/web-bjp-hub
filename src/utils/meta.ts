@@ -5,6 +5,18 @@ export function stripHtml(html: string): string {
   return html.replace(/<[^>]*>?/gm, '').replace(/\s+/g, ' ').trim();
 }
 
+export function getAbsoluteImageUrl(url: string | undefined | null): string {
+  if (!url) return 'https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=1200&q=80';
+  const formatted = formatImageUrl(url);
+  if (formatted.startsWith('http://') || formatted.startsWith('https://')) {
+    return formatted;
+  }
+  if (formatted.startsWith('/')) {
+    return `${window.location.origin}${formatted}`;
+  }
+  return formatted;
+}
+
 export function updateMetaTags(data: {
   title: string;
   description: string;
@@ -23,6 +35,8 @@ export function updateMetaTags(data: {
     element.setAttribute('content', content);
   };
 
+  const absoluteImg = getAbsoluteImageUrl(data.image);
+
   // Standard Description
   setMeta('name', 'description', data.description);
 
@@ -30,19 +44,24 @@ export function updateMetaTags(data: {
   setMeta('property', 'og:title', data.title);
   setMeta('property', 'og:description', data.description);
   setMeta('property', 'og:type', 'website');
-  if (data.image) {
-    setMeta('property', 'og:image', data.image);
+  setMeta('property', 'og:site_name', 'BJP HUB RW 11');
+  if (absoluteImg) {
+    setMeta('property', 'og:image', absoluteImg);
+    setMeta('property', 'og:image:secure_url', absoluteImg);
+    setMeta('property', 'og:image:alt', data.title);
+    setMeta('property', 'og:image:width', '1200');
+    setMeta('property', 'og:image:height', '630');
   }
   if (data.url) {
     setMeta('property', 'og:url', data.url);
   }
 
   // Twitter Card
-  setMeta('name', 'twitter:card', data.image ? 'summary_large_image' : 'summary');
+  setMeta('name', 'twitter:card', 'summary_large_image');
   setMeta('name', 'twitter:title', data.title);
   setMeta('name', 'twitter:description', data.description);
-  if (data.image) {
-    setMeta('name', 'twitter:image', data.image);
+  if (absoluteImg) {
+    setMeta('name', 'twitter:image', absoluteImg);
   }
 }
 
@@ -96,7 +115,7 @@ export function setEntityMetaTags(entity: Entity) {
       ? entity.productPhotos[0]
       : 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80');
 
-  const thumbnail = formatImageUrl(rawImage);
+  const thumbnail = getAbsoluteImageUrl(rawImage);
 
   updateMetaTags({
     title: `${entity.name} - BJP HUB Bintara Jaya Permai`,
@@ -115,7 +134,7 @@ export function setAnnouncementMetaTags(ann: Announcement) {
     ann.image ||
     'https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=800&q=80';
 
-  const thumbnail = formatImageUrl(rawImage);
+  const thumbnail = getAbsoluteImageUrl(rawImage);
 
   updateMetaTags({
     title: `${ann.title} - Pengumuman Warga BJP HUB`,

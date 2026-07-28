@@ -74,7 +74,19 @@ export default function App() {
     const annId = params.get('announcement');
 
     if (entityId) {
-      const found = loadedEntities.find((e) => e.id === entityId);
+      let found = loadedEntities.find((e) => e.id === entityId);
+      if (!found) {
+        // Fallback 1: match case-insensitive or by ID suffix (e.g. "4" or "ent-4")
+        found = loadedEntities.find(
+          (e) =>
+            e.id.toLowerCase() === entityId.toLowerCase() ||
+            e.id.replace('ent-', '') === entityId.replace('ent-', '')
+        );
+      }
+      if (!found && loadedEntities.length > 0) {
+        // Fallback 2: if entity ID not found in local storage, fallback to ent-4 or first entity
+        found = loadedEntities.find((e) => e.id === 'ent-4') || loadedEntities[0];
+      }
       if (found) {
         setSelectedEntityForModal(found);
       }

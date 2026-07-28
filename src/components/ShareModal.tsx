@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Entity, Announcement } from '../types';
 import { formatImageUrl } from '../utils/imageUrl';
-import { setEntityMetaTags, setAnnouncementMetaTags, stripHtml } from '../utils/meta';
+import { setEntityMetaTags, setAnnouncementMetaTags, stripHtml, getAbsoluteImageUrl } from '../utils/meta';
 import { X, Share2, Check, Copy, MessageCircle, ExternalLink, Sparkles } from 'lucide-react';
 
 interface ShareModalProps {
@@ -29,7 +29,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({ item, type, onClose }) =
     ? entity!.image || (entity!.productPhotos?.[0]) || 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80'
     : ann!.image || 'https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=800&q=80';
 
-  const thumbnail = formatImageUrl(rawImage);
+  const thumbnail = getAbsoluteImageUrl(rawImage);
   const shareParamKey = isEntity ? 'entity' : 'announcement';
   const shareUrl = `${window.location.origin}${window.location.pathname}?${shareParamKey}=${item.id}`;
 
