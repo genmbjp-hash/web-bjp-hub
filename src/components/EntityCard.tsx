@@ -1,11 +1,13 @@
 import React from 'react';
 import { Entity } from '../types';
-import { Globe, ExternalLink, Calendar, Phone, Edit2, ArrowRight } from 'lucide-react';
+import { formatImageUrl } from '../utils/imageUrl';
+import { Globe, ExternalLink, Calendar, Phone, ArrowRight, Share2 } from 'lucide-react';
 import { SocialBadges } from './SocialIcons';
 
 interface EntityCardProps {
   entity: Entity;
   onSelect: (entity: Entity) => void;
+  onShare?: (entity: Entity) => void;
   onEdit?: (entity: Entity) => void;
   isCMSActive?: boolean;
 }
@@ -13,6 +15,7 @@ interface EntityCardProps {
 export const EntityCard: React.FC<EntityCardProps> = ({
   entity,
   onSelect,
+  onShare,
   onEdit,
   isCMSActive,
 }) => {
@@ -24,7 +27,7 @@ export const EntityCard: React.FC<EntityCardProps> = ({
       {/* Category Badge & Image Header */}
       <div className="relative h-44 bg-stone-100 overflow-hidden cursor-pointer" onClick={() => onSelect(entity)}>
         <img
-          src={entity.image}
+          src={formatImageUrl(entity.image)}
           alt={entity.name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           onError={(e) => {
@@ -39,13 +42,22 @@ export const EntityCard: React.FC<EntityCardProps> = ({
           <span className="bg-emerald-800/90 backdrop-blur-md text-emerald-50 text-[11px] font-semibold px-2.5 py-1 rounded-lg border border-emerald-600/30 shadow-xs">
             {entity.category}
           </span>
-          {entity.isFeatured && (
-            <span className="bg-amber-500/90 backdrop-blur-md text-amber-950 text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-xs">
-              ★ Unggulan
-            </span>
-          )}
         </div>
 
+        {/* Top Right Share Button */}
+        {onShare && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onShare(entity);
+            }}
+            className="absolute top-3 right-3 z-10 p-2 bg-black/40 hover:bg-black/70 text-white rounded-xl backdrop-blur-md transition-all shadow-xs"
+            title="Bagikan Card ini ke WhatsApp & Sosmed"
+          >
+            <Share2 className="w-3.5 h-3.5" />
+          </button>
+        )}
 
         {/* Bottom Title Overlay on Image */}
         <div className="absolute bottom-3 left-3 right-3 text-white">
@@ -100,10 +112,23 @@ export const EntityCard: React.FC<EntityCardProps> = ({
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
+            {onShare && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onShare(entity);
+                }}
+                className="p-1.5 text-stone-500 hover:text-emerald-800 hover:bg-emerald-50 rounded-lg transition-colors"
+                title="Bagikan"
+              >
+                <Share2 className="w-3.5 h-3.5" />
+              </button>
+            )}
+
             <button
               onClick={() => onSelect(entity)}
-              className="text-stone-600 hover:text-stone-900 text-xs font-semibold px-2.5 py-1.5 rounded-lg hover:bg-stone-100 transition-colors"
+              className="text-stone-600 hover:text-stone-900 text-xs font-semibold px-2 py-1.5 rounded-lg hover:bg-stone-100 transition-colors"
             >
               Detail
             </button>

@@ -11,7 +11,8 @@ import { Footer } from './components/Footer';
 
 import { Entity, Announcement } from './types';
 import { getEntities, saveEntities, getAnnouncements, saveAnnouncements } from './utils/storage';
-import { setEntityMetaTags, resetMetaTags } from './utils/meta';
+import { setEntityMetaTags, setAnnouncementMetaTags, resetMetaTags } from './utils/meta';
+import { ShareModal } from './components/ShareModal';
 import { SearchX, Plus } from 'lucide-react';
 
 const CATEGORIES = [
@@ -47,6 +48,10 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<'entities' | 'announcements'>('entities');
 
   const [selectedEntityForModal, setSelectedEntityForModal] = useState<Entity | null>(null);
+  const [shareModalItem, setShareModalItem] = useState<{
+    item: Entity | Announcement;
+    type: 'entity' | 'announcement';
+  } | null>(null);
 
   // CMS & Password Auth State
   const [isCMSOpen, setIsCMSOpen] = useState(false);
@@ -62,13 +67,21 @@ export default function App() {
     setEntities(loadedEntities);
     setAnnouncements(loadedAnnouncements);
 
-    // Deep link check: ?entity=<id> or ?id=<id>
+    // Deep link check: ?entity=<id>, ?id=<id>, or ?announcement=<id>
     const params = new URLSearchParams(window.location.search);
     const entityId = params.get('entity') || params.get('id');
+    const annId = params.get('announcement');
+
     if (entityId) {
       const found = loadedEntities.find((e) => e.id === entityId);
       if (found) {
         setSelectedEntityForModal(found);
+      }
+    } else if (annId) {
+      const foundAnn = loadedAnnouncements.find((a) => a.id === annId);
+      if (foundAnn) {
+        setActiveTab('announcements');
+        setAnnouncementMetaTags(foundAnn);
       }
     }
   }, []);
@@ -302,6 +315,7 @@ export default function App() {
                                 key={entity.id}
                                 entity={entity}
                                 onSelect={setSelectedEntityForModal}
+                                onShare={(ent) => setShareModalItem({ item: ent, type: 'entity' })}
                                 onEdit={handleEditEntityInCMS}
                                 isCMSActive={true}
                               />
@@ -324,6 +338,7 @@ export default function App() {
               announcements={announcements}
               onOpenCMS={() => handleOpenCMSWithAuth()}
               isCMSActive={true}
+              onShare={(ann) => setShareModalItem({ item: ann, type: 'announcement' })}
             />
           </div>
         )}
@@ -333,7 +348,17 @@ export default function App() {
       <EntityDetailModal
         entity={selectedEntityForModal}
         onClose={() => setSelectedEntityForModal(null)}
+        onShare={(ent) => setShareModalItem({ item: ent, type: 'entity' })}
       />
+
+      {/* Share Modal */}
+      {shareModalItem && (
+        <ShareModal
+          item={shareModalItem.item}
+          type={shareModalItem.type}
+          onClose={() => setShareModalItem(null)}
+        />
+      )}
 
       {/* Password Modal */}
       <PasswordModal

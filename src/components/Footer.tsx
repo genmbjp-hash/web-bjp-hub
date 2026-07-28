@@ -1,5 +1,6 @@
 import React from 'react';
 import { Heart, Instagram } from 'lucide-react';
+import { BJP_LOGO_URL } from '../assets/logo';
 
 interface FooterProps {
   onOpenCMS?: () => void;
@@ -14,9 +15,11 @@ export const Footer: React.FC<FooterProps> = () => {
           {/* Main Info */}
           <div className="space-y-3">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-emerald-600 text-white font-bold text-base flex items-center justify-center">
-                BJP
-              </div>
+              <img
+                src={BJP_LOGO_URL}
+                alt="BJP HUB Logo"
+                className="w-10 h-10 rounded-md object-cover border border-amber-300/40 shadow-xs"
+              />
               <div>
                 <h3 className="font-bold text-white text-base">BJP HUB - Bintara Jaya Permai</h3>
                 <p className="text-xs text-stone-400">Pengurus RW 11 Kelurahan Bintara Jaya</p>

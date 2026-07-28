@@ -1,4 +1,5 @@
 import { Entity, Announcement } from '../types';
+import { BJP_LOGO_URL } from '../assets/logo';
 
 export const INITIAL_ENTITIES: Entity[] = [
   {
@@ -13,7 +14,7 @@ export const INITIAL_ENTITIES: Entity[] = [
   <li>Kordinasi kegiatan antar lembaga dan komunitas warga</li>
   <li>Layanan bantuan warga dan aspirasi online</li>
 </ul>`,
-    image: 'https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=600&q=80',
+    image: BJP_LOGO_URL,
     ctaUrl: 'https://bit.ly/bjp-hub',
     ctaWording: 'Kunjungi Portal BJP HUB',
     instagram: 'https://www.instagram.com/bintarajayapermai.ofc/',
@@ -82,7 +83,7 @@ export const INITIAL_ENTITIES: Entity[] = [
   <li>Inkubasi Branding, Kemasan, & Pemasaran Digital</li>
   <li>Gerakan Beli & Bela Produk Tetangga Komplek</li>
 </ul>`,
-    image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80',
+    image: 'https://drive.google.com/file/d/1Z4dIQiY_G7kGn8eSa4tXW1stMHiedMd7/view?usp=drive_link',
     ctaUrl: 'https://instagram.com/bintarajayapermai.ofc',
     ctaWording: 'Kunjungi Katalog UMKM',
     mediaUrl: 'https://bintarajayapermai.com',
@@ -96,10 +97,8 @@ export const INITIAL_ENTITIES: Entity[] = [
       whatsapp: { enabled: true, url: '081555443322' },
     },
     productPhotos: [
-      'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80',
-      'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80',
-      'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80',
-      'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=800&q=80',
+      'https://drive.google.com/file/d/1G7GNW4_QVeMN8XyXpBuxkUJkgw6ftFKN/view?usp=drive_link',
+      'https://drive.google.com/file/d/19utLAw0z97DG287tQiSx6F0Yp18EUGLX/view?usp=drive_link',
     ],
     createdAt: '2026-01-01T00:00:00Z',
     updatedAt: '2026-01-01T00:00:00Z'
@@ -341,11 +340,12 @@ export const INITIAL_ANNOUNCEMENTS: Announcement[] = [
     title: 'Bazar Kuliner & UMKM Warga Komplek Minggu Ini',
     category: 'Sentra Usaha BJP',
     date: '27 Juli 2026',
-    content: 'Diundang seluruh warga Komplek Bintara Jaya Permai untuk meramaikan Bazar Kuliner UMKM Warga di Lapangan Utam RW 11. Tersedia aneka jajanan tradisional, olahan rumahan, dan pakaian.',
+    content: 'Diundang seluruh warga Komplek Bintara Jaya Permai (RW 11) untuk meramaikan Bazar Kuliner & Festival UMKM Warga di Lapangan Utama RW 11. Tersedia aneka makanan khas Nusantara, jajanan tradisional, kerajinan tangan, dan doorprize menarik!',
     author: 'Sentra Usaha BJP',
     ctaUrl: 'https://bit.ly/bjp-hub',
     ctaWording: 'Daftar Stand UMKM',
-    isImportant: true
+    isImportant: true,
+    image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80'
   },
   {
     id: 'ann-2',

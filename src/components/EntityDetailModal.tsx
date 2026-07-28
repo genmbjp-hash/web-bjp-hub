@@ -1,6 +1,7 @@
 import React from 'react';
 import { Entity } from '../types';
 import { stripHtml } from '../utils/meta';
+import { formatImageUrl } from '../utils/imageUrl';
 import {
   X,
   ExternalLink,
@@ -24,19 +25,25 @@ import {
 interface EntityDetailModalProps {
   entity: Entity | null;
   onClose: () => void;
+  onShare?: (entity: Entity) => void;
 }
 
 export const EntityDetailModal: React.FC<EntityDetailModalProps> = ({
   entity,
   onClose,
+  onShare,
 }) => {
   const [copied, setCopied] = React.useState(false);
   const [isPhotosExpanded, setIsPhotosExpanded] = React.useState(true);
-  const [selectedLightboxImage, setSelectedLightboxImage] = React.useState<string | null>(null);
+  const [selectedLightboxImage, setSelectedLightboxImage] = React.useState<{ photo: string; caption?: string } | null>(null);
 
   if (!entity) return null;
 
   const handleShare = async () => {
+    if (onShare) {
+      onShare(entity);
+      return;
+    }
     const shareUrl = `${window.location.origin}${window.location.pathname}?entity=${entity.id}`;
     const cleanDesc = stripHtml(entity.description);
     const snippet = cleanDesc.length > 120 ? cleanDesc.slice(0, 120) + '...' : cleanDesc;
@@ -100,7 +107,7 @@ export const EntityDetailModal: React.FC<EntityDetailModalProps> = ({
         {/* Header Image */}
         <div className="relative h-56 sm:h-64 bg-stone-100 overflow-hidden">
           <img
-            src={entity.image}
+            src={formatImageUrl(entity.image)}
             alt={entity.name}
             className="w-full h-full object-cover"
             onError={(e) => {
@@ -119,16 +126,11 @@ export const EntityDetailModal: React.FC<EntityDetailModalProps> = ({
             <X className="w-5 h-5" />
           </button>
 
-          {/* Category Tag & Featured */}
+          {/* Category Tag */}
           <div className="absolute top-3 left-3 flex items-center gap-2">
             <span className="bg-emerald-800 text-emerald-50 text-xs font-semibold px-3 py-1 rounded-lg border border-emerald-600/30">
               {entity.category}
             </span>
-            {entity.isFeatured && (
-              <span className="bg-amber-400 text-amber-950 text-xs font-bold px-2.5 py-1 rounded-lg">
-                ★ Unggulan Komplek
-              </span>
-            )}
           </div>
 
           {/* Bottom Title inside Image */}
@@ -201,30 +203,40 @@ export const EntityDetailModal: React.FC<EntityDetailModalProps> = ({
 
               {isPhotosExpanded && (
                 <div className="p-4 bg-white border-t border-stone-200">
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                    {productPhotos.map((photo, idx) => (
-                      <div
-                        key={idx}
-                        onClick={() => setSelectedLightboxImage(photo)}
-                        className="relative aspect-square bg-stone-100 rounded-xl overflow-hidden border border-stone-200/80 group cursor-pointer"
-                      >
-                        <img
-                          src={photo}
-                          alt={`${entity.name} produk ${idx + 1}`}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).src =
-                              'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=600&q=80';
-                          }}
-                        />
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-medium gap-1">
-                          <Maximize2 className="w-4 h-4" />
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    {productPhotos.map((photo, idx) => {
+                      const caption = entity.productPhotoCaptions?.[idx] || '';
+                      return (
+                        <div
+                          key={idx}
+                          onClick={() => setSelectedLightboxImage({ photo, caption })}
+                          className="flex flex-col bg-stone-50 rounded-xl overflow-hidden border border-stone-200 group cursor-pointer hover:border-emerald-300 transition-all shadow-2xs"
+                        >
+                          <div className="relative aspect-square w-full bg-stone-100 overflow-hidden">
+                            <img
+                              src={formatImageUrl(photo)}
+                              alt={caption || `${entity.name} produk ${idx + 1}`}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src =
+                                  'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=600&q=80';
+                              }}
+                            />
+                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-medium gap-1">
+                              <Maximize2 className="w-4 h-4" />
+                            </div>
+                          </div>
+                          {caption && (
+                            <div className="p-2 bg-stone-50 text-[11px] text-stone-700 font-medium border-t border-stone-100 line-clamp-2">
+                              {caption}
+                            </div>
+                          )}
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                   <p className="text-[11px] text-stone-400 mt-2 text-center">
-                    Klik foto untuk memperbesar tampilan.
+                    Klik foto untuk memperbesar tampilan dan melihat foto selengkapnya.
                   </p>
                 </div>
               )}
@@ -336,22 +348,27 @@ export const EntityDetailModal: React.FC<EntityDetailModalProps> = ({
       {/* Lightbox Modal for Product Photos */}
       {selectedLightboxImage && (
         <div
-          className="fixed inset-0 z-60 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in"
+          className="fixed inset-0 z-60 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in"
           onClick={() => setSelectedLightboxImage(null)}
         >
-          <div className="relative max-w-3xl max-h-[90vh] flex flex-col items-center">
+          <div className="relative max-w-3xl max-h-[90vh] flex flex-col items-center gap-3" onClick={(e) => e.stopPropagation()}>
             <button
               onClick={() => setSelectedLightboxImage(null)}
-              className="absolute -top-10 right-0 text-white hover:text-stone-300 p-2 text-xs font-bold flex items-center gap-1"
+              className="self-end text-white hover:text-stone-300 p-2 text-xs font-bold flex items-center gap-1 cursor-pointer"
             >
               <X className="w-6 h-6" />
               <span>Tutup</span>
             </button>
             <img
-              src={selectedLightboxImage}
-              alt="Galeri Produk"
-              className="max-w-full max-h-[80vh] object-contain rounded-2xl shadow-2xl border border-white/20"
+              src={formatImageUrl(selectedLightboxImage.photo)}
+              alt={selectedLightboxImage.caption || "Galeri Produk"}
+              className="max-w-full max-h-[75vh] object-contain rounded-2xl shadow-2xl border border-white/20"
             />
+            {selectedLightboxImage.caption && (
+              <p className="text-white text-center text-xs sm:text-sm bg-black/60 px-4 py-2 rounded-xl border border-white/10 backdrop-blur-xs max-w-xl">
+                {selectedLightboxImage.caption}
+              </p>
+            )}
           </div>
         </div>
       )}

@@ -1,4 +1,5 @@
-import { Entity } from '../types';
+import { Entity, Announcement } from '../types';
+import { formatImageUrl } from './imageUrl';
 
 export function stripHtml(html: string): string {
   return html.replace(/<[^>]*>?/gm, '').replace(/\s+/g, ' ').trim();
@@ -62,15 +63,37 @@ export function setEntityMetaTags(entity: Entity) {
   const snippet = cleanDesc.length > 150 ? cleanDesc.slice(0, 150) + '...' : cleanDesc;
   const directUrl = `${window.location.origin}${window.location.pathname}?entity=${entity.id}`;
   
-  // Pick image thumbnail: product photo > fallback image
-  const thumbnail =
-    entity.productPhotos && entity.productPhotos.length > 0
+  // Pick image thumbnail: entity image > product photo > fallback image
+  const rawImage =
+    entity.image ||
+    (entity.productPhotos && entity.productPhotos.length > 0
       ? entity.productPhotos[0]
-      : 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80';
+      : 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80');
+
+  const thumbnail = formatImageUrl(rawImage);
 
   updateMetaTags({
     title: `${entity.name} - BJP HUB Bintara Jaya Permai`,
     description: `${entity.category} | ${snippet}`,
+    image: thumbnail,
+    url: directUrl,
+  });
+}
+
+export function setAnnouncementMetaTags(ann: Announcement) {
+  const cleanDesc = stripHtml(ann.content);
+  const snippet = cleanDesc.length > 150 ? cleanDesc.slice(0, 150) + '...' : cleanDesc;
+  const directUrl = `${window.location.origin}${window.location.pathname}?announcement=${ann.id}`;
+
+  const rawImage =
+    ann.image ||
+    'https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=800&q=80';
+
+  const thumbnail = formatImageUrl(rawImage);
+
+  updateMetaTags({
+    title: `${ann.title} - Pengumuman Warga BJP HUB`,
+    description: `[Pengumuman ${ann.category}] ${snippet}`,
     image: thumbnail,
     url: directUrl,
   });

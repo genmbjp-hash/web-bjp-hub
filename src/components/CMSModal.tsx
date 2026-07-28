@@ -3,9 +3,12 @@ import { Entity, Announcement } from '../types';
 import {
   X, Plus, Edit3, Trash2, Copy, Download, Upload, RefreshCw, Check,
   Image as ImageIcon, Sparkles, LayoutGrid, Megaphone, HelpCircle,
-  Bold, Italic, List, Heading, ExternalLink, ShieldAlert, ArrowLeft
+  Bold, Italic, List, Heading, ExternalLink, ShieldAlert, ArrowLeft,
+  GripVertical, ArrowUp, ArrowDown
 } from 'lucide-react';
 import { exportDataAsJSON, importDataFromJSON, resetToDefaults } from '../utils/storage';
+import { formatImageUrl } from '../utils/imageUrl';
+import { BJP_LOGO_URL } from '../assets/logo';
 import { InstagramIcon, FacebookIcon, TikTokIcon, WhatsAppIcon, SocialBadges } from './SocialIcons';
 
 interface CMSModalProps {
@@ -21,7 +24,7 @@ interface CMSModalProps {
 
 // Preset Images for board members without photo links
 const IMAGE_PRESETS = [
-  { label: 'Pusat Hub / Portal', url: 'https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=600&q=80' },
+  { label: 'Logo BJP HUB Resmi', url: BJP_LOGO_URL },
   { label: 'Pemerintahan / RT RW', url: 'https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=600&q=80' },
   { label: 'Masjid / DKM', url: 'https://images.unsplash.com/photo-1590076175571-4b5459efb08c?auto=format&fit=crop&w=600&q=80' },
   { label: 'UMKM / Kuliner', url: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=600&q=80' },
@@ -68,7 +71,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
   editingEntityInit,
   initialCategoryForNewEntity,
 }) => {
-  const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'backup'>('entities');
+  const [activeTab, setActiveTab] = useState<'entities' | 'announcements'>('entities');
   const [editingEntity, setEditingEntity] = useState<Entity | null>(editingEntityInit || null);
   const [isCreatingNewEntity, setIsCreatingNewEntity] = useState(false);
 
@@ -99,9 +102,30 @@ export const CMSModal: React.FC<CMSModalProps> = ({
     ctaUrl: '',
     ctaWording: 'Info Selengkapnya',
     isImportant: false,
+    image: '',
   });
 
   const [notification, setNotification] = useState<string | null>(null);
+
+  // Product Photos 5 slots state
+  const [isProductPhotosEnabled, setIsProductPhotosEnabled] = useState<boolean>(false);
+  const [photoSlot1, setPhotoSlot1] = useState<string>('');
+  const [photoSlot2, setPhotoSlot2] = useState<string>('');
+  const [photoSlot3, setPhotoSlot3] = useState<string>('');
+  const [photoSlot4, setPhotoSlot4] = useState<string>('');
+  const [photoSlot5, setPhotoSlot5] = useState<string>('');
+
+  // Product Photo Captions 5 slots state
+  const [photoCaption1, setPhotoCaption1] = useState<string>('');
+  const [photoCaption2, setPhotoCaption2] = useState<string>('');
+  const [photoCaption3, setPhotoCaption3] = useState<string>('');
+  const [photoCaption4, setPhotoCaption4] = useState<string>('');
+  const [photoCaption5, setPhotoCaption5] = useState<string>('');
+
+  const [photoError, setPhotoError] = useState<string | null>(null);
+
+  // Drag & drop sorting for announcements
+  const [draggedAnnIndex, setDraggedAnnIndex] = useState<number | null>(null);
 
   // Social toggles helper
   const toggleSocial = (platform: 'tiktok' | 'facebook' | 'instagram' | 'whatsapp') => {
@@ -169,6 +193,13 @@ export const CMSModal: React.FC<CMSModalProps> = ({
         whatsapp: { enabled: false, url: '' },
       },
     });
+    setIsProductPhotosEnabled(false);
+    setPhotoSlot1(''); setPhotoCaption1('');
+    setPhotoSlot2(''); setPhotoCaption2('');
+    setPhotoSlot3(''); setPhotoCaption3('');
+    setPhotoSlot4(''); setPhotoCaption4('');
+    setPhotoSlot5(''); setPhotoCaption5('');
+    setPhotoError(null);
   };
 
   // Handle edit or create initial entity if passed
@@ -182,6 +213,17 @@ export const CMSModal: React.FC<CMSModalProps> = ({
         whatsapp: { enabled: false, url: '' },
       };
       setFormEntity({ ...editingEntityInit, socials });
+
+      const photos = editingEntityInit.productPhotos || [];
+      const captions = editingEntityInit.productPhotoCaptions || [];
+      setIsProductPhotosEnabled(photos.length > 0);
+      setPhotoSlot1(photos[0] || ''); setPhotoCaption1(captions[0] || '');
+      setPhotoSlot2(photos[1] || ''); setPhotoCaption2(captions[1] || '');
+      setPhotoSlot3(photos[2] || ''); setPhotoCaption3(captions[2] || '');
+      setPhotoSlot4(photos[3] || ''); setPhotoCaption4(captions[3] || '');
+      setPhotoSlot5(photos[4] || ''); setPhotoCaption5(captions[4] || '');
+      setPhotoError(null);
+
       setIsCreatingNewEntity(false);
       setActiveTab('entities');
     } else if (initialCategoryForNewEntity) {
@@ -207,6 +249,16 @@ export const CMSModal: React.FC<CMSModalProps> = ({
       whatsapp: { enabled: false, url: '' },
     };
     setFormEntity({ ...ent, socials });
+
+    const photos = ent.productPhotos || [];
+    const captions = ent.productPhotoCaptions || [];
+    setIsProductPhotosEnabled(photos.length > 0);
+    setPhotoSlot1(photos[0] || ''); setPhotoCaption1(captions[0] || '');
+    setPhotoSlot2(photos[1] || ''); setPhotoCaption2(captions[1] || '');
+    setPhotoSlot3(photos[2] || ''); setPhotoCaption3(captions[2] || '');
+    setPhotoSlot4(photos[3] || ''); setPhotoCaption4(captions[3] || '');
+    setPhotoSlot5(photos[4] || ''); setPhotoCaption5(captions[4] || '');
+    setPhotoError(null);
   };
 
   const handleSaveEntity = (e: React.FormEvent) => {
@@ -216,7 +268,33 @@ export const CMSModal: React.FC<CMSModalProps> = ({
       return;
     }
 
+    // Validate Product Photos if Toggle is ON
+    let finalPhotos: string[] = [];
+    let finalCaptions: string[] = [];
+    if (isProductPhotosEnabled) {
+      if (!photoSlot1.trim()) {
+        setPhotoError('Mohon isi minimal Gambar 1 (URL Gambar / Google Drive) karena fitur Foto Produk diaktifkan!');
+        return;
+      }
+      const rawPairs = [
+        { url: photoSlot1.trim(), caption: photoCaption1.trim() },
+        { url: photoSlot2.trim(), caption: photoCaption2.trim() },
+        { url: photoSlot3.trim(), caption: photoCaption3.trim() },
+        { url: photoSlot4.trim(), caption: photoCaption4.trim() },
+        { url: photoSlot5.trim(), caption: photoCaption5.trim() },
+      ].filter((p) => Boolean(p.url));
+
+      finalPhotos = rawPairs.map((p) => p.url);
+      finalCaptions = rawPairs.map((p) => p.caption);
+    }
+    setPhotoError(null);
+
     const now = new Date().toISOString();
+    const updatedEntityData = {
+      ...formEntity,
+      productPhotos: finalPhotos,
+      productPhotoCaptions: finalCaptions,
+    };
 
     if (editingEntity) {
       // Update existing
@@ -224,7 +302,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
         item.id === editingEntity.id
           ? ({
               ...item,
-              ...formEntity,
+              ...updatedEntityData,
               updatedAt: now,
             } as Entity)
           : item
@@ -246,7 +324,8 @@ export const CMSModal: React.FC<CMSModalProps> = ({
         contact: formEntity.contact || '',
         schedule: formEntity.schedule || '',
         isFeatured: formEntity.isFeatured || false,
-        productPhotos: formEntity.productPhotos || [],
+        productPhotos: finalPhotos,
+        productPhotoCaptions: finalCaptions,
         createdAt: now,
         updatedAt: now,
       };
@@ -278,7 +357,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
     showToast(`Berhasil menyalin "${ent.name}".`);
   };
 
-  // ANNOUNCEMENT CRUD HANDLERS
+  // ANNOUNCEMENT CRUD & REORDER HANDLERS
   const handleSaveAnnouncement = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formAnn.title?.trim()) {
@@ -299,10 +378,12 @@ export const CMSModal: React.FC<CMSModalProps> = ({
         category: formAnn.category || 'Umum',
         content: formAnn.content || '',
         author: formAnn.author || 'Pengurus RW 11',
-        date: formAnn.date || new Date().toLocaleDateString('id-ID'),
+        date: formAnn.date || new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
         ctaUrl: formAnn.ctaUrl || '',
         ctaWording: formAnn.ctaWording || 'Info Selengkapnya',
         isImportant: formAnn.isImportant || false,
+        image: formAnn.image || '',
+        order: announcements.length,
       };
       onSaveAnnouncements([newAnn, ...announcements]);
       showToast('Pengumuman baru berhasil ditambahkan!');
@@ -318,6 +399,39 @@ export const CMSModal: React.FC<CMSModalProps> = ({
       onSaveAnnouncements(filtered);
       showToast('Pengumuman berhasil dihapus.');
     }
+  };
+
+  const handleMoveAnnouncement = (index: number, direction: 'up' | 'down') => {
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= announcements.length) return;
+
+    const updated = [...announcements];
+    const temp = updated[index];
+    updated[index] = updated[targetIndex];
+    updated[targetIndex] = temp;
+
+    onSaveAnnouncements(updated);
+    showToast('Urutan pengumuman berhasil diperbarui!');
+  };
+
+  const handleAnnDragStart = (index: number) => {
+    setDraggedAnnIndex(index);
+  };
+
+  const handleAnnDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
+  const handleAnnDrop = (dropIndex: number) => {
+    if (draggedAnnIndex === null || draggedAnnIndex === dropIndex) return;
+
+    const updated = [...announcements];
+    const [removed] = updated.splice(draggedAnnIndex, 1);
+    updated.splice(dropIndex, 0, removed);
+
+    setDraggedAnnIndex(null);
+    onSaveAnnouncements(updated);
+    showToast('Urutan pengumuman berhasil disesuaikan!');
   };
 
   // BACKUP HANDLERS
@@ -382,9 +496,11 @@ export const CMSModal: React.FC<CMSModalProps> = ({
         {/* Header Bar */}
         <div className="bg-stone-900 text-white p-4 sm:p-5 flex items-center justify-between border-b border-stone-800">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-amber-500 text-stone-950 rounded-xl font-bold">
-              <Edit3 className="w-5 h-5" />
-            </div>
+            <img
+              src={BJP_LOGO_URL}
+              alt="BJP HUB"
+              className="w-10 h-10 rounded-md object-cover border border-amber-400/50 shadow-xs"
+            />
             <div>
               <h2 className="font-bold text-base sm:text-lg tracking-tight">
                 CMS Pengurus Komplek Bintara Jaya Permai (RW 11)
@@ -433,18 +549,6 @@ export const CMSModal: React.FC<CMSModalProps> = ({
           >
             <Megaphone className="w-4 h-4 text-emerald-700" />
             <span>Kelola Pengumuman ({announcements.length})</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('backup')}
-            className={`flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-semibold border-b-2 transition-all whitespace-nowrap ${
-              activeTab === 'backup'
-                ? 'border-emerald-700 text-emerald-900 bg-emerald-50/50 rounded-t-lg'
-                : 'border-transparent text-stone-600 hover:text-stone-900'
-            }`}
-          >
-            <Download className="w-4 h-4 text-emerald-700" />
-            <span>Backup & Publish Vercel</span>
           </button>
         </div>
 
@@ -508,33 +612,48 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                             ))}
                           </select>
                         </div>
-
-                        <div className="flex items-center pt-5">
-                          <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-stone-800">
-                            <input
-                              type="checkbox"
-                              checked={formEntity.isFeatured || false}
-                              onChange={(e) => setFormEntity({ ...formEntity, isFeatured: e.target.checked })}
-                              className="w-4 h-4 text-emerald-600 rounded-md border-stone-300 focus:ring-emerald-500"
-                            />
-                            <span>Tampilkan Penanda "★ Unggulan"</span>
-                          </label>
-                        </div>
                       </div>
 
                       {/* Image Picker with Presets */}
                       <div className="space-y-2">
                         <label className="text-xs font-bold text-stone-700 flex items-center justify-between">
                           <span>3. URL Foto / Gambar Utama</span>
-                          <span className="text-[11px] text-stone-400">Bisa pilih foto cepat di bawah ini</span>
+                          <span className="text-[11px] text-stone-400">Support Google Drive & Direct URL</span>
                         </label>
                         <input
                           type="text"
                           value={formEntity.image || ''}
                           onChange={(e) => setFormEntity({ ...formEntity, image: e.target.value })}
-                          placeholder="https://images.unsplash.com/..."
-                          className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                          placeholder="https://drive.google.com/file/d/.../view atau https://images.unsplash.com/..."
+                          className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 font-mono"
                         />
+
+                        {/* Main Image Preview */}
+                        {formEntity.image && (
+                          <div className="flex items-center gap-3 p-2 bg-white rounded-xl border border-stone-200 shadow-2xs">
+                            <div className="w-16 h-12 bg-stone-100 rounded-lg overflow-hidden border border-stone-200 flex-shrink-0">
+                              <img
+                                src={formatImageUrl(formEntity.image)}
+                                alt="Preview Gambar Utama"
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).src =
+                                    'https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=600&q=80';
+                                }}
+                              />
+                            </div>
+                            <div className="text-[11px] text-stone-600">
+                              <span className="font-semibold block text-stone-800">Preview Gambar Utama</span>
+                              {formEntity.image.includes('drive.google.com') ? (
+                                <span className="text-emerald-700 font-semibold flex items-center gap-1">
+                                  ✓ Google Drive Link Terdeteksi (Konversi Otomatis Active)
+                                </span>
+                              ) : (
+                                <span>URL Gambar Siap Tampil</span>
+                              )}
+                            </div>
+                          </div>
+                        )}
 
                         {/* Presets Grid */}
                         <div className="bg-stone-50 p-2.5 rounded-xl border border-stone-200 space-y-1.5">
@@ -817,31 +936,133 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                         </div>
                       </div>
 
-                      {/* Product / Gallery Photos (Optional) */}
-                      <div className="border-t border-stone-100 pt-3 space-y-1">
-                        <label className="text-xs font-bold text-stone-700 flex items-center justify-between">
-                          <span className="flex items-center gap-1.5">
-                            <ImageIcon className="w-3.5 h-3.5 text-emerald-600" />
-                            <span>Foto Produk / Galeri Usaha (Opsional)</span>
-                          </span>
-                          <span className="text-[11px] font-normal text-stone-400">1 URL per baris</span>
-                        </label>
-                        <textarea
-                          rows={3}
-                          value={formEntity.productPhotos ? formEntity.productPhotos.join('\n') : ''}
-                          onChange={(e) => {
-                            const urls = e.target.value
-                              .split('\n')
-                              .map((s) => s.trim())
-                              .filter(Boolean);
-                            setFormEntity({ ...formEntity, productPhotos: urls });
-                          }}
-                          placeholder="https://images.unsplash.com/photo-1555396273-367ea4eb4db5&#10;https://images.unsplash.com/photo-1504674900247-0877df9cc836"
-                          className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 font-mono"
-                        />
-                        <p className="text-[11px] text-stone-400">
-                          Masukkan URL foto produk atau galeri kegiatan. Di halaman detail card, section foto ini dapat di-expand/collapse.
-                        </p>
+                      {/* Product / Gallery Photos Section with Toggle & 5 Fields */}
+                      <div className="border-t border-stone-200 pt-4 space-y-3">
+                        <div className="bg-stone-50 p-4 rounded-xl border border-stone-200 space-y-3">
+                          <div className="flex items-center justify-between border-b border-stone-200 pb-2">
+                            <div className="flex items-center gap-2">
+                              <ImageIcon className="w-4 h-4 text-emerald-700" />
+                              <div>
+                                <h4 className="text-xs font-bold text-stone-800">
+                                  Foto Produk & Galeri Usaha (Maksimal 5 Gambar)
+                                </h4>
+                                <p className="text-[11px] text-stone-500">
+                                  Mendukung URL gambar langsung atau link publik Google Drive.
+                                </p>
+                              </div>
+                            </div>
+
+                            {/* Toggle Switch ON/OFF */}
+                            <div className="flex items-center gap-2">
+                              <span className={`text-xs font-semibold ${isProductPhotosEnabled ? 'text-emerald-700' : 'text-stone-400'}`}>
+                                {isProductPhotosEnabled ? 'Aktif' : 'Nonaktif'}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const next = !isProductPhotosEnabled;
+                                  setIsProductPhotosEnabled(next);
+                                  setPhotoError(null);
+                                }}
+                                className={`w-9 h-5 flex items-center rounded-full p-0.5 transition-colors cursor-pointer ${
+                                  isProductPhotosEnabled ? 'bg-emerald-600' : 'bg-stone-300'
+                                }`}
+                              >
+                                <span
+                                  className={`w-4 h-4 bg-white rounded-full shadow-md transform transition-transform ${
+                                    isProductPhotosEnabled ? 'translate-x-4' : 'translate-x-0'
+                                  }`}
+                                />
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Error Banner */}
+                          {photoError && (
+                            <div className="bg-red-50 border border-red-200 text-red-700 p-2.5 rounded-lg text-xs font-semibold flex items-center gap-2">
+                              <ShieldAlert className="w-4 h-4 shrink-0 text-red-600" />
+                              <span>{photoError}</span>
+                            </div>
+                          )}
+
+                          {isProductPhotosEnabled ? (
+                            <div className="space-y-3 pt-1">
+                              <p className="text-[11px] text-amber-800 bg-amber-50/80 border border-amber-200 p-2.5 rounded-lg flex items-start gap-1.5 font-medium">
+                                <span>⚠️</span>
+                                <span>
+                                  Karena fitur Foto Produk diaktifkan, Anda <strong>wajib mengisi Gambar 1</strong>. Gambar 2 s/d 5 bersifat opsional.
+                                </span>
+                              </p>
+
+                              {/* 5 Photo Input Slots with Captions */}
+                              {[
+                                { label: 'Gambar 1', value: photoSlot1, onChange: setPhotoSlot1, caption: photoCaption1, onCaptionChange: setPhotoCaption1, isRequired: true },
+                                { label: 'Gambar 2', value: photoSlot2, onChange: setPhotoSlot2, caption: photoCaption2, onCaptionChange: setPhotoCaption2, isRequired: false },
+                                { label: 'Gambar 3', value: photoSlot3, onChange: setPhotoSlot3, caption: photoCaption3, onCaptionChange: setPhotoCaption3, isRequired: false },
+                                { label: 'Gambar 4', value: photoSlot4, onChange: setPhotoSlot4, caption: photoCaption4, onCaptionChange: setPhotoCaption4, isRequired: false },
+                                { label: 'Gambar 5', value: photoSlot5, onChange: setPhotoSlot5, caption: photoCaption5, onCaptionChange: setPhotoCaption5, isRequired: false },
+                              ].map((slot, idx) => (
+                                <div key={idx} className="bg-white p-3 rounded-xl border border-stone-200 space-y-2">
+                                  <div className="flex items-center justify-between text-xs font-bold text-stone-700">
+                                    <span className="flex items-center gap-1.5">
+                                      <span>{slot.label}</span>
+                                      {slot.isRequired ? (
+                                        <span className="text-[10px] bg-red-100 text-red-700 px-1.5 py-0.5 rounded font-semibold">* Wajib Input</span>
+                                      ) : (
+                                        <span className="text-[10px] text-stone-400 font-normal">(Opsional)</span>
+                                      )}
+                                    </span>
+                                    {slot.value && slot.value.includes('drive.google.com') && (
+                                      <span className="text-[10px] text-emerald-700 font-medium">✓ Google Drive Link</span>
+                                    )}
+                                  </div>
+
+                                  <div className="flex items-center gap-2">
+                                    <input
+                                      type="text"
+                                      value={slot.value}
+                                      onChange={(e) => {
+                                        slot.onChange(e.target.value);
+                                        if (photoError) setPhotoError(null);
+                                      }}
+                                      placeholder={`URL ${slot.label} (contoh: https://drive.google.com/file/d/.../view)`}
+                                      className="flex-1 px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 font-mono"
+                                    />
+
+                                    {slot.value && (
+                                      <div className="w-12 h-10 bg-stone-100 rounded-lg overflow-hidden border border-stone-200 flex-shrink-0">
+                                        <img
+                                          src={formatImageUrl(slot.value)}
+                                          alt={`Preview ${slot.label}`}
+                                          className="w-full h-full object-cover"
+                                          onError={(e) => {
+                                            (e.target as HTMLImageElement).src =
+                                              'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=600&q=80';
+                                          }}
+                                        />
+                                      </div>
+                                    )}
+                                  </div>
+
+                                  {/* Optional Caption Text Field */}
+                                  <div className="pt-1">
+                                    <input
+                                      type="text"
+                                      value={slot.caption}
+                                      onChange={(e) => slot.onCaptionChange(e.target.value)}
+                                      placeholder={`Keterangan / Deskripsi ${slot.label} (Opsional, contoh: Paket Hemat Nasi Kebuli Spesial)`}
+                                      className="w-full px-3 py-1.5 bg-stone-50 border border-stone-200 rounded-lg text-xs text-stone-700 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                                    />
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <p className="text-xs text-stone-400 italic">
+                              Fitur foto produk saat ini nonaktif. Aktifkan toggle di atas jika Anda ingin menginput galeri foto produk untuk entitas ini.
+                            </p>
+                          )}
+                        </div>
                       </div>
 
                       {/* Submit Actions */}
@@ -876,7 +1097,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                       <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden space-y-3">
                         <div className="relative h-40 bg-stone-100">
                           <img
-                            src={formEntity.image || IMAGE_PRESETS[0].url}
+                            src={formatImageUrl(formEntity.image) || IMAGE_PRESETS[0].url}
                             alt="Preview"
                             className="w-full h-full object-cover"
                             onError={(e) => {
@@ -897,6 +1118,40 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                           <p className="text-stone-600 text-xs line-clamp-3">
                             {(formEntity.description || '').replace(/<[^>]*>?/gm, '') || 'Deskripsi entitas...'}
                           </p>
+
+                          {/* Live Product Photos Gallery Preview */}
+                          {isProductPhotosEnabled && photoSlot1 && (
+                            <div className="pt-2 border-t border-stone-100 space-y-1.5">
+                              <div className="text-[10px] font-bold text-stone-700 flex items-center gap-1">
+                                <ImageIcon className="w-3 h-3 text-emerald-700" />
+                                <span>Pratinjau Foto Produk & Captions:</span>
+                              </div>
+                              <div className="grid grid-cols-2 gap-1.5">
+                                {[
+                                  { url: photoSlot1, caption: photoCaption1 },
+                                  { url: photoSlot2, caption: photoCaption2 },
+                                  { url: photoSlot3, caption: photoCaption3 },
+                                  { url: photoSlot4, caption: photoCaption4 },
+                                  { url: photoSlot5, caption: photoCaption5 },
+                                ].filter(p => Boolean(p.url)).map((p, idx) => (
+                                  <div key={idx} className="bg-stone-50 rounded-lg overflow-hidden border border-stone-200">
+                                    <div className="aspect-square bg-stone-100">
+                                      <img
+                                        src={formatImageUrl(p.url)}
+                                        alt={p.caption || `Foto ${idx + 1}`}
+                                        className="w-full h-full object-cover"
+                                      />
+                                    </div>
+                                    {p.caption && (
+                                      <p className="p-1 text-[9px] text-stone-700 font-medium line-clamp-2 bg-white border-t border-stone-100 leading-tight">
+                                        {p.caption}
+                                      </p>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
 
                           {/* Live Social Badges */}
                           <div className="pt-2 border-t border-stone-100 flex items-center justify-between">
@@ -1004,9 +1259,13 @@ export const CMSModal: React.FC<CMSModalProps> = ({
 
                                   <div className="flex items-center gap-3">
                                     <img
-                                      src={item.image}
+                                      src={formatImageUrl(item.image)}
                                       alt={item.name}
                                       className="w-12 h-12 rounded-xl object-cover border border-stone-200 flex-shrink-0 bg-white"
+                                      onError={(e) => {
+                                        (e.target as HTMLImageElement).src =
+                                          'https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=600&q=80';
+                                      }}
                                     />
                                     <div>
                                       <h5 className="font-bold text-stone-900 text-sm leading-snug line-clamp-1">
@@ -1118,6 +1377,42 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                     </div>
                   </div>
 
+                  {/* Banner Image URL & Dimension Note */}
+                  <div className="space-y-1.5 pt-1 border-t border-stone-100">
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs font-bold text-stone-700">URL Gambar Banner Pengumuman (Opsional)</label>
+                      {formAnn.image && formAnn.image.includes('drive.google.com') && (
+                        <span className="text-[10px] text-emerald-700 font-medium font-sans">✓ Google Drive Link</span>
+                      )}
+                    </div>
+                    <input
+                      type="text"
+                      value={formAnn.image || ''}
+                      onChange={(e) => setFormAnn({ ...formAnn, image: e.target.value })}
+                      placeholder="Contoh: https://drive.google.com/file/d/.../view atau https://..."
+                      className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-xs text-stone-900 font-mono"
+                    />
+                    <p className="text-[11px] text-stone-500 font-medium leading-relaxed">
+                      💡 <strong>Rekomendasi Ukuran Banner:</strong> 1200 x 600 px (Rasio 2:1 atau 16:9) agar gambar terlihat tajam, presisi, dan tidak terpotong.
+                    </p>
+
+                    {formAnn.image && (
+                      <div className="mt-2 rounded-xl overflow-hidden border border-stone-200 aspect-[2/1] bg-stone-100 relative max-h-44">
+                        <img
+                          src={formatImageUrl(formAnn.image)}
+                          alt="Preview Banner Pengumuman"
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=600&q=80';
+                          }}
+                        />
+                        <div className="absolute bottom-1 right-1 bg-black/60 text-white text-[10px] px-2 py-0.5 rounded-md backdrop-blur-xs">
+                          Preview Banner (1200 x 600 px)
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
                   <div className="flex items-center pt-2">
                     <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-stone-800">
                       <input
@@ -1151,49 +1446,120 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                 </form>
               ) : (
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between bg-white p-4 rounded-2xl border border-stone-200">
-                    <h3 className="font-bold text-stone-900 text-base">Pengumuman & Agenda Warga</h3>
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-stone-200 shadow-2xs">
+                    <div>
+                      <h3 className="font-bold text-stone-900 text-base">Kelola & Urutkan Pengumuman Warga ({announcements.length})</h3>
+                      <p className="text-xs text-stone-500">Tarik ikon pegangan (Drag & Drop) atau gunakan tombol panah untuk mengubah urutan posisi pengumuman.</p>
+                    </div>
                     <button
                       onClick={() => setIsCreatingAnn(true)}
-                      className="flex items-center gap-1.5 bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-xs px-4 py-2 rounded-xl"
+                      className="flex items-center gap-1.5 bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-xs px-4 py-2 rounded-xl transition-colors shadow-xs"
                     >
                       <Plus className="w-4 h-4" />
-                      <span>Buat Pengumuman</span>
+                      <span>Buat Pengumuman Baru</span>
                     </button>
                   </div>
 
                   <div className="space-y-3">
-                    {announcements.map((ann) => (
+                    {announcements.map((ann, idx) => (
                       <div
                         key={ann.id}
-                        className="bg-white p-4 rounded-2xl border border-stone-200 flex items-start justify-between gap-4"
+                        draggable
+                        onDragStart={() => handleAnnDragStart(idx)}
+                        onDragOver={handleAnnDragOver}
+                        onDrop={() => handleAnnDrop(idx)}
+                        className={`bg-white p-4 rounded-2xl border transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 ${
+                          draggedAnnIndex === idx
+                            ? 'border-emerald-500 bg-emerald-50/40 shadow-lg scale-[1.01]'
+                            : 'border-stone-200 hover:border-stone-300 shadow-2xs'
+                        }`}
                       >
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-2">
-                            <span className="bg-stone-100 text-stone-700 text-[10px] font-bold px-2 py-0.5 rounded-md">
-                              {ann.category}
+                        <div className="flex items-start sm:items-center gap-3 w-full sm:w-auto flex-1">
+                          {/* Drag Handle & Position Index */}
+                          <div className="flex flex-col sm:flex-row items-center gap-1.5 shrink-0 text-stone-400">
+                            <div
+                              className="p-1 hover:bg-stone-100 rounded cursor-grab active:cursor-grabbing text-stone-400 hover:text-stone-700"
+                              title="Tarik untuk mengubah urutan (Drag and Drop)"
+                            >
+                              <GripVertical className="w-5 h-5" />
+                            </div>
+
+                            {/* Up / Down Move Buttons */}
+                            <div className="flex flex-col gap-0.5">
+                              <button
+                                onClick={() => handleMoveAnnouncement(idx, 'up')}
+                                disabled={idx === 0}
+                                className={`p-0.5 rounded hover:bg-stone-100 ${
+                                  idx === 0 ? 'text-stone-200 cursor-not-allowed' : 'text-stone-600 hover:text-stone-900'
+                                }`}
+                                title="Pindah Ke Atas"
+                              >
+                                <ArrowUp className="w-3.5 h-3.5" />
+                              </button>
+                              <button
+                                onClick={() => handleMoveAnnouncement(idx, 'down')}
+                                disabled={idx === announcements.length - 1}
+                                className={`p-0.5 rounded hover:bg-stone-100 ${
+                                  idx === announcements.length - 1 ? 'text-stone-200 cursor-not-allowed' : 'text-stone-600 hover:text-stone-900'
+                                }`}
+                                title="Pindah Ke Bawah"
+                              >
+                                <ArrowDown className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+
+                            <span className="text-[10px] font-bold bg-stone-100 text-stone-600 w-5 h-5 rounded-full flex items-center justify-center">
+                              {idx + 1}
                             </span>
-                            <span className="text-stone-400 text-xs">{ann.date}</span>
                           </div>
-                          <h4 className="font-bold text-stone-900 text-sm">{ann.title}</h4>
-                          <p className="text-stone-600 text-xs line-clamp-2">{ann.content}</p>
+
+                          {/* Optional Banner Thumbnail */}
+                          {ann.image && (
+                            <div className="w-16 h-12 rounded-lg overflow-hidden border border-stone-200 shrink-0 bg-stone-100">
+                              <img
+                                src={formatImageUrl(ann.image)}
+                                alt={ann.title}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                          )}
+
+                          {/* Announcement Info */}
+                          <div className="space-y-1 flex-1">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="bg-stone-100 text-stone-700 text-[10px] font-bold px-2 py-0.5 rounded-md">
+                                {ann.category}
+                              </span>
+                              {ann.isImportant && (
+                                <span className="bg-red-100 text-red-700 text-[10px] font-bold px-2 py-0.5 rounded-md">
+                                  Penting
+                                </span>
+                              )}
+                              <span className="text-stone-400 text-xs">{ann.date}</span>
+                            </div>
+                            <h4 className="font-bold text-stone-900 text-sm leading-snug">{ann.title}</h4>
+                            <p className="text-stone-600 text-xs line-clamp-1">{ann.content}</p>
+                          </div>
                         </div>
 
-                        <div className="flex items-center gap-1">
+                        {/* Actions */}
+                        <div className="flex items-center gap-1.5 self-end sm:self-center shrink-0 border-t sm:border-t-0 pt-2 sm:pt-0 w-full sm:w-auto justify-end">
                           <button
                             onClick={() => {
                               setEditingAnn(ann);
                               setFormAnn(ann);
                             }}
-                            className="p-1.5 text-stone-600 hover:bg-stone-100 rounded-lg"
+                            className="flex items-center gap-1 px-2.5 py-1.5 text-stone-700 hover:bg-stone-100 rounded-lg text-xs font-semibold border border-stone-200 transition-colors"
                           >
-                            <Edit3 className="w-4 h-4" />
+                            <Edit3 className="w-3.5 h-3.5" />
+                            <span>Edit</span>
                           </button>
                           <button
                             onClick={() => handleDeleteAnnouncement(ann.id)}
-                            className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg"
+                            className="flex items-center gap-1 px-2.5 py-1.5 text-red-600 hover:bg-red-50 rounded-lg text-xs font-semibold border border-red-200 transition-colors"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <Trash2 className="w-3.5 h-3.5" />
+                            <span>Hapus</span>
                           </button>
                         </div>
                       </div>

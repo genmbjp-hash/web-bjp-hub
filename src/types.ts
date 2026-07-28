@@ -25,6 +25,7 @@ export interface Entity {
   isFeatured?: boolean;
   socials?: EntitySocials;
   productPhotos?: string[];
+  productPhotoCaptions?: string[];
   createdAt: string;
   updatedAt: string;
 }
@@ -39,6 +40,8 @@ export interface Announcement {
   ctaUrl?: string;
   ctaWording?: string;
   isImportant?: boolean;
+  image?: string;
+  order?: number;
 }
 
 export type CategoryType =

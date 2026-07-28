@@ -31,10 +31,11 @@ export function getEntities(): Entity[] {
         return {
           ...e,
           category: mappedCat,
+          image: e.id === 'ent-4' ? initMatch.image : e.image,
           productPhotos:
-            e.productPhotos && e.productPhotos.length > 0
-              ? e.productPhotos
-              : initMatch.productPhotos,
+            e.id === 'ent-4' || !e.productPhotos || e.productPhotos.length === 0
+              ? initMatch.productPhotos
+              : e.productPhotos,
           socials: e.socials || initMatch.socials,
         };
       }

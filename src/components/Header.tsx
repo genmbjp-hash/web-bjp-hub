@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Search, Shield, Menu, X, LayoutGrid, Megaphone, HelpCircle } from 'lucide-react';
+import { BJP_LOGO_URL } from '../assets/logo';
 
 interface HeaderProps {
   searchTerm: string;
@@ -34,13 +35,15 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="flex items-center justify-between h-16 gap-4">
           {/* Logo & Identity */}
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => onTabChange('entities')}>
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-700 text-white flex items-center justify-center font-bold text-lg shadow-sm border border-emerald-500/20">
-              BJP
-            </div>
+            <img
+              src={BJP_LOGO_URL}
+              alt="BJP HUB Logo"
+              className="w-10 h-10 rounded-md object-cover shadow-xs border border-amber-300 hover:scale-105 transition-transform"
+            />
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="font-bold text-stone-900 text-base sm:text-lg leading-tight tracking-tight">
-                  BJP HUB
+                <h1 className="font-extrabold text-stone-900 text-base sm:text-lg leading-tight tracking-tight">
+                  BJP<span className="text-emerald-700">.hub</span>
                 </h1>
                 <span className="bg-emerald-100 text-emerald-800 text-[10px] font-semibold px-2 py-0.5 rounded-full border border-emerald-200">
                   RW 11
