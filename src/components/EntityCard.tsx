@@ -63,20 +63,22 @@ export const EntityCard: React.FC<EntityCardProps> = ({
         </p>
 
         {/* Extra info pills if available */}
-        <div className="space-y-1.5 pt-1 text-xs text-stone-500 border-t border-stone-100">
-          {entity.schedule && (
-            <div className="flex items-center gap-1.5 line-clamp-1">
-              <Calendar className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
-              <span>{entity.schedule}</span>
-            </div>
-          )}
-          {entity.contact && (
-            <div className="flex items-center gap-1.5 line-clamp-1">
-              <Phone className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
-              <span>{entity.contact}</span>
-            </div>
-          )}
-        </div>
+        {(Boolean(entity.schedule?.trim()) || Boolean(entity.contact?.trim())) && (
+          <div className="space-y-1.5 pt-1 text-xs text-stone-500 border-t border-stone-100">
+            {entity.schedule?.trim() && (
+              <div className="flex items-center gap-1.5 line-clamp-1">
+                <Calendar className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+                <span>{entity.schedule}</span>
+              </div>
+            )}
+            {entity.contact?.trim() && (
+              <div className="flex items-center gap-1.5 line-clamp-1">
+                <Phone className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+                <span>{entity.contact}</span>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Social Badges & Actions */}
         <div className="pt-2 flex items-center justify-between gap-2 border-t border-stone-100">

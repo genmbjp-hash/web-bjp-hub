@@ -47,10 +47,10 @@ const WORDING_PRESETS = [
 ];
 
 const CATEGORY_PRESETS = [
+  'Sentra Usaha BJP',
   'Pusat Hub',
   'Administratif / Pemerintahan',
   'Keagamaan',
-  'Ekonomi / UMKM',
   'Lingkungan',
   'Kesejahteraan Keluarga',
   'Kesehatan',
@@ -161,6 +161,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
       contact: '',
       schedule: '',
       isFeatured: false,
+      productPhotos: [],
       socials: {
         instagram: { enabled: false, url: '' },
         facebook: { enabled: false, url: '' },
@@ -245,6 +246,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
         contact: formEntity.contact || '',
         schedule: formEntity.schedule || '',
         isFeatured: formEntity.isFeatured || false,
+        productPhotos: formEntity.productPhotos || [],
         createdAt: now,
         updatedAt: now,
       };
@@ -813,6 +815,33 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                             className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
                           />
                         </div>
+                      </div>
+
+                      {/* Product / Gallery Photos (Optional) */}
+                      <div className="border-t border-stone-100 pt-3 space-y-1">
+                        <label className="text-xs font-bold text-stone-700 flex items-center justify-between">
+                          <span className="flex items-center gap-1.5">
+                            <ImageIcon className="w-3.5 h-3.5 text-emerald-600" />
+                            <span>Foto Produk / Galeri Usaha (Opsional)</span>
+                          </span>
+                          <span className="text-[11px] font-normal text-stone-400">1 URL per baris</span>
+                        </label>
+                        <textarea
+                          rows={3}
+                          value={formEntity.productPhotos ? formEntity.productPhotos.join('\n') : ''}
+                          onChange={(e) => {
+                            const urls = e.target.value
+                              .split('\n')
+                              .map((s) => s.trim())
+                              .filter(Boolean);
+                            setFormEntity({ ...formEntity, productPhotos: urls });
+                          }}
+                          placeholder="https://images.unsplash.com/photo-1555396273-367ea4eb4db5&#10;https://images.unsplash.com/photo-1504674900247-0877df9cc836"
+                          className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 font-mono"
+                        />
+                        <p className="text-[11px] text-stone-400">
+                          Masukkan URL foto produk atau galeri kegiatan. Di halaman detail card, section foto ini dapat di-expand/collapse.
+                        </p>
                       </div>
 
                       {/* Submit Actions */}

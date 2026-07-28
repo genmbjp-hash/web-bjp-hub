@@ -72,21 +72,70 @@ export const INITIAL_ENTITIES: Entity[] = [
   {
     id: 'ent-4',
     name: 'SENTRA USAHA (UMKM Hub BJP)',
-    category: 'Ekonomi / UMKM',
-    description: `Wadah inkubasi dan penggerak ekonomi mikro warga komplek. Memberdayakan pelaku usaha kecil rumahan dengan ruang promosi digital, penyelenggaraan bazar berkala, pelatihan pengembangan bisnis, serta perluasan jaringan pasar.
+    category: 'Sentra Usaha BJP',
+    description: `Wadah inkubasi dan penggerak ekonomi mikro warga komplek Bintara Jaya Permai (RW 11). Memberdayakan pelaku usaha kecil rumahan dengan ruang promosi digital, penyelenggaraan bazar berkala, pelatihan pengembangan bisnis, serta perluasan jaringan pasar antar warga.
 
-<p><strong>Fasilitas UMKM:</strong></p>
+<p><strong>Fasilitas & Layanan UMKM:</strong></p>
 <ul>
-  <li>Katalog Produk & Kuliner Rumahan Warga</li>
-  <li>Penyelenggaraan Bazar Kuliner Hari Minggu</li>
-  <li>Saling Beli Produk Antar Warga Komplek</li>
+  <li>Katalog Produk & Kuliner Rumahan Warga Komplek</li>
+  <li>Penyelenggaraan Bazar Kuliner Setiap Hari Minggu Pagi</li>
+  <li>Inkubasi Branding, Kemasan, & Pemasaran Digital</li>
+  <li>Gerakan Beli & Bela Produk Tetangga Komplek</li>
 </ul>`,
-    image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=600&q=80',
-    ctaUrl: '#',
-    ctaWording: 'Lihat Katalog UMKM Warga',
-    contact: '0815-5544-3322 (Koordinator UMKM)',
-    schedule: 'Bazar Rutin: Hari Minggu Pagi',
+    image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80',
+    ctaUrl: 'https://instagram.com/bintarajayapermai.ofc',
+    ctaWording: 'Kunjungi Katalog UMKM',
+    mediaUrl: 'https://bintarajayapermai.com',
+    contact: '0815-5544-3322 (Koordinator UMKM RW 11)',
+    schedule: 'Bazar Rutin: Setiap Minggu Pagi (06.30 - 10.00 WIB)',
     isFeatured: true,
+    socials: {
+      instagram: { enabled: true, url: 'https://www.instagram.com/bintarajayapermai.ofc/' },
+      facebook: { enabled: true, url: 'https://facebook.com/bintarajayapermai' },
+      tiktok: { enabled: true, url: 'https://www.tiktok.com/@bintarajayapermai' },
+      whatsapp: { enabled: true, url: '081555443322' },
+    },
+    productPhotos: [
+      'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=800&q=80',
+    ],
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z'
+  },
+  {
+    id: 'ent-umkm-1',
+    name: 'Dapur Selera Nusantara (UMKM Kuliner BJP)',
+    category: 'Sentra Usaha BJP',
+    description: `Usaha kuliner rumahan unggulan milik warga Bintara Jaya Permai (Blok B). Menyajikan aneka masakan tradisional khas Nusantara, tumpeng mini, catering harian, serta kudapan tradisional berkualitas tanpa bahan pengawet.
+
+<p><strong>Menu & Layanan Unggulan:</strong></p>
+<ul>
+  <li>Nasi Liwet & Nasi Kuning Tumpeng Mini</li>
+  <li>Catering Harian & Pesanan Acara Komplek</li>
+  <li>Aneka Jajanan Pasar & Kue Basah Tradisional</li>
+  <li>Pengiriman Bebas Ongkir Khusus Area Komplek BJP</li>
+</ul>`,
+    image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80',
+    ctaUrl: 'https://wa.me/6281234567890',
+    ctaWording: 'Pesan via WhatsApp',
+    mediaUrl: 'https://bintarajayapermai.com',
+    contact: '0812-3456-7890 (Ibu Retno - Blok B3 No. 12)',
+    schedule: 'Buka Setiap Hari: 07.00 - 19.00 WIB',
+    isFeatured: true,
+    socials: {
+      instagram: { enabled: true, url: 'https://www.instagram.com/bintarajayapermai.ofc/' },
+      facebook: { enabled: true, url: 'https://facebook.com/bintarajayapermai' },
+      tiktok: { enabled: true, url: 'https://www.tiktok.com/@bintarajayapermai' },
+      whatsapp: { enabled: true, url: '081234567890' },
+    },
+    productPhotos: [
+      'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80',
+    ],
     createdAt: '2026-01-01T00:00:00Z',
     updatedAt: '2026-01-01T00:00:00Z'
   },
@@ -290,7 +339,7 @@ export const INITIAL_ANNOUNCEMENTS: Announcement[] = [
   {
     id: 'ann-1',
     title: 'Bazar Kuliner & UMKM Warga Komplek Minggu Ini',
-    category: 'Ekonomi / UMKM',
+    category: 'Sentra Usaha BJP',
     date: '27 Juli 2026',
     content: 'Diundang seluruh warga Komplek Bintara Jaya Permai untuk meramaikan Bazar Kuliner UMKM Warga di Lapangan Utam RW 11. Tersedia aneka jajanan tradisional, olahan rumahan, dan pakaian.',
     author: 'Sentra Usaha BJP',

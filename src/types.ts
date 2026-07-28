@@ -24,6 +24,7 @@ export interface Entity {
   schedule?: string;
   isFeatured?: boolean;
   socials?: EntitySocials;
+  productPhotos?: string[];
   createdAt: string;
   updatedAt: string;
 }

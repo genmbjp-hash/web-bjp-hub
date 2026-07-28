@@ -7,15 +7,43 @@ const STORAGE_KEY_ANNOUNCEMENTS = 'bjp_hub_announcements_v1';
 export function getEntities(): Entity[] {
   try {
     const data = localStorage.getItem(STORAGE_KEY_ENTITIES);
-    if (!data) {
-      saveEntities(INITIAL_ENTITIES);
-      return INITIAL_ENTITIES;
+    let list: Entity[] = INITIAL_ENTITIES;
+    if (data) {
+      const parsed = JSON.parse(data);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        list = parsed;
+        // Ensure any new initial entities (like ent-umkm-1) are merged if missing
+        INITIAL_ENTITIES.forEach((initE) => {
+          if (!list.some((item) => item.id === initE.id)) {
+            list.push(initE);
+          }
+        });
+      }
     }
-    const parsed = JSON.parse(data);
-    if (Array.isArray(parsed) && parsed.length > 0) {
-      return parsed;
-    }
-    return INITIAL_ENTITIES;
+    return list.map((e) => {
+      const mappedCat =
+        e.category === 'Ekonomi / UMKM' || e.category === 'Ekonomi/UMKM'
+          ? 'Sentra Usaha BJP'
+          : e.category;
+
+      const initMatch = INITIAL_ENTITIES.find((i) => i.id === e.id);
+      if (initMatch) {
+        return {
+          ...e,
+          category: mappedCat,
+          productPhotos:
+            e.productPhotos && e.productPhotos.length > 0
+              ? e.productPhotos
+              : initMatch.productPhotos,
+          socials: e.socials || initMatch.socials,
+        };
+      }
+
+      return {
+        ...e,
+        category: mappedCat,
+      };
+    });
   } catch (err) {
     console.error('Failed to load entities from storage', err);
     return INITIAL_ENTITIES;
@@ -33,15 +61,18 @@ export function saveEntities(entities: Entity[]): void {
 export function getAnnouncements(): Announcement[] {
   try {
     const data = localStorage.getItem(STORAGE_KEY_ANNOUNCEMENTS);
-    if (!data) {
-      saveAnnouncements(INITIAL_ANNOUNCEMENTS);
-      return INITIAL_ANNOUNCEMENTS;
+    let list: Announcement[] = INITIAL_ANNOUNCEMENTS;
+    if (data) {
+      const parsed = JSON.parse(data);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        list = parsed;
+      }
     }
-    const parsed = JSON.parse(data);
-    if (Array.isArray(parsed) && parsed.length > 0) {
-      return parsed;
-    }
-    return INITIAL_ANNOUNCEMENTS;
+    return list.map((a) =>
+      a.category === 'Ekonomi / UMKM' || a.category === 'Ekonomi/UMKM'
+        ? { ...a, category: 'Sentra Usaha BJP' }
+        : a
+    );
   } catch (err) {
     console.error('Failed to load announcements from storage', err);
     return INITIAL_ANNOUNCEMENTS;

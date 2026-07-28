@@ -11,14 +11,15 @@ import { Footer } from './components/Footer';
 
 import { Entity, Announcement } from './types';
 import { getEntities, saveEntities, getAnnouncements, saveAnnouncements } from './utils/storage';
+import { setEntityMetaTags, resetMetaTags } from './utils/meta';
 import { SearchX, Plus } from 'lucide-react';
 
 const CATEGORIES = [
   'Semua',
+  'Sentra Usaha BJP',
   'Pusat Hub',
   'Administratif / Pemerintahan',
   'Keagamaan',
-  'Ekonomi / UMKM',
   'Lingkungan',
   'Kesejahteraan Keluarga',
   'Kesehatan',
@@ -27,10 +28,10 @@ const CATEGORIES = [
 ];
 
 const SECTION_CATEGORIES = [
+  'Sentra Usaha BJP',
   'Pusat Hub',
   'Administratif / Pemerintahan',
   'Keagamaan',
-  'Ekonomi / UMKM',
   'Lingkungan',
   'Kesejahteraan Keluarga',
   'Kesehatan',
@@ -54,13 +55,64 @@ export default function App() {
   const [editingEntityForCMS, setEditingEntityForCMS] = useState<Entity | null>(null);
   const [pendingCategoryForCard, setPendingCategoryForCard] = useState<string | null>(null);
 
-  // Initialize data from local storage
+  // Initialize data from local storage & check URL deep link
   useEffect(() => {
     const loadedEntities = getEntities();
     const loadedAnnouncements = getAnnouncements();
     setEntities(loadedEntities);
     setAnnouncements(loadedAnnouncements);
+
+    // Deep link check: ?entity=<id> or ?id=<id>
+    const params = new URLSearchParams(window.location.search);
+    const entityId = params.get('entity') || params.get('id');
+    if (entityId) {
+      const found = loadedEntities.find((e) => e.id === entityId);
+      if (found) {
+        setSelectedEntityForModal(found);
+      }
+    }
   }, []);
+
+  // Sync URL query params and meta tags whenever selectedEntityForModal changes
+  useEffect(() => {
+    if (selectedEntityForModal) {
+      setEntityMetaTags(selectedEntityForModal);
+
+      const url = new URL(window.location.href);
+      if (url.searchParams.get('entity') !== selectedEntityForModal.id) {
+        url.searchParams.set('entity', selectedEntityForModal.id);
+        window.history.pushState({ entityId: selectedEntityForModal.id }, '', url.toString());
+      }
+    } else {
+      resetMetaTags();
+
+      const url = new URL(window.location.href);
+      if (url.searchParams.has('entity') || url.searchParams.has('id')) {
+        url.searchParams.delete('entity');
+        url.searchParams.delete('id');
+        window.history.pushState({}, '', url.pathname + url.search);
+      }
+    }
+  }, [selectedEntityForModal]);
+
+  // Handle browser Back & Forward button navigation
+  useEffect(() => {
+    const handlePopState = () => {
+      const params = new URLSearchParams(window.location.search);
+      const entityId = params.get('entity') || params.get('id');
+      if (entityId) {
+        const found = entities.find((e) => e.id === entityId);
+        if (found) {
+          setSelectedEntityForModal(found);
+          return;
+        }
+      }
+      setSelectedEntityForModal(null);
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [entities]);
 
   const handleSaveEntities = (updated: Entity[]) => {
     setEntities(updated);
@@ -172,16 +224,13 @@ export default function App() {
               {/* Category Title Header */}
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-stone-200 pb-3">
                 <div>
-                  <h2 className="text-xl sm:text-2xl font-bold text-stone-900 tracking-tight flex items-center gap-2">
-                    <span className="font-bold not-italic text-right">{selectedCategory === 'Semua' ? 'Seluruh Section & Entitas Warga' : `Section: ${selectedCategory}`}</span>
-                    <span className="text-xs font-semibold bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full">
-                      {totalFilteredCount} Card
-                    </span>
+                  <h2 className="text-lg sm:text-2xl font-bold text-stone-900 tracking-tight leading-snug">
+                    <span className="font-bold not-italic">{selectedCategory === 'Semua' ? 'Seluruh Entitas Warga' : selectedCategory}</span>
                   </h2>
                   <p className="text-xs sm:text-sm text-stone-500 mt-0.5">
                     {selectedCategory === 'Semua'
-                      ? 'Daftar entitas dan kegiatan komplek Bintara Jaya Permai (RW 11) dikelompokkan per section'
-                      : `Menampilkan unit kegiatan dalam section ${selectedCategory}`}
+                      ? 'Daftar entitas dan kegiatan komplek Bintara Jaya Permai (RW 11)'
+                      : `Menampilkan unit kegiatan dalam ${selectedCategory}`}
                   </p>
                 </div>
 
@@ -232,11 +281,8 @@ export default function App() {
                         {/* Section Header */}
                         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-stone-100 pb-3">
                           <div>
-                            <h3 className="text-lg sm:text-xl font-bold text-stone-900 tracking-tight flex items-center gap-2">
+                            <h3 className="text-base sm:text-xl font-bold text-stone-900 tracking-tight leading-snug">
                               <span>{sectionCat}</span>
-                              <span className="text-xs font-semibold bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full">
-                                {sectionEntities.length} Card
-                              </span>
                             </h3>
                             <p className="text-xs text-stone-500 mt-0.5">
                               Unit entitas & kegiatan warga dalam kategori {sectionCat}
@@ -247,7 +293,7 @@ export default function App() {
                         {/* Cards Grid for this Section */}
                         {sectionEntities.length === 0 ? (
                           <div className="p-8 rounded-2xl border border-dashed border-stone-200 text-center bg-stone-50/50">
-                            <p className="text-xs text-stone-400">Belum ada card di section "{sectionCat}".</p>
+                            <p className="text-xs text-stone-400">Belum ada card di kategori "{sectionCat}".</p>
                           </div>
                         ) : (
                           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -287,8 +333,6 @@ export default function App() {
       <EntityDetailModal
         entity={selectedEntityForModal}
         onClose={() => setSelectedEntityForModal(null)}
-        onEdit={handleEditEntityInCMS}
-        isCMSActive={true}
       />
 
       {/* Password Modal */}
