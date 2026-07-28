@@ -6,15 +6,19 @@ interface PasswordModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  logoUrl?: string;
 }
 
 export const PasswordModal: React.FC<PasswordModalProps> = ({
   isOpen,
   onClose,
   onSuccess,
+  logoUrl,
 }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(false);
+
+  const displayLogo = logoUrl || BJP_LOGO_URL;
 
   if (!isOpen) return null;
 
@@ -43,7 +47,7 @@ export const PasswordModal: React.FC<PasswordModalProps> = ({
         {/* Header Icon */}
         <div className="flex items-center gap-3 border-b border-stone-100 pb-3">
           <img
-            src={BJP_LOGO_URL}
+            src={displayLogo}
             alt="BJP HUB"
             className="w-10 h-10 rounded-md object-cover border border-amber-400 shadow-xs"
           />

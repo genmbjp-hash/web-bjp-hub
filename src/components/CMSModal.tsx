@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { Entity, Announcement } from '../types';
+import React, { useState, useEffect } from 'react';
+import { Entity, Announcement, SiteSettings, NavbarTabConfig } from '../types';
 import {
   X, Plus, Edit3, Trash2, Copy, Download, Upload, RefreshCw, Check,
   Image as ImageIcon, Sparkles, LayoutGrid, Megaphone, HelpCircle,
   Bold, Italic, List, Heading, ExternalLink, ShieldAlert, ArrowLeft,
-  GripVertical, ArrowUp, ArrowDown
+  GripVertical, ArrowUp, ArrowDown, MapPin, Info, Globe, Sliders, Palette, Eye
 } from 'lucide-react';
 import { exportDataAsJSON, importDataFromJSON, resetToDefaults } from '../utils/storage';
 import { formatImageUrl } from '../utils/imageUrl';
@@ -18,6 +18,8 @@ interface CMSModalProps {
   onSaveEntities: (entities: Entity[]) => void;
   announcements: Announcement[];
   onSaveAnnouncements: (announcements: Announcement[]) => void;
+  siteSettings: SiteSettings;
+  onSaveSiteSettings: (settings: SiteSettings) => void;
   editingEntityInit?: Entity | null;
   initialCategoryForNewEntity?: string | null;
 }
@@ -68,10 +70,12 @@ export const CMSModal: React.FC<CMSModalProps> = ({
   onSaveEntities,
   announcements,
   onSaveAnnouncements,
+  siteSettings,
+  onSaveSiteSettings,
   editingEntityInit,
   initialCategoryForNewEntity,
 }) => {
-  const [activeTab, setActiveTab] = useState<'entities' | 'announcements'>('entities');
+  const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'settings' | 'backup'>('entities');
   const [editingEntity, setEditingEntity] = useState<Entity | null>(editingEntityInit || null);
   const [isCreatingNewEntity, setIsCreatingNewEntity] = useState(false);
 
@@ -87,8 +91,31 @@ export const CMSModal: React.FC<CMSModalProps> = ({
     mediaUrl: '',
     contact: '',
     schedule: '',
+    address: '',
+    infoNotes: '',
     isFeatured: false,
   });
+
+  // Local state for Site Settings (Branding & Navbar Tabs)
+  const [tempLogoUrl, setTempLogoUrl] = useState<string>(siteSettings?.logoUrl || BJP_LOGO_URL);
+  const [tempNavbarTabs, setTempNavbarTabs] = useState<NavbarTabConfig[]>(
+    siteSettings?.navbarTabs || [
+      { id: 'entities', label: 'Entitas Kegiatan', enabled: true, order: 0 },
+      { id: 'announcements', label: 'Pengumuman & Agenda', enabled: true, order: 1 },
+    ]
+  );
+
+  useEffect(() => {
+    if (siteSettings) {
+      setTempLogoUrl(siteSettings.logoUrl || BJP_LOGO_URL);
+      setTempNavbarTabs(
+        siteSettings.navbarTabs || [
+          { id: 'entities', label: 'Entitas Kegiatan', enabled: true, order: 0 },
+          { id: 'announcements', label: 'Pengumuman & Agenda', enabled: true, order: 1 },
+        ]
+      );
+    }
+  }, [siteSettings, isOpen]);
 
   // Form State for Announcement
   const [editingAnn, setEditingAnn] = useState<Announcement | null>(null);
@@ -323,6 +350,8 @@ export const CMSModal: React.FC<CMSModalProps> = ({
         mediaUrl: formEntity.mediaUrl || '',
         contact: formEntity.contact || '',
         schedule: formEntity.schedule || '',
+        address: formEntity.address || '',
+        infoNotes: formEntity.infoNotes || '',
         isFeatured: formEntity.isFeatured || false,
         productPhotos: finalPhotos,
         productPhotoCaptions: finalCaptions,
@@ -508,13 +537,25 @@ export const CMSModal: React.FC<CMSModalProps> = ({
             </div>
           </div>
 
-          <button
-            onClick={onClose}
-            className="p-2 text-stone-400 hover:text-white bg-stone-800 hover:bg-stone-700 rounded-xl transition-colors"
-            title="Tutup CMS"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={handleExport}
+              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-stone-800 hover:bg-stone-700 text-stone-200 rounded-xl text-xs font-semibold border border-stone-700 transition-colors cursor-pointer"
+              title="Download Backup File JSON Data"
+            >
+              <Download className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Backup JSON</span>
+            </button>
+
+            <button
+              onClick={onClose}
+              className="p-2 text-stone-400 hover:text-white bg-stone-800 hover:bg-stone-700 rounded-xl transition-colors cursor-pointer"
+              title="Tutup CMS"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Navigation Tabs */}
@@ -549,6 +590,34 @@ export const CMSModal: React.FC<CMSModalProps> = ({
           >
             <Megaphone className="w-4 h-4 text-emerald-700" />
             <span>Kelola Pengumuman ({announcements.length})</span>
+          </button>
+
+          <button
+            onClick={() => {
+              setActiveTab('settings');
+            }}
+            className={`flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-semibold border-b-2 transition-all whitespace-nowrap ${
+              activeTab === 'settings'
+                ? 'border-emerald-700 text-emerald-900 bg-emerald-50/50 rounded-t-lg'
+                : 'border-transparent text-stone-600 hover:text-stone-900'
+            }`}
+          >
+            <Globe className="w-4 h-4 text-emerald-700" />
+            <span>Logo Web & Tab Navbar</span>
+          </button>
+
+          <button
+            onClick={() => {
+              setActiveTab('backup');
+            }}
+            className={`flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-semibold border-b-2 transition-all whitespace-nowrap ${
+              activeTab === 'backup'
+                ? 'border-emerald-700 text-emerald-900 bg-emerald-50/50 rounded-t-lg'
+                : 'border-transparent text-stone-600 hover:text-stone-900'
+            }`}
+          >
+            <Download className="w-4 h-4 text-emerald-700" />
+            <span>Backup & Restore Data JSON</span>
           </button>
         </div>
 
@@ -911,28 +980,77 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                         </div>
                       </div>
 
-                      {/* Extra Meta (Contact, Schedule) */}
-                      <div className="border-t border-stone-100 pt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div className="space-y-1">
-                          <label className="text-xs font-bold text-stone-700">Kontak Admin / No. HP (Opsional)</label>
-                          <input
-                            type="text"
-                            value={formEntity.contact || ''}
-                            onChange={(e) => setFormEntity({ ...formEntity, contact: e.target.value })}
-                            placeholder="Contoh: 0812-3456-7890 (Pak RW)"
-                            className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-                          />
+                      {/* Extra Meta (4 Optional Fields: Jam Buka, Telepon, Alamat, Info Lainnya) */}
+                      <div className="border-t border-stone-200 pt-3 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <h4 className="text-xs font-bold text-stone-800 uppercase tracking-wider">
+                            Informasi Tambahan (Semua Field Opsional)
+                          </h4>
+                          <span className="text-[10px] bg-stone-100 text-stone-600 px-2 py-0.5 rounded-md border border-stone-200">
+                            Opsional
+                          </span>
                         </div>
 
-                        <div className="space-y-1">
-                          <label className="text-xs font-bold text-stone-700">Jadwal Operasional / Rutin (Opsional)</label>
-                          <input
-                            type="text"
-                            value={formEntity.schedule || ''}
-                            onChange={(e) => setFormEntity({ ...formEntity, schedule: e.target.value })}
-                            placeholder="Contoh: Setiap Hari Minggu Pagi (06.30 WIB)"
-                            className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-                          />
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          {/* Jam Buka / Operasional */}
+                          <div className="space-y-1">
+                            <label className="text-xs font-bold text-stone-700 flex items-center gap-1.5">
+                              <HelpCircle className="w-3.5 h-3.5 text-emerald-600" />
+                              <span>Jam Buka / Operasional (Opsional)</span>
+                            </label>
+                            <input
+                              type="text"
+                              value={formEntity.schedule || ''}
+                              onChange={(e) => setFormEntity({ ...formEntity, schedule: e.target.value })}
+                              placeholder="Contoh: Senin - Sabtu (08.00 - 17.00 WIB)"
+                              className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                            />
+                          </div>
+
+                          {/* Telepon / No. HP / Kontak */}
+                          <div className="space-y-1">
+                            <label className="text-xs font-bold text-stone-700 flex items-center gap-1.5">
+                              <HelpCircle className="w-3.5 h-3.5 text-emerald-600" />
+                              <span>Telepon / Kontak WA (Opsional)</span>
+                            </label>
+                            <input
+                              type="text"
+                              value={formEntity.contact || ''}
+                              onChange={(e) => setFormEntity({ ...formEntity, contact: e.target.value })}
+                              placeholder="Contoh: 0812-3456-7890"
+                              className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                            />
+                          </div>
+
+                          {/* Alamat Lokasi */}
+                          <div className="space-y-1">
+                            <label className="text-xs font-bold text-stone-700 flex items-center gap-1.5">
+                              <MapPin className="w-3.5 h-3.5 text-emerald-600" />
+                              <span>Alamat Lokasi (Opsional)</span>
+                            </label>
+                            <input
+                              type="text"
+                              value={formEntity.address || ''}
+                              onChange={(e) => setFormEntity({ ...formEntity, address: e.target.value })}
+                              placeholder="Contoh: Jl. Utama Komplek Bintara Jaya Permai Blok A No. 12"
+                              className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                            />
+                          </div>
+
+                          {/* Catatan / Info Lainnya */}
+                          <div className="space-y-1">
+                            <label className="text-xs font-bold text-stone-700 flex items-center gap-1.5">
+                              <Info className="w-3.5 h-3.5 text-emerald-600" />
+                              <span>Info Lainnya / Catatan (Opsional)</span>
+                            </label>
+                            <input
+                              type="text"
+                              value={formEntity.infoNotes || ''}
+                              onChange={(e) => setFormEntity({ ...formEntity, infoNotes: e.target.value })}
+                              placeholder="Contoh: Melayani pengantaran area RW 11 & sekitar"
+                              className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                            />
+                          </div>
                         </div>
                       </div>
 
@@ -1645,6 +1763,513 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                       Sistem Vercel akan mendeteksi framework <em>Vite + React</em> secara otomatis. Klik tombol <strong>"Deploy"</strong> dan tunggu 1 menit hingga website aktif!
                     </li>
                   </ol>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 3: SITE SETTINGS (Logo Web & Tab Navbar) */}
+          {activeTab === 'settings' && (
+            <div className="space-y-6 max-w-4xl mx-auto pb-6">
+              {/* Header Box */}
+              <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-xs space-y-2">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 bg-emerald-100 text-emerald-800 rounded-xl">
+                    <Globe className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="font-extrabold text-stone-900 text-base sm:text-lg">
+                      Pengaturan Logo Website & Navbar
+                    </h3>
+                    <p className="text-xs text-stone-500">
+                      Kelola identitas visual logo web, Favicon, OG Image, serta posisi dan nama tab navigasi navbar.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Section 1: Upload Logo Website */}
+              <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-xs space-y-5">
+                <div className="flex items-center justify-between border-b border-stone-100 pb-3">
+                  <div className="flex items-center gap-2">
+                    <Palette className="w-5 h-5 text-emerald-700" />
+                    <h4 className="font-bold text-stone-900 text-sm sm:text-base">
+                      1. Upload Logo Website (Header, Footer, Favicon & OG Meta)
+                    </h4>
+                  </div>
+                  <span className="text-xs bg-emerald-50 text-emerald-800 font-semibold px-2.5 py-1 rounded-full border border-emerald-200">
+                    Satu Logo untuk Semua
+                  </span>
+                </div>
+
+                <p className="text-xs text-stone-600 leading-relaxed">
+                  Logo yang diunggah/diatur di sini akan otomatis diterapkan pada <strong>Header Navbar</strong>, <strong>Footer Website</strong>, <strong>Hero Banner</strong>, <strong>Favicon Tab Browser</strong>, serta <strong>Open Graph (OG Image)</strong> saat link website dibagikan ke WhatsApp / media sosial.
+                </p>
+
+                {/* Logo Upload / URL Options */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                  {/* Form Controls */}
+                  <div className="space-y-4">
+                    {/* Option A: Upload File */}
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-bold text-stone-800 block">
+                        Upload Gambar dari Komputer:
+                      </label>
+                      <label className="flex items-center justify-center gap-2 p-3 bg-stone-50 border-2 border-dashed border-stone-300 hover:border-emerald-600 rounded-xl cursor-pointer transition-colors text-xs font-semibold text-stone-700">
+                        <Upload className="w-4 h-4 text-emerald-600" />
+                        <span>Pilih File Gambar Logo</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              const reader = new FileReader();
+                              reader.onload = (evt) => {
+                                if (evt.target?.result) {
+                                  setTempLogoUrl(evt.target.result as string);
+                                }
+                              };
+                              reader.readAsDataURL(file);
+                            }
+                          }}
+                        />
+                      </label>
+                    </div>
+
+                    <div className="relative flex py-1 items-center">
+                      <div className="flex-grow border-t border-stone-200"></div>
+                      <span className="flex-shrink mx-3 text-[10px] font-bold text-stone-400 uppercase">atau masukan URL</span>
+                      <div className="flex-grow border-t border-stone-200"></div>
+                    </div>
+
+                    {/* Option B: Direct URL Input */}
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-bold text-stone-800 block">
+                        Tautan URL Gambar / Logo:
+                      </label>
+                      <input
+                        type="text"
+                        value={tempLogoUrl}
+                        onChange={(e) => setTempLogoUrl(e.target.value)}
+                        placeholder="https://... / data:image/..."
+                        className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 font-mono"
+                      />
+                    </div>
+
+                    {/* Reset Button */}
+                    <button
+                      type="button"
+                      onClick={() => setTempLogoUrl(BJP_LOGO_URL)}
+                      className="inline-flex items-center gap-1.5 text-xs text-stone-600 hover:text-stone-900 bg-stone-100 hover:bg-stone-200 px-3 py-1.5 rounded-lg border border-stone-200 font-medium transition-colors"
+                    >
+                      <RefreshCw className="w-3.5 h-3.5 text-stone-500" />
+                      <span>Kembalikan ke Logo Default BJP HUB</span>
+                    </button>
+                  </div>
+
+                  {/* Preview Box */}
+                  <div className="bg-stone-900 p-5 rounded-2xl text-white space-y-4 border border-stone-800 shadow-inner">
+                    <div className="flex items-center justify-between border-b border-stone-800 pb-2">
+                      <span className="text-xs font-bold text-amber-300 flex items-center gap-1.5">
+                        <Eye className="w-3.5 h-3.5" /> Pratinjau Tampilan Logo
+                      </span>
+                      <span className="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-md border border-emerald-500/30 font-medium">
+                        Live Preview
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-4 bg-stone-800/80 p-3 rounded-xl border border-stone-700">
+                      <img
+                        src={tempLogoUrl || BJP_LOGO_URL}
+                        alt="Pratinjau Logo"
+                        className="w-14 h-14 rounded-lg object-cover border border-amber-400/50 shadow-md bg-stone-900"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = BJP_LOGO_URL;
+                        }}
+                      />
+                      <div>
+                        <h5 className="font-extrabold text-white text-sm">BJP.hub</h5>
+                        <p className="text-[11px] text-stone-400">RW 11 Bintara Jaya Permai</p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-1.5 text-[11px] text-stone-300 pt-1">
+                      <div className="flex items-center gap-2">
+                        <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                        <span>Favicon Tab Browser</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                        <span>Header Navbar & Footer Web</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                        <span>Open Graph Image (WhatsApp Share Preview)</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Section 2: Reposisi & Rename Tab Navbar */}
+              <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-xs space-y-5">
+                <div className="flex items-center justify-between border-b border-stone-100 pb-3">
+                  <div className="flex items-center gap-2">
+                    <Sliders className="w-5 h-5 text-emerald-700" />
+                    <h4 className="font-bold text-stone-900 text-sm sm:text-base">
+                      2. Reposisi & Rename Tab Navigasi Navbar
+                    </h4>
+                  </div>
+                  <span className="text-xs bg-amber-50 text-amber-800 font-semibold px-2.5 py-1 rounded-full border border-amber-200">
+                    Atur Urutan & Nama Tab
+                  </span>
+                </div>
+
+                <p className="text-xs text-stone-600 leading-relaxed">
+                  Gunakan tombol panah ke atas/bawah untuk <strong>mengatur posisi urutan (reposisi)</strong> dan ubah teks input untuk <strong>mengganti nama (rename)</strong> tab navigasi yang tampil di navbar bagian atas website.
+                </p>
+
+                <div className="space-y-3">
+                  {[...tempNavbarTabs]
+                    .sort((a, b) => a.order - b.order)
+                    .map((tab, idx, arr) => (
+                      <div
+                        key={tab.id}
+                        className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-stone-50 rounded-xl border border-stone-200"
+                      >
+                        {/* Order Buttons */}
+                        <div className="flex items-center gap-2">
+                          <div className="flex flex-col gap-1">
+                            <button
+                              type="button"
+                              disabled={idx === 0}
+                              onClick={() => {
+                                if (idx === 0) return;
+                                const newTabs = [...arr];
+                                const tempOrder = newTabs[idx].order;
+                                newTabs[idx].order = newTabs[idx - 1].order;
+                                newTabs[idx - 1].order = tempOrder;
+                                setTempNavbarTabs(newTabs);
+                              }}
+                              className="p-1 bg-white hover:bg-stone-200 disabled:opacity-30 border border-stone-200 rounded text-stone-700"
+                              title="Pindahkan Ke Atas / Lebih Kiri"
+                            >
+                              <ArrowUp className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              disabled={idx === arr.length - 1}
+                              onClick={() => {
+                                if (idx === arr.length - 1) return;
+                                const newTabs = [...arr];
+                                const tempOrder = newTabs[idx].order;
+                                newTabs[idx].order = newTabs[idx + 1].order;
+                                newTabs[idx + 1].order = tempOrder;
+                                setTempNavbarTabs(newTabs);
+                              }}
+                              className="p-1 bg-white hover:bg-stone-200 disabled:opacity-30 border border-stone-200 rounded text-stone-700"
+                              title="Pindahkan Ke Bawah / Lebih Kanan"
+                            >
+                              <ArrowDown className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+
+                          <span className="w-6 h-6 rounded-full bg-stone-200 text-stone-800 text-xs font-bold flex items-center justify-center">
+                            {idx + 1}
+                          </span>
+
+                          <span className="text-xs font-bold text-stone-500 uppercase tracking-wider">
+                            {tab.id === 'entities' ? 'Tab Entitas' : 'Tab Pengumuman'}
+                          </span>
+                        </div>
+
+                        {/* Label Edit Field */}
+                        <div className="flex-1 space-y-1">
+                          <label className="text-[11px] font-bold text-stone-700 block">
+                            Nama Label Tab (Rename):
+                          </label>
+                          <input
+                            type="text"
+                            value={tab.label}
+                            onChange={(e) => {
+                              const newLabel = e.target.value;
+                              setTempNavbarTabs(
+                                tempNavbarTabs.map((t) =>
+                                  t.id === tab.id ? { ...t, label: newLabel } : t
+                                )
+                              );
+                            }}
+                            className="w-full px-3 py-1.5 bg-white border border-stone-300 rounded-lg text-xs font-semibold text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                          />
+                        </div>
+
+                        {/* Active Toggle */}
+                        <div className="flex items-center gap-2">
+                          <label className="flex items-center gap-2 text-xs font-semibold text-stone-700 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={tab.enabled}
+                              onChange={(e) => {
+                                const isChecked = e.target.checked;
+                                setTempNavbarTabs(
+                                  tempNavbarTabs.map((t) =>
+                                    t.id === tab.id ? { ...t, enabled: isChecked } : t
+                                  )
+                                );
+                              }}
+                              className="w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500"
+                            />
+                            <span>Tampilkan Tab</span>
+                          </label>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+
+                {/* Navbar Live Mockup Preview */}
+                <div className="p-4 bg-stone-100 rounded-xl border border-stone-200 space-y-2">
+                  <span className="text-xs font-bold text-stone-700 block">
+                    Pratinjau Hasil Tampilan Tab Navbar Utama:
+                  </span>
+                  <div className="flex items-center gap-2 bg-white p-2 rounded-lg border border-stone-300 shadow-2xs">
+                    {[...tempNavbarTabs]
+                      .filter((t) => t.enabled)
+                      .sort((a, b) => a.order - b.order)
+                      .map((t, index) => (
+                        <div
+                          key={t.id}
+                          className={`px-3 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1.5 ${
+                            index === 0
+                              ? 'bg-emerald-50 text-emerald-900 border border-emerald-200'
+                              : 'bg-stone-100 text-stone-700'
+                          }`}
+                        >
+                          {t.id === 'entities' ? (
+                            <LayoutGrid className="w-3.5 h-3.5 text-emerald-700" />
+                          ) : (
+                            <Megaphone className="w-3.5 h-3.5 text-emerald-700" />
+                          )}
+                          <span>{t.label}</span>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Save All Settings Button */}
+              <div className="bg-white p-5 rounded-2xl border border-stone-200 shadow-xs flex items-center justify-between">
+                <div>
+                  <h4 className="font-bold text-stone-900 text-sm">Simpan Perubahan Branding & Navbar</h4>
+                  <p className="text-xs text-stone-500">
+                    Klik tombol di samping untuk menerapkan logo dan susunan tab navbar terbaru secara langsung.
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    onSaveSiteSettings({
+                      logoUrl: tempLogoUrl,
+                      navbarTabs: tempNavbarTabs,
+                    });
+                    showToast('Pengaturan logo website & tab navbar berhasil disimpan!');
+                  }}
+                  className="flex items-center gap-2 px-5 py-2.5 bg-emerald-800 hover:bg-emerald-900 text-white rounded-xl font-semibold text-xs sm:text-sm shadow-md transition-all shrink-0 cursor-pointer"
+                >
+                  <Check className="w-4 h-4 text-emerald-300" />
+                  <span>Simpan Pengaturan</span>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 4: BACKUP & RESTORE DATA JSON */}
+          {activeTab === 'backup' && (
+            <div className="space-y-6 max-w-4xl mx-auto pb-6">
+              {/* Header Box */}
+              <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-xs space-y-2">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 bg-emerald-100 text-emerald-800 rounded-xl">
+                    <Download className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="font-extrabold text-stone-900 text-base sm:text-lg">
+                      Backup & Restore Data JSON Website
+                    </h3>
+                    <p className="text-xs text-stone-500">
+                      Cadangkan seluruh data Entitas Kegiatan, Pengumuman, dan Pengaturan ke file JSON atau pulihkan data dari file cadangan sebelumnya.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Cards Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Card 1: Ekspor / Download JSON */}
+                <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-xs space-y-4 flex flex-col justify-between">
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+                        1. Ekspor Data
+                      </span>
+                      <span className="text-[11px] font-semibold text-stone-500">
+                        Format .JSON
+                      </span>
+                    </div>
+
+                    <h4 className="font-extrabold text-stone-900 text-base">
+                      Unduh Salinan Cadangan (Backup Data)
+                    </h4>
+
+                    <p className="text-xs text-stone-600 leading-relaxed">
+                      Ekspor seluruh <strong>{entities.length} Entitas Kegiatan</strong> dan <strong>{announcements.length} Pengumuman</strong> beserta seluruh foto, jam buka, kontak, dan alamat ke satu file <code>.json</code>.
+                    </p>
+
+                    <div className="p-3 bg-stone-50 rounded-xl border border-stone-200 text-xs text-stone-700 space-y-1">
+                      <div className="flex justify-between font-medium">
+                        <span>Total Entitas:</span>
+                        <span className="font-bold text-stone-900">{entities.length} Item</span>
+                      </div>
+                      <div className="flex justify-between font-medium">
+                        <span>Total Pengumuman & Agenda:</span>
+                        <span className="font-bold text-stone-900">{announcements.length} Item</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleExport}
+                    className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-emerald-800 hover:bg-emerald-900 text-white rounded-xl font-bold text-xs sm:text-sm shadow-md transition-all cursor-pointer"
+                  >
+                    <Download className="w-4 h-4 text-emerald-300" />
+                    <span>Download Backup Data (.json)</span>
+                  </button>
+                </div>
+
+                {/* Card 2: Impor / Upload JSON */}
+                <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-xs space-y-4 flex flex-col justify-between">
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-blue-800 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-200">
+                        2. Impor / Restore Data
+                      </span>
+                      <span className="text-[11px] font-semibold text-stone-500">
+                        Unggah File .JSON
+                      </span>
+                    </div>
+
+                    <h4 className="font-extrabold text-stone-900 text-base">
+                      Pulihkan Data dari File Cadangan
+                    </h4>
+
+                    <p className="text-xs text-stone-600 leading-relaxed">
+                      Pilih file <code>.json</code> hasil ekspor sebelumnya dari perangkat Anda untuk memulihkan seluruh data entitas dan pengumuman secara otomatis.
+                    </p>
+
+                    <div className="p-3 bg-blue-50/50 rounded-xl border border-blue-100 text-xs text-blue-900 leading-relaxed">
+                      💡 File JSON yang diimpor akan langsung memperbarui daftar entitas dan pengumuman tanpa menghilangkan konfigurasi penting.
+                    </div>
+                  </div>
+
+                  <label className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-blue-700 hover:bg-blue-800 text-white rounded-xl font-bold text-xs sm:text-sm shadow-md transition-all cursor-pointer">
+                    <Upload className="w-4 h-4 text-blue-200" />
+                    <span>Pilih File Backup JSON & Import</span>
+                    <input
+                      type="file"
+                      accept=".json,application/json"
+                      onChange={handleImportFile}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+              </div>
+
+              {/* Card 3: Reset Total ke Default Awal PDF */}
+              <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-xs space-y-4">
+                <div className="flex items-center justify-between border-b border-stone-100 pb-3">
+                  <div className="flex items-center gap-2">
+                    <ShieldAlert className="w-5 h-5 text-amber-600" />
+                    <h4 className="font-bold text-stone-900 text-sm sm:text-base">
+                      3. Reset Data Ke Setelan Standar Awal (13 Entitas Resmi PDF)
+                    </h4>
+                  </div>
+                  <span className="text-xs bg-amber-50 text-amber-800 font-semibold px-2.5 py-1 rounded-full border border-amber-200">
+                    Opsi Pemulihan Awal
+                  </span>
+                </div>
+
+                <p className="text-xs text-stone-600 leading-relaxed">
+                  Gunakan opsi ini jika Anda ingin mengembalikan seluruh data ke <strong>13 Entitas Resmi Awal</strong> dari dokumen PDF Bintara Jaya Permai (RW 11). Perubahan lokal yang belum di-backup akan ditimpa.
+                </p>
+
+                <div className="flex items-center justify-between pt-1">
+                  <span className="text-[11px] text-amber-800 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200 font-medium">
+                    ⚠️ Memerlukan konfirmasi keamanan sebelum proses reset dijalankan.
+                  </span>
+
+                  <button
+                    type="button"
+                    onClick={handleResetData}
+                    className="flex items-center gap-2 px-4 py-2.5 bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 rounded-xl font-bold text-xs transition-all cursor-pointer"
+                  >
+                    <RefreshCw className="w-4 h-4 text-amber-700" />
+                    <span>Reset Data Ke 13 Entitas Awal</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Section 4: Panduan Lengkap & Instruksi Backup */}
+              <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-xs space-y-4">
+                <div className="flex items-center gap-2 border-b border-stone-100 pb-3">
+                  <HelpCircle className="w-5 h-5 text-emerald-700" />
+                  <h4 className="font-bold text-stone-900 text-sm sm:text-base">
+                    Petunjuk Lengkap & Instruksi Keamanan Data Admin
+                  </h4>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-stone-700">
+                  <div className="p-4 bg-stone-50 rounded-xl border border-stone-200 space-y-1.5">
+                    <h5 className="font-bold text-stone-900 flex items-center gap-1.5">
+                      <span className="w-5 h-5 rounded-full bg-emerald-800 text-white text-[10px] flex items-center justify-center font-bold">1</span>
+                      Cara Melakukan Backup Data
+                    </h5>
+                    <p className="text-stone-600 leading-relaxed">
+                      Klik tombol <strong>"Download Backup Data (.json)"</strong>. File bernama <code>bjp-hub-data-TANGGAL.json</code> akan tersimpan di folder Unduhan komputer/HP Anda.
+                    </p>
+                  </div>
+
+                  <div className="p-4 bg-stone-50 rounded-xl border border-stone-200 space-y-1.5">
+                    <h5 className="font-bold text-stone-900 flex items-center gap-1.5">
+                      <span className="w-5 h-5 rounded-full bg-emerald-800 text-white text-[10px] flex items-center justify-center font-bold">2</span>
+                      Cara Memulihkan (Restore) Data
+                    </h5>
+                    <p className="text-stone-600 leading-relaxed">
+                      Klik <strong>"Pilih File Backup JSON & Import"</strong>, lalu pilih file <code>.json</code> cadangan yang ingin dipulihkan. Data akan langsung terbarui di website secara otomatis.
+                    </p>
+                  </div>
+
+                  <div className="p-4 bg-stone-50 rounded-xl border border-stone-200 space-y-1.5">
+                    <h5 className="font-bold text-stone-900 flex items-center gap-1.5">
+                      <span className="w-5 h-5 rounded-full bg-emerald-800 text-white text-[10px] flex items-center justify-center font-bold">3</span>
+                      Memindahkan Data ke Perangkat Lain
+                    </h5>
+                    <p className="text-stone-600 leading-relaxed">
+                      Kirim file JSON cadangan via WhatsApp / Email ke pengurus lain. Pengurus lain dapat langsung mengimpor file tersebut melalui CMS di HP/komputer mereka.
+                    </p>
+                  </div>
+
+                  <div className="p-4 bg-stone-50 rounded-xl border border-stone-200 space-y-1.5">
+                    <h5 className="font-bold text-stone-900 flex items-center gap-1.5">
+                      <span className="w-5 h-5 rounded-full bg-emerald-800 text-white text-[10px] flex items-center justify-center font-bold">4</span>
+                      Rekomendasi Jadwal Backup
+                    </h5>
+                    <p className="text-stone-600 leading-relaxed">
+                      Lakukan ekspor data JSON secara berkala setelah Anda menambah atau mengedit entitas UMKM, jadwal operasional, atau pengumuman warga baru.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>

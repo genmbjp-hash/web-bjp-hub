@@ -9,8 +9,8 @@ import { CMSModal } from './components/CMSModal';
 import { PasswordModal } from './components/PasswordModal';
 import { Footer } from './components/Footer';
 
-import { Entity, Announcement } from './types';
-import { getEntities, saveEntities, getAnnouncements, saveAnnouncements } from './utils/storage';
+import { Entity, Announcement, SiteSettings } from './types';
+import { getEntities, saveEntities, getAnnouncements, saveAnnouncements, getSiteSettings, saveSiteSettings } from './utils/storage';
 import { setEntityMetaTags, setAnnouncementMetaTags, resetMetaTags } from './utils/meta';
 import { ShareModal } from './components/ShareModal';
 import { SearchX, Plus } from 'lucide-react';
@@ -43,6 +43,7 @@ const SECTION_CATEGORIES = [
 export default function App() {
   const [entities, setEntities] = useState<Entity[]>([]);
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+  const [siteSettings, setSiteSettings] = useState<SiteSettings>(() => getSiteSettings());
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Semua');
   const [activeTab, setActiveTab] = useState<'entities' | 'announcements'>('entities');
@@ -97,7 +98,7 @@ export default function App() {
         window.history.pushState({ entityId: selectedEntityForModal.id }, '', url.toString());
       }
     } else {
-      resetMetaTags();
+      resetMetaTags(siteSettings.logoUrl);
 
       const url = new URL(window.location.href);
       if (url.searchParams.has('entity') || url.searchParams.has('id')) {
@@ -106,7 +107,7 @@ export default function App() {
         window.history.pushState({}, '', url.pathname + url.search);
       }
     }
-  }, [selectedEntityForModal]);
+  }, [selectedEntityForModal, siteSettings.logoUrl]);
 
   // Handle browser Back & Forward button navigation
   useEffect(() => {
@@ -135,6 +136,12 @@ export default function App() {
   const handleSaveAnnouncements = (updated: Announcement[]) => {
     setAnnouncements(updated);
     saveAnnouncements(updated);
+  };
+
+  const handleSaveSiteSettings = (updatedSettings: SiteSettings) => {
+    setSiteSettings(updatedSettings);
+    saveSiteSettings(updatedSettings);
+    resetMetaTags(updatedSettings.logoUrl);
   };
 
   // CMS access handler with password check
@@ -210,6 +217,8 @@ export default function App() {
         onOpenCMS={() => handleOpenCMSWithAuth()}
         isCMSActive={isCMSOpen}
         totalEntitiesCount={entities.length}
+        logoUrl={siteSettings.logoUrl}
+        navbarTabs={siteSettings.navbarTabs}
       />
 
       {/* Main Container */}
@@ -218,6 +227,7 @@ export default function App() {
         <Hero
           onOpenCMS={() => handleOpenCMSWithAuth()}
           totalEntities={entities.length}
+          logoUrl={siteSettings.logoUrl}
         />
 
         {/* View Tab 1: Entitas Kegiatan */}
@@ -365,6 +375,7 @@ export default function App() {
         isOpen={isPasswordModalOpen}
         onClose={() => setIsPasswordModalOpen(false)}
         onSuccess={handlePasswordSuccess}
+        logoUrl={siteSettings.logoUrl}
       />
 
       {/* CMS Modal */}
@@ -379,6 +390,8 @@ export default function App() {
         onSaveEntities={handleSaveEntities}
         announcements={announcements}
         onSaveAnnouncements={handleSaveAnnouncements}
+        siteSettings={siteSettings}
+        onSaveSiteSettings={handleSaveSiteSettings}
         editingEntityInit={editingEntityForCMS}
         initialCategoryForNewEntity={pendingCategoryForCard}
       />
@@ -387,6 +400,7 @@ export default function App() {
       <Footer
         onOpenCMS={() => handleOpenCMSWithAuth()}
         isCMSActive={isCMSOpen}
+        logoUrl={siteSettings.logoUrl}
       />
     </div>
   );

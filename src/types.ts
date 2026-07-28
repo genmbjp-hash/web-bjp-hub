@@ -22,12 +22,26 @@ export interface Entity {
   mediaUrl?: string;
   contact?: string;
   schedule?: string;
+  address?: string;
+  infoNotes?: string;
   isFeatured?: boolean;
   socials?: EntitySocials;
   productPhotos?: string[];
   productPhotoCaptions?: string[];
   createdAt: string;
   updatedAt: string;
+}
+
+export interface NavbarTabConfig {
+  id: 'entities' | 'announcements' | string;
+  label: string;
+  enabled: boolean;
+  order: number;
+}
+
+export interface SiteSettings {
+  logoUrl: string;
+  navbarTabs: NavbarTabConfig[];
 }
 
 export interface Announcement {

@@ -5,9 +5,12 @@ import { BJP_LOGO_URL } from '../assets/logo';
 interface HeroProps {
   onOpenCMS: () => void;
   totalEntities: number;
+  logoUrl?: string;
 }
 
-export const Hero: React.FC<HeroProps> = ({ totalEntities }) => {
+export const Hero: React.FC<HeroProps> = ({ totalEntities, logoUrl }) => {
+  const displayLogo = logoUrl || BJP_LOGO_URL;
+
   return (
     <div className="relative overflow-hidden bg-gradient-to-b from-stone-900 via-stone-800 to-stone-900 text-white border-b border-stone-800">
       {/* Decorative background grid pattern */}
@@ -32,7 +35,7 @@ export const Hero: React.FC<HeroProps> = ({ totalEntities }) => {
 
           <div className="hidden md:flex flex-col items-center justify-center p-4 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-xs shrink-0">
             <img
-              src={BJP_LOGO_URL}
+              src={displayLogo}
               alt="Logo BJP HUB RW 11"
               className="w-20 h-20 rounded-xl object-cover border border-amber-400/40 shadow-xl"
             />

@@ -5,9 +5,12 @@ import { BJP_LOGO_URL } from '../assets/logo';
 interface FooterProps {
   onOpenCMS?: () => void;
   isCMSActive?: boolean;
+  logoUrl?: string;
 }
 
-export const Footer: React.FC<FooterProps> = () => {
+export const Footer: React.FC<FooterProps> = ({ logoUrl }) => {
+  const displayLogo = logoUrl || BJP_LOGO_URL;
+
   return (
     <footer className="bg-stone-900 text-stone-300 border-t border-stone-800 text-xs sm:text-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -16,7 +19,7 @@ export const Footer: React.FC<FooterProps> = () => {
           <div className="space-y-3">
             <div className="flex items-center gap-3">
               <img
-                src={BJP_LOGO_URL}
+                src={displayLogo}
                 alt="BJP HUB Logo"
                 className="w-10 h-10 rounded-md object-cover border border-amber-300/40 shadow-xs"
               />

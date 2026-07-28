@@ -1,8 +1,47 @@
-import { Entity, Announcement } from '../types';
+import { Entity, Announcement, SiteSettings } from '../types';
 import { INITIAL_ENTITIES, INITIAL_ANNOUNCEMENTS } from '../data/initialData';
+import { BJP_LOGO_URL } from '../assets/logo';
+import { updateSiteFaviconAndOgImage } from './meta';
 
 const STORAGE_KEY_ENTITIES = 'bjp_hub_entities_v1';
 const STORAGE_KEY_ANNOUNCEMENTS = 'bjp_hub_announcements_v1';
+const STORAGE_KEY_SITE_SETTINGS = 'bjp_hub_site_settings_v1';
+
+export const DEFAULT_SITE_SETTINGS: SiteSettings = {
+  logoUrl: BJP_LOGO_URL,
+  navbarTabs: [
+    { id: 'entities', label: 'Entitas Kegiatan', enabled: true, order: 0 },
+    { id: 'announcements', label: 'Pengumuman & Agenda', enabled: true, order: 1 },
+  ],
+};
+
+export function getSiteSettings(): SiteSettings {
+  try {
+    const data = localStorage.getItem(STORAGE_KEY_SITE_SETTINGS);
+    if (data) {
+      const parsed = JSON.parse(data);
+      return {
+        logoUrl: parsed.logoUrl || BJP_LOGO_URL,
+        navbarTabs:
+          Array.isArray(parsed.navbarTabs) && parsed.navbarTabs.length > 0
+            ? parsed.navbarTabs
+            : DEFAULT_SITE_SETTINGS.navbarTabs,
+      };
+    }
+  } catch (err) {
+    console.error('Failed to load site settings', err);
+  }
+  return DEFAULT_SITE_SETTINGS;
+}
+
+export function saveSiteSettings(settings: SiteSettings): void {
+  try {
+    localStorage.setItem(STORAGE_KEY_SITE_SETTINGS, JSON.stringify(settings));
+    updateSiteFaviconAndOgImage(settings.logoUrl);
+  } catch (err) {
+    console.error('Failed to save site settings', err);
+  }
+}
 
 export function getEntities(): Entity[] {
   try {

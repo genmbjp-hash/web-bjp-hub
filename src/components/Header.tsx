@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Search, Shield, Menu, X, LayoutGrid, Megaphone, HelpCircle } from 'lucide-react';
 import { BJP_LOGO_URL } from '../assets/logo';
+import { NavbarTabConfig } from '../types';
 
 interface HeaderProps {
   searchTerm: string;
@@ -10,6 +11,8 @@ interface HeaderProps {
   onOpenCMS: () => void;
   isCMSActive: boolean;
   totalEntitiesCount: number;
+  logoUrl?: string;
+  navbarTabs?: NavbarTabConfig[];
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -20,8 +23,22 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenCMS,
   isCMSActive,
   totalEntitiesCount,
+  logoUrl,
+  navbarTabs,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const displayLogo = logoUrl || BJP_LOGO_URL;
+
+  // Active enabled tabs sorted by order
+  const activeNavbarTabs = (
+    navbarTabs && navbarTabs.length > 0
+      ? [...navbarTabs].filter((t) => t.enabled).sort((a, b) => a.order - b.order)
+      : [
+          { id: 'entities', label: 'Entitas Kegiatan', enabled: true, order: 0 },
+          { id: 'announcements', label: 'Pengumuman & Agenda', enabled: true, order: 1 },
+        ]
+  ) as NavbarTabConfig[];
 
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-stone-200 shadow-xs">
@@ -36,7 +53,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Logo & Identity */}
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => onTabChange('entities')}>
             <img
-              src={BJP_LOGO_URL}
+              src={displayLogo}
               alt="BJP HUB Logo"
               className="w-10 h-10 rounded-md object-cover shadow-xs border border-amber-300 hover:scale-105 transition-transform"
             />
@@ -55,32 +72,31 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Navigation Tabs (Desktop) */}
           <div className="hidden md:flex items-center bg-stone-100 p-1 rounded-xl border border-stone-200/80">
-            <button
-              onClick={() => onTabChange('entities')}
-              className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${
-                activeTab === 'entities'
-                  ? 'bg-white text-emerald-900 shadow-xs border border-stone-200/60 font-semibold'
-                  : 'text-stone-600 hover:text-stone-900'
-              }`}
-            >
-              <LayoutGrid className="w-4 h-4 text-emerald-600" />
-              <span>Entitas Kegiatan</span>
-              <span className="bg-stone-200/70 text-stone-700 text-xs px-1.5 py-0.2 rounded-full">
-                {totalEntitiesCount}
-              </span>
-            </button>
+            {activeNavbarTabs.map((tab) => {
+              const isEntities = tab.id === 'entities';
+              const Icon = isEntities ? LayoutGrid : Megaphone;
+              const isSelected = activeTab === tab.id;
 
-            <button
-              onClick={() => onTabChange('announcements')}
-              className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${
-                activeTab === 'announcements'
-                  ? 'bg-white text-emerald-900 shadow-xs border border-stone-200/60 font-semibold'
-                  : 'text-stone-600 hover:text-stone-900'
-              }`}
-            >
-              <Megaphone className="w-4 h-4 text-emerald-600" />
-              <span>Pengumuman & Agenda</span>
-            </button>
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => onTabChange(tab.id as 'entities' | 'announcements')}
+                  className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                    isSelected
+                      ? 'bg-white text-emerald-900 shadow-xs border border-stone-200/60 font-semibold'
+                      : 'text-stone-600 hover:text-stone-900'
+                  }`}
+                >
+                  <Icon className="w-4 h-4 text-emerald-600" />
+                  <span>{tab.label}</span>
+                  {isEntities && (
+                    <span className="bg-stone-200/70 text-stone-700 text-xs px-1.5 py-0.2 rounded-full">
+                      {totalEntitiesCount}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
           </div>
 
           {/* Quick Search Bar */}
@@ -147,35 +163,31 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Mobile Tab Links */}
           <div className="grid grid-cols-2 gap-2 pt-2">
-            <button
-              onClick={() => {
-                onTabChange('entities');
-                setMobileMenuOpen(false);
-              }}
-              className={`flex items-center justify-center gap-2 p-2.5 rounded-lg text-xs font-semibold ${
-                activeTab === 'entities'
-                  ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-                  : 'bg-stone-100 text-stone-700'
-              }`}
-            >
-              <LayoutGrid className="w-4 h-4" />
-              <span>Entitas ({totalEntitiesCount})</span>
-            </button>
+            {activeNavbarTabs.map((tab) => {
+              const isEntities = tab.id === 'entities';
+              const Icon = isEntities ? LayoutGrid : Megaphone;
+              const isSelected = activeTab === tab.id;
 
-            <button
-              onClick={() => {
-                onTabChange('announcements');
-                setMobileMenuOpen(false);
-              }}
-              className={`flex items-center justify-center gap-2 p-2.5 rounded-lg text-xs font-semibold ${
-                activeTab === 'announcements'
-                  ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-                  : 'bg-stone-100 text-stone-700'
-              }`}
-            >
-              <Megaphone className="w-4 h-4" />
-              <span>Pengumuman</span>
-            </button>
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => {
+                    onTabChange(tab.id as 'entities' | 'announcements');
+                    setMobileMenuOpen(false);
+                  }}
+                  className={`flex items-center justify-center gap-2 p-2.5 rounded-lg text-xs font-semibold ${
+                    isSelected
+                      ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                      : 'bg-stone-100 text-stone-700'
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span>
+                    {tab.label} {isEntities ? `(${totalEntitiesCount})` : ''}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
       )}

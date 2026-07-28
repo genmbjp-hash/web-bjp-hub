@@ -14,6 +14,8 @@ import {
   ChevronUp,
   Image as ImageIcon,
   Maximize2,
+  MapPin,
+  Info,
 } from 'lucide-react';
 import {
   InstagramIcon,
@@ -143,14 +145,17 @@ export const EntityDetailModal: React.FC<EntityDetailModalProps> = ({
 
         {/* Modal Body */}
         <div className="p-6 space-y-5 flex-1">
-          {/* Quick Info Grid */}
-          {(Boolean(entity.schedule?.trim()) || Boolean(entity.contact?.trim())) && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-stone-50 rounded-xl border border-stone-200/80 text-xs">
+          {/* Quick Info Grid (Jam Buka, Telepon, Alamat, Info Lainnya) */}
+          {(Boolean(entity.schedule?.trim()) ||
+            Boolean(entity.contact?.trim()) ||
+            Boolean(entity.address?.trim()) ||
+            Boolean(entity.infoNotes?.trim())) && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3.5 bg-stone-50 rounded-xl border border-stone-200/80 text-xs">
               {entity.schedule?.trim() && (
                 <div className="flex items-start gap-2 text-stone-700">
                   <Calendar className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
                   <div>
-                    <span className="font-semibold text-stone-900 block">Jadwal Operasional / Rutin:</span>
+                    <span className="font-semibold text-stone-900 block">Jadwal Operasional / Jam Buka:</span>
                     <span>{entity.schedule}</span>
                   </div>
                 </div>
@@ -159,8 +164,26 @@ export const EntityDetailModal: React.FC<EntityDetailModalProps> = ({
                 <div className="flex items-start gap-2 text-stone-700">
                   <Phone className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
                   <div>
-                    <span className="font-semibold text-stone-900 block">Kontak Pengurus / Admin:</span>
+                    <span className="font-semibold text-stone-900 block">Kontak Pengurus / Telepon:</span>
                     <span>{entity.contact}</span>
+                  </div>
+                </div>
+              )}
+              {entity.address?.trim() && (
+                <div className="flex items-start gap-2 text-stone-700">
+                  <MapPin className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <span className="font-semibold text-stone-900 block">Alamat Lokasi:</span>
+                    <span>{entity.address}</span>
+                  </div>
+                </div>
+              )}
+              {entity.infoNotes?.trim() && (
+                <div className="flex items-start gap-2 text-stone-700">
+                  <Info className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <span className="font-semibold text-stone-900 block">Info Lainnya / Catatan:</span>
+                    <span>{entity.infoNotes}</span>
                   </div>
                 </div>
               )}

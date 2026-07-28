@@ -1,7 +1,7 @@
 import React from 'react';
 import { Entity } from '../types';
 import { formatImageUrl } from '../utils/imageUrl';
-import { Globe, ExternalLink, Calendar, Phone, ArrowRight, Share2 } from 'lucide-react';
+import { Globe, ExternalLink, Calendar, Phone, ArrowRight, Share2, MapPin, Info } from 'lucide-react';
 import { SocialBadges } from './SocialIcons';
 
 interface EntityCardProps {
@@ -74,8 +74,11 @@ export const EntityCard: React.FC<EntityCardProps> = ({
           {cleanDescription}
         </p>
 
-        {/* Extra info pills if available */}
-        {(Boolean(entity.schedule?.trim()) || Boolean(entity.contact?.trim())) && (
+        {/* Extra info pills if available (Jam Buka, Telepon, Alamat, Info Lainnya) */}
+        {(Boolean(entity.schedule?.trim()) ||
+          Boolean(entity.contact?.trim()) ||
+          Boolean(entity.address?.trim()) ||
+          Boolean(entity.infoNotes?.trim())) && (
           <div className="space-y-1.5 pt-1 text-xs text-stone-500 border-t border-stone-100">
             {entity.schedule?.trim() && (
               <div className="flex items-center gap-1.5 line-clamp-1">
@@ -87,6 +90,18 @@ export const EntityCard: React.FC<EntityCardProps> = ({
               <div className="flex items-center gap-1.5 line-clamp-1">
                 <Phone className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
                 <span>{entity.contact}</span>
+              </div>
+            )}
+            {entity.address?.trim() && (
+              <div className="flex items-center gap-1.5 line-clamp-1 text-stone-600">
+                <MapPin className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+                <span>{entity.address}</span>
+              </div>
+            )}
+            {entity.infoNotes?.trim() && (
+              <div className="flex items-center gap-1.5 line-clamp-1 text-stone-600">
+                <Info className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+                <span>{entity.infoNotes}</span>
               </div>
             )}
           </div>

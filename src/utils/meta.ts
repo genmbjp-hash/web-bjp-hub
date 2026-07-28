@@ -46,7 +46,29 @@ export function updateMetaTags(data: {
   }
 }
 
-export function resetMetaTags() {
+export function updateSiteFaviconAndOgImage(logoUrl?: string) {
+  if (!logoUrl) return;
+
+  // Update favicon link tag
+  let favicon = document.querySelector("link[rel='icon']") as HTMLLinkElement;
+  if (!favicon) {
+    favicon = document.createElement('link');
+    favicon.rel = 'icon';
+    document.head.appendChild(favicon);
+  }
+  favicon.href = logoUrl;
+
+  // Update og:image tag
+  let ogImage = document.querySelector("meta[property='og:image']");
+  if (!ogImage) {
+    ogImage = document.createElement('meta');
+    ogImage.setAttribute('property', 'og:image');
+    document.head.appendChild(ogImage);
+  }
+  ogImage.setAttribute('content', logoUrl);
+}
+
+export function resetMetaTags(siteLogoUrl?: string) {
   const defaultTitle = 'Portal BJP HUB - Bintara Jaya Permai (RW 11)';
   const defaultDesc =
     'Website Portal Informasi Kegiatan & Entitas Warga Komplek Bintara Jaya Permai (RW 11) Bekasi';
@@ -54,8 +76,12 @@ export function resetMetaTags() {
   updateMetaTags({
     title: defaultTitle,
     description: defaultDesc,
+    image: siteLogoUrl,
     url: window.location.origin + window.location.pathname,
   });
+  if (siteLogoUrl) {
+    updateSiteFaviconAndOgImage(siteLogoUrl);
+  }
 }
 
 export function setEntityMetaTags(entity: Entity) {
