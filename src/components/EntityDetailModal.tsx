@@ -128,11 +128,22 @@ export const EntityDetailModal: React.FC<EntityDetailModalProps> = ({
             <X className="w-5 h-5" />
           </button>
 
-          {/* Category Tag */}
+          {/* Category Tag & Share CTA */}
           <div className="absolute top-3 left-3 flex items-center gap-2">
             <span className="bg-emerald-800 text-emerald-50 text-xs font-semibold px-3 py-1 rounded-lg border border-emerald-600/30">
               {entity.category}
             </span>
+            <button
+              onClick={handleShare}
+              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all shadow-md cursor-pointer ${
+                copied
+                  ? 'bg-emerald-500 text-stone-950 font-extrabold'
+                  : 'bg-white/90 hover:bg-white text-stone-800'
+              }`}
+            >
+              {copied ? <Check className="w-3.5 h-3.5 stroke-[3]" /> : <Share2 className="w-3.5 h-3.5 text-emerald-700" />}
+              <span>{copied ? 'Tautan Disalin!' : 'Bagikan Halaman ini'}</span>
+            </button>
           </div>
 
           {/* Bottom Title inside Image */}
@@ -349,22 +360,36 @@ export const EntityDetailModal: React.FC<EntityDetailModalProps> = ({
         <div className="p-4 bg-stone-50 border-t border-stone-200 flex flex-wrap items-center justify-between gap-3 rounded-b-2xl">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-stone-600 hover:text-stone-900 text-xs font-semibold rounded-xl hover:bg-stone-200 transition-colors"
+            className="px-4 py-2 text-stone-600 hover:text-stone-900 text-xs font-semibold rounded-xl hover:bg-stone-200 transition-colors cursor-pointer"
           >
             Tutup
           </button>
 
-          {entity.ctaUrl && entity.ctaUrl !== '#' && (
-            <a
-              href={entity.ctaUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-white text-xs sm:text-sm font-bold px-5 py-2.5 rounded-xl shadow-md transition-colors ml-auto"
+          <div className="flex items-center gap-2 ml-auto">
+            <button
+              onClick={handleShare}
+              className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                copied
+                  ? 'bg-emerald-800 text-white border border-emerald-900'
+                  : 'bg-stone-200 hover:bg-stone-300 text-stone-800 border border-stone-300'
+              }`}
             >
-              <span>{entity.ctaWording || 'Kunjungi Tautan'}</span>
-              <ExternalLink className="w-4 h-4" />
-            </a>
-          )}
+              {copied ? <Check className="w-4 h-4 text-emerald-300 stroke-[3]" /> : <Share2 className="w-4 h-4 text-emerald-700" />}
+              <span>{copied ? 'Tautan Entitas Disalin!' : 'Bagikan Halaman Ini'}</span>
+            </button>
+
+            {entity.ctaUrl && entity.ctaUrl !== '#' && (
+              <a
+                href={entity.ctaUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-white text-xs sm:text-sm font-bold px-5 py-2 rounded-xl shadow-md transition-colors"
+              >
+                <span>{entity.ctaWording || 'Kunjungi Tautan'}</span>
+                <ExternalLink className="w-4 h-4" />
+              </a>
+            )}
+          </div>
         </div>
       </div>
 

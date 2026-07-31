@@ -331,6 +331,466 @@ export const INITIAL_ENTITIES: Entity[] = [
     isFeatured: false,
     createdAt: '2026-01-01T00:00:00Z',
     updatedAt: '2026-01-01T00:00:00Z'
+  },
+  {
+    id: 'ent-hub-2',
+    name: 'Sekretariat RW 11 BJP',
+    category: 'Pusat Hub',
+    description: `Kantor pusat administrasi dan koordinasi harian pengurus RW 11 Bintara Jaya Permai. Menjadi ruang pelayanan surat-menurut, rapat koordinasi pengurus, serta penampungan aspirasi warga.
+<p><strong>Fasilitas:</strong></p>
+<ul>
+  <li>Ruang Rapat & Pertemuan Pengurus</li>
+  <li>Layanan Administrasi Kependudukan</li>
+  <li>Pusat Layanan Aspirasi & Pengaduan Warga</li>
+</ul>`,
+    image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=600&q=80',
+    ctaUrl: 'https://bit.ly/bjp-hub',
+    ctaWording: 'Hubungi Sekretariat',
+    contact: '0812-1122-3344 (Sekretaris RW 11)',
+    schedule: 'Senin - Sabtu (09.00 - 16.00 WIB)',
+    isFeatured: false,
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z'
+  },
+  {
+    id: 'ent-hub-3',
+    name: 'Digital Information Center BJP',
+    category: 'Pusat Hub',
+    description: `Pusat pengelolaan media informasi digital, pengumuman online, dan integrasi data warga komplek Bintara Jaya Permai.
+<p><strong>Layanan Digital:</strong></p>
+<ul>
+  <li>Publikasi Pengumuman & Agenda Rutin Komplek</li>
+  <li>Digitalisasi Data Entitas & Kegiatan Warga</li>
+  <li>Layanan Broadcast Informasi WhatsApp Warga</li>
+</ul>`,
+    image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&q=80',
+    ctaUrl: 'https://bit.ly/bjp-hub',
+    ctaWording: 'Lihat Portal Informasi',
+    contact: '0813-8899-0011 (Admin Digital)',
+    schedule: '24 Jam Online',
+    isFeatured: false,
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z'
+  },
+  {
+    id: 'ent-hub-4',
+    name: 'Balai Kegiatan Warga BJP',
+    category: 'Pusat Hub',
+    description: `Gedung serbaguna fasilitas umum komplek yang digunakan untuk berbagai acara perayaan, rapat akbar warga, latihan olahraga indoor, hingga acara kebudayaan.
+<p><strong>Fungsi Balai:</strong></p>
+<ul>
+  <li>Tempat Resepsi & Acara Syukuran Warga</li>
+  <li>Musyawarah Akbar & Pemilihan Pengurus RT/RW</li>
+  <li>Ruang Latihan Kesenian & Kegiatan Komunitas</li>
+</ul>`,
+    image: 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=600&q=80',
+    ctaUrl: 'https://bit.ly/bjp-hub',
+    ctaWording: 'Reservasi Balai Warga',
+    contact: '0812-7788-9900 (Pengelola Balai)',
+    schedule: 'Senin - Minggu (08.00 - 22.00 WIB)',
+    isFeatured: false,
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z'
+  },
+  {
+    id: 'ent-adm-2',
+    name: 'Pos Keamanan & Siskamling RW 11',
+    category: 'Administratif / Pemerintahan',
+    description: `Sistem pengamanan lingkungan terpadu yang dijaga oleh tim satpam profesional dan kegiatan rondor siskamling warga demi menjaga ketertiban 24 jam di Komplek BJP.
+<p><strong>Layanan Keamanan:</strong></p>
+<ul>
+  <li>Patroli 24 Jam Keliling Blok A - F</li>
+  <li>Pemeriksaan Tamu Khusus & Portal Malam</li>
+  <li>Tanggap Darurat Keamanan Lingkungan</li>
+</ul>`,
+    image: 'https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=600&q=80',
+    ctaUrl: 'tel:081198765432',
+    ctaWording: 'Hubungi Pos Keamanan',
+    contact: '0811-9876-5432 (Pos Utama)',
+    schedule: '24 Jam Non-Stop',
+    isFeatured: false,
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z'
+  },
+  {
+    id: 'ent-adm-3',
+    name: 'Layanan Kependudukan RT 01-08',
+    category: 'Administratif / Pemerintahan',
+    description: `Layanan pengurusan domisili, surat keterangan RT, pencatatan warga baru, dan koordinasi kebersihan rutin di tingkat lingkungan RT komplek.
+<p><strong>Layanan:</strong></p>
+<ul>
+  <li>Surat Pengantar Pengurusan KTP/KK/Surat Keterangan</li>
+  <li>Pendataan Warga Kontrak & Pemilik Baru</li>
+  <li>Pengaduan Lingkungan Tingkat RT</li>
+</ul>`,
+    image: 'https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=600&q=80',
+    ctaUrl: 'https://www.instagram.com/bintarajayapermai.ofc/',
+    ctaWording: 'Kontak Pengurus RT',
+    contact: 'Hubungi Ketua RT Masing-masing',
+    schedule: 'Sesuai Jam Pelayanan Ketua RT',
+    isFeatured: false,
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z'
+  },
+  {
+    id: 'ent-adm-4',
+    name: 'Forum Komunikasi RT/RW BJP',
+    category: 'Administratif / Pemerintahan',
+    description: `Wadah koordinasi berkala antara Pengurus RW 11 dengan seluruh Ketua RT 01 sampai RT 08 untuk membahas program pembangunan komplek dan transparansi anggaran.
+<p><strong>Fokus Forum:</strong></p>
+<ul>
+  <li>Rapat Pembahasan Anggaran Kebersihan & Keamanan</li>
+  <li>Perencanaan Perbaikan Infrastruktur Komplek</li>
+  <li>Evaluasi Kinerja & Aspirasi Warga</li>
+</ul>`,
+    image: 'https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=600&q=80',
+    ctaUrl: 'https://www.instagram.com/bintarajayapermai.ofc/',
+    ctaWording: 'Hasil Musyawarah',
+    contact: '0811-9876-5432 (Pengurus Forum)',
+    schedule: 'Rapat Rutin: Minggu Ke-1 Setiap Bulan',
+    isFeatured: false,
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z'
+  },
+  {
+    id: 'ent-rel-2',
+    name: 'TPA / TPQ Al Aqwam',
+    category: 'Keagamaan',
+    description: `Taman Pendidikan Al-Qur'an untuk anak-anak warga komplek BJP. Membina generasi muda berakhlak mulia dengan pengajaran iqro, tahfidz juz amma, serta doa harian.
+<p><strong>Program Pembelajaran:</strong></p>
+<ul>
+  <li>Bimbingan Membaca Al-Qur'an & Tajwid</li>
+  <li>Hafalan Doa Harian & Surah Pendek</li>
+  <li>Praktek Ibadah Sholat Subuh & Maghrib</li>
+</ul>`,
+    image: 'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&w=600&q=80',
+    ctaUrl: 'https://www.instagram.com/masjid.alaqwam/',
+    ctaWording: 'Info Pendaftaran TPA',
+    contact: '0813-2233-4455 (Ust. Ahmad)',
+    schedule: 'Senin - Jumat (15.30 - 17.00 WIB)',
+    isFeatured: false,
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z'
+  },
+  {
+    id: 'ent-rel-3',
+    name: 'Kajian Muslimah An-Nisa BJP',
+    category: 'Keagamaan',
+    description: `Majlis ta'lim khusus ibu-ibu warga komplek BJP. Menyelenggarakan kajian keislaman rutin, fardhu 'ain, fiqih wanita, serta kegiatan sosial santunan anak yatim.
+<p><strong>Kegiatan Utama:</strong></p>
+<ul>
+  <li>Kajian Tematik Fiqih & Akhlak Muslimah</li>
+  <li>Tadarus Al-Qur'an Pekanan</li>
+  <li>Program Bakti Sosial & Santunan Yatim</li>
+</ul>`,
+    image: 'https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?auto=format&fit=crop&w=600&q=80',
+    ctaUrl: 'https://www.instagram.com/masjid.alaqwam/',
+    ctaWording: 'Info Kajian Ibu-ibu',
+    contact: '0812-9900-1122 (Hj. Fatimah)',
+    schedule: 'Setiap Rabu Pagi (09.00 - 11.00 WIB)',
+    isFeatured: false,
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z'
+  },
+  {
+    id: 'ent-rel-4',
+    name: 'Remaja Islam Masjid (RISMA Al Aqwam)',
+    category: 'Keagamaan',
+    description: `Wadah pemuda dan remaja masjid Komplek BJP dalam menggerakkan kegiatan keagamaan, peringatan hari besar Islam (PHBI), serta bakti sosial ramadhan.
+<p><strong>Program Remaja:</strong></p>
+<ul>
+  <li>Penyelenggaraan Panitia Ramadhan & Idul Adha</li>
+  <li>Kajian Remaja & Mentoring Pemuda</li>
+  <li>Rihlah & Infaq Kreatif Remaja Masjid</li>
+</ul>`,
+    image: 'https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&w=600&q=80',
+    ctaUrl: 'https://www.instagram.com/masjid.alaqwam/',
+    ctaWording: 'Gabung Remaja Masjid',
+    contact: '0815-1122-3344 (Ketua RISMA)',
+    schedule: "Sabtu Malam Ba'da Isya",
+    isFeatured: false,
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z'
+  },
+  {
+    id: 'ent-umkm-2',
+    name: 'Kopi Seduh Permai (UMKM BJP)',
+    category: 'Sentra Usaha BJP',
+    description: `Kedai kopi rumahan kreasi warga BJP. Menyajikan racikan kopi susu gula aren segar, manual brew, serta cemilan kentang goreng & roti bakar hangat untuk teman bersantai.
+<p><strong>Menu Favorit:</strong></p>
+<ul>
+  <li>Kopi Susu Gula Aren Permai Signature</li>
+  <li>Manual Brew V60 Beans Lokal</li>
+  <li>Roti Bakar Keju Coklat & Snack Box</li>
+</ul>`,
+    image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=80',
+    ctaUrl: 'https://wa.me/6281399887766',
+    ctaWording: 'Pesan Kopi via WA',
+    contact: '0813-9988-7766 (Mas Bayu - Blok C1 No. 5)',
+    schedule: 'Selasa - Minggu (15.00 - 22.00 WIB)',
+    isFeatured: false,
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z'
+  },
+  {
+    id: 'ent-umkm-3',
+    name: 'Batik & Craft Rumahan BJP',
+    category: 'Sentra Usaha BJP',
+    description: `Kerajinan kain batik tulis, ecoprint, souvenir hampers, dan tas rajut buatan tangan karya kelompok usaha wanita Bintara Jaya Permai.
+<p><strong>Produk Unggulan:</strong></p>
+<ul>
+  <li>Kain & Pakaian Ecoprint Motif Daun Alami</li>
+  <li>Tas Rajut Handmade & Dompet Etnik</li>
+  <li>Hampers Souvenir Acara & Pernikahan</li>
+</ul>`,
+    image: 'https://images.unsplash.com/photo-1606760227091-3dd850d492a6?auto=format&fit=crop&w=800&q=80',
+    ctaUrl: 'https://wa.me/6281277665544',
+    ctaWording: 'Katalog Batik & Craft',
+    contact: '0812-7766-5544 (Ibu Dewi - Blok D2)',
+    schedule: 'Setiap Hari (08.00 - 18.00 WIB)',
+    isFeatured: false,
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z'
+  },
+  {
+    id: 'ent-env-2',
+    name: 'Komunitas Kebun Hydroponik BJP',
+    category: 'Lingkungan',
+    description: `Kelompok tani kota (urban farming) warga yang memproduksi sayuran segar bebas pestisida seperti selada, pakcoy, dan kangkung hidroponik di area kebun bersama RW 11.
+<p><strong>Hasil Kebun:</strong></p>
+<ul>
+  <li>Panen Sayur Segar Hidroponik Setiap Pekan</li>
+  <li>Pelatihan Sistem Hidroponik Skala Rumah Tangga</li>
+  <li>Penjualan Sayur Hemat Untuk Warga Komplek</li>
+</ul>`,
+    image: 'https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?auto=format&fit=crop&w=600&q=80',
+    ctaUrl: 'https://wa.me/6281233445566',
+    ctaWording: 'Pesan Sayur Segar',
+    contact: '0812-3344-5566 (Pak Tri - Koordinator Kebun)',
+    schedule: 'Panen Rutin: Sabtu Pagi (07.00 WIB)',
+    isFeatured: false,
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z'
+  },
+  {
+    id: 'ent-env-3',
+    name: 'Tim Pengolahan Kompos Organik',
+    category: 'Lingkungan',
+    description: `Gerakan pemanfaatan sampah sisa dapur dan daun kering komplek menjadi pupuk kompos berkualitas tinggi untuk menyuburkan tanaman taman warga.
+<p><strong>Aktivitas:</strong></p>
+<ul>
+  <li>Pengumpulan Sampah Dapur Organik Warga</li>
+  <li>Pembuatan Kompos Metode Takakura & Biopori</li>
+  <li>Pembagian Pupuk Organik Gratis Untuk Taman RT</li>
+</ul>`,
+    image: 'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=600&q=80',
+    ctaUrl: '#',
+    ctaWording: 'Info Pengolahan Kompos',
+    contact: '0813-4455-6677 (Tim Kompos)',
+    schedule: 'Setiap Minggu Pagi',
+    isFeatured: false,
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z'
+  },
+  {
+    id: 'ent-env-4',
+    name: 'Gerakan Reboisasi & Pertamanan BJP',
+    category: 'Lingkungan',
+    description: `Komunitas pencinta tanaman hijau yang menghijaukan jalur hijau, taman bermain anak, dan penanaman pohon peneduh di sekitar jalan utama Komplek BJP.
+<p><strong>Program Reboisasi:</strong></p>
+<ul>
+  <li>Penanaman Pohon Peneduh & Tabebuya Komplek</li>
+  <li>Perawatan Taman Bermain & Fasilitas Hijau RW</li>
+  <li>Bibit Tanaman Gratis Untuk Penghijauan Rumah</li>
+</ul>`,
+    image: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fit=crop&w=600&q=80',
+    ctaUrl: '#',
+    ctaWording: 'Ikut Kerja Bakti Taman',
+    contact: '0811-2233-4455 (Koordinator Penghijauan)',
+    schedule: 'Kerja Bakti: Minggu Ke-3 Setiap Bulan',
+    isFeatured: false,
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z'
+  },
+  {
+    id: 'ent-fml-2',
+    name: 'Koperasi Wanita Bina Sejahtera',
+    category: 'Kesejahteraan Keluarga',
+    description: `Koperasi simpan pinjam dan usaha mandiri milik ibu-ibu warga BJP untuk memperkuat ekonomi keluarga serta mendukung permodalan usaha kecil warga.
+<p><strong>Layanan Koperasi:</strong></p>
+<ul>
+  <li>Tabungan Koperasi & Simpanan Rutin Warga</li>
+  <li>Pinjaman Usaha Mikro Syariah Tanpa Riba</li>
+  <li>Penyediaan Sembako Harga Terjangkau</li>
+</ul>`,
+    image: 'https://images.unsplash.com/photo-1556742049-0a670fc80799?auto=format&fit=crop&w=600&q=80',
+    ctaUrl: '#',
+    ctaWording: 'Info Koperasi Warga',
+    contact: '0813-1122-3344 (Pengurus Koperasi)',
+    schedule: 'Senin - Jumat (09.00 - 15.00 WIB)',
+    isFeatured: false,
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z'
+  },
+  {
+    id: 'ent-fml-3',
+    name: 'Dapur Sehat Gizi Anak & Balita',
+    category: 'Kesejahteraan Keluarga',
+    description: `Program pemberian makanan tambahan (PMT) pemulihan gizi balita dan penyuluhan pola makan sehat keluarga bekerja sama dengan Posyandu RW 11.
+<p><strong>Program Gizi:</strong></p>
+<ul>
+  <li>Menu PMT Olahan Ikan & Telur Tinggi Protein</li>
+  <li>Konsultasi Gizi & Cegah Stunting Pada Anak</li>
+  <li>Demonstrasi Masak Sehat Ibu-ibu PKK</li>
+</ul>`,
+    image: 'https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=600&q=80',
+    ctaUrl: '#',
+    ctaWording: 'Info Program Gizi',
+    contact: '0812-8899-0011 (Kader Gizi)',
+    schedule: 'Jadwal Bersamaan Dengan Posyandu',
+    isFeatured: false,
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z'
+  },
+  {
+    id: 'ent-fml-4',
+    name: 'Rumah Pintar & Bimbingan Belajar',
+    category: 'Kesejahteraan Keluarga',
+    description: `Fasilitas belajar bersama dan bimbingan pr-sekolah serta matematika dasar gratis untuk anak-anak komplek yang diasuh oleh sukarelawan ibu-ibu pengajar.
+<p><strong>Program Bimbel:</strong></p>
+<ul>
+  <li>Bantuan Belajar Tugas Sekolah (PR) SD & SMP</li>
+  <li>Taman Bacaan Anak & Perpustakaan Mini</li>
+  <li>Kelas Bahasa Inggris Dasar & Sains Ceria</li>
+</ul>`,
+    image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=600&q=80',
+    ctaUrl: '#',
+    ctaWording: 'Daftar Rumah Pintar',
+    contact: '0815-6677-8899 (Pengelola Rumah Pintar)',
+    schedule: 'Selasa & Kamis (16.00 - 17.30 WIB)',
+    isFeatured: false,
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z'
+  },
+  {
+    id: 'ent-hlt-2',
+    name: 'Layanan Ambulans Siaga Warga',
+    category: 'Kesehatan',
+    description: `Armada mobil ambulans siaga 24 jam milik komplek BJP yang siap melayani kebutuhan antar-jemput darurat medis warga ke RS terdekat.
+<p><strong>Layanan Ambulans:</strong></p>
+<ul>
+  <li>Antar Jemput Pasien Emergency 24 Jam</li>
+  <li>Fasilitas Tabung Oksigen & Tandu Medis</li>
+  <li>Driver Siaga On-Call Khusus Warga BJP</li>
+</ul>`,
+    image: 'https://images.unsplash.com/photo-1587745416684-47953f16f02f?auto=format&fit=crop&w=600&q=80',
+    ctaUrl: 'tel:081244556677',
+    ctaWording: 'Call Emergency Ambulans',
+    contact: '0812-4455-6677 (Call Center Medis)',
+    schedule: '24 Jam Standby Darurat',
+    isFeatured: true,
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z'
+  },
+  {
+    id: 'ent-hlt-3',
+    name: 'Posyandu Lansia Budi Sehat',
+    category: 'Kesehatan',
+    description: `Pelayanan kesehatan khusus lansia warga komplek meliputi cek tensi, gula darah, asam urat, serta senam pencegahan osteoporosis.
+<p><strong>Layanan Lansia:</strong></p>
+<ul>
+  <li>Skrining Kesehatan Rutin & Cek Darah Ringan</li>
+  <li>Konsultasi Kesehatan & Konsumsi Obat Rutin</li>
+  <li>Senam Bugar Lansia & Pembagian Vitamin</li>
+</ul>`,
+    image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=600&q=80',
+    ctaUrl: '#',
+    ctaWording: 'Jadwal Posyandu Lansia',
+    contact: '0813-7766-5544 (Kader Lansia)',
+    schedule: 'Setiap Sabtu Ke-3 (08.00 - 11.00 WIB)',
+    isFeatured: false,
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z'
+  },
+  {
+    id: 'ent-hlt-4',
+    name: 'Tim P3K & Tanggap Darurat Warga',
+    category: 'Kesehatan',
+    description: `Kelompok relawan medis warga yang dibekali ketrampilan pertolongan pertama pada kecelakaan (P3K) dan evakuasi awal bencana di lingkungan RW 11.
+<p><strong>Fungsi Tim:</strong></p>
+<ul>
+  <li>Pertolongan Pertama Kejadian Darurat Lingkungan</li>
+  <li>Pendampingan Kesehatan Event & Olahraga Warga</li>
+  <li>Penyediaan Tabung Oksigen & Alat P3K Terpadu</li>
+</ul>`,
+    image: 'https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=600&q=80',
+    ctaUrl: '#',
+    ctaWording: 'Kontak Tim P3K',
+    contact: '0812-9900-8877 (Koordinator P3K)',
+    schedule: '24 Jam Siaga Bencana',
+    isFeatured: false,
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z'
+  },
+  {
+    id: 'ent-ydh-2',
+    name: 'Karang Taruna RW 11',
+    category: 'Kepemudaan',
+    description: `Organisasi kepemudaan resmi tingkat RW yang menjadi pilar pergerakan sosial, perlombaan kemerdekaan RI, serta kepedulian lingkungan anak muda.
+<p><strong>Program Karang Taruna:</strong></p>
+<ul>
+  <li>Panitia Peringatan HUT RI 17 Agustus Komplek</li>
+  <li>Aksi Sosial Pemuda & Donor Darah Warga</li>
+  <li>Kreativitas Pemuda & Pelatihan Digital Skill</li>
+</ul>`,
+    image: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=600&q=80',
+    ctaUrl: 'https://www.instagram.com/bintarajayapermai.ofc/',
+    ctaWording: 'Instagram Karang Taruna',
+    contact: '0819-1122-3344 (Ketua Katar)',
+    schedule: 'Rapat Rutin: Minggu Ke-4 Malam',
+    isFeatured: false,
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z'
+  },
+  {
+    id: 'ent-ydh-3',
+    name: 'Esports & Gaming Community BJP',
+    category: 'Kepemudaan',
+    description: `Wadah komunitas gaming positif anak muda komplek untuk mengasah bakat esport Mobile Legends, PUBG Mobile, dan FIFA secara sportif.
+<p><strong>Aktivitas:</strong></p>
+<ul>
+  <li>Turnamen Online Mobile Legends Antar RT</li>
+  <li>Nobar Final Turnamen Esport Nasional</li>
+  <li>Edukasi Time Management & Digital Literacy</li>
+</ul>`,
+    image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=600&q=80',
+    ctaUrl: 'https://www.instagram.com/bintarajayapermai.ofc/',
+    ctaWording: 'Gabung Komunitas Esport',
+    contact: '0818-7766-5544 (Kapten Esport)',
+    schedule: 'Mabar Rutin: Jumat Malam (20.00 WIB)',
+    isFeatured: false,
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z'
+  },
+  {
+    id: 'ent-ydh-4',
+    name: 'Sanggar Seni & Musik Pemuda',
+    category: 'Kepemudaan',
+    description: `Kelompok minat seni musik, akustik, tari tradisional, dan teater kreasi muda-mudi komplek Bintara Jaya Permai.
+<p><strong>Aktivitas Seni:</strong></p>
+<ul>
+  <li>Latihan Band & Akustik Malam Minggu</li>
+  <li>Pengisi Acara Pentas Seni Kemerdekaan Komplek</li>
+  <li>Workshop Fotografi & Videografi Smartphone</li>
+</ul>`,
+    image: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80',
+    ctaUrl: '#',
+    ctaWording: 'Gabung Sanggar Seni',
+    contact: '0817-5544-3322 (Koordinator Seni)',
+    schedule: 'Sabtu Sore (16.00 WIB di Balai Warga)',
+    isFeatured: false,
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z'
   }
 ];
 

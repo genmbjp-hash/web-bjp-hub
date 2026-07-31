@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header';
-import { Hero } from './components/Hero';
+import { HomePageHeader } from './components/HomePageHeader';
+import { CategoryPageHeader } from './components/CategoryPageHeader';
+import { CategoryCarousel } from './components/CategoryCarousel';
 import { CategoryFilter } from './components/CategoryFilter';
 import { EntityCard } from './components/EntityCard';
 import { EntityDetailModal } from './components/EntityDetailModal';
@@ -9,36 +11,11 @@ import { CMSModal } from './components/CMSModal';
 import { PasswordModal } from './components/PasswordModal';
 import { Footer } from './components/Footer';
 
-import { Entity, Announcement, SiteSettings } from './types';
-import { getEntities, saveEntities, getAnnouncements, saveAnnouncements, getSiteSettings, saveSiteSettings } from './utils/storage';
+import { Entity, Announcement, SiteSettings, CategoryHeaderConfig } from './types';
+import { getEntities, saveEntities, getAnnouncements, saveAnnouncements, getSiteSettings, saveSiteSettings, DEFAULT_CATEGORY_CONFIGS } from './utils/storage';
 import { setEntityMetaTags, setAnnouncementMetaTags, resetMetaTags } from './utils/meta';
 import { ShareModal } from './components/ShareModal';
 import { SearchX, Plus } from 'lucide-react';
-
-const CATEGORIES = [
-  'Semua',
-  'Sentra Usaha BJP',
-  'Pusat Hub',
-  'Administratif / Pemerintahan',
-  'Keagamaan',
-  'Lingkungan',
-  'Kesejahteraan Keluarga',
-  'Kesehatan',
-  'Kepemudaan',
-  'Olahraga',
-];
-
-const SECTION_CATEGORIES = [
-  'Sentra Usaha BJP',
-  'Pusat Hub',
-  'Administratif / Pemerintahan',
-  'Keagamaan',
-  'Lingkungan',
-  'Kesejahteraan Keluarga',
-  'Kesehatan',
-  'Kepemudaan',
-  'Olahraga',
-];
 
 export default function App() {
   const [entities, setEntities] = useState<Entity[]>([]);
@@ -68,15 +45,19 @@ export default function App() {
     setEntities(loadedEntities);
     setAnnouncements(loadedAnnouncements);
 
-    // Deep link check: ?entity=<id>, ?id=<id>, or ?announcement=<id>
+    // Deep link check: ?entity=<id>, ?category=<name>, or ?announcement=<id>
     const params = new URLSearchParams(window.location.search);
     const entityId = params.get('entity') || params.get('id');
     const annId = params.get('announcement');
+    const categoryParam = params.get('category');
+
+    if (categoryParam) {
+      setSelectedCategory(categoryParam);
+    }
 
     if (entityId) {
       let found = loadedEntities.find((e) => e.id === entityId);
       if (!found) {
-        // Fallback 1: match case-insensitive or by ID suffix (e.g. "4" or "ent-4")
         found = loadedEntities.find(
           (e) =>
             e.id.toLowerCase() === entityId.toLowerCase() ||
@@ -84,7 +65,6 @@ export default function App() {
         );
       }
       if (!found && loadedEntities.length > 0) {
-        // Fallback 2: if entity ID not found in local storage, fallback to ent-4 or first entity
         found = loadedEntities.find((e) => e.id === 'ent-4') || loadedEntities[0];
       }
       if (found) {
@@ -183,22 +163,34 @@ export default function App() {
     setIsCMSOpen(true);
   };
 
-  // Filter sections to render
-  const activeSections = selectedCategory === 'Semua'
-    ? SECTION_CATEGORIES
-    : [selectedCategory];
+  // Filter sections & category configs
+  const categoryConfigs = siteSettings.categoryConfigs || DEFAULT_CATEGORY_CONFIGS;
+  const categoryNames = ['Semua', ...categoryConfigs.map((c) => c.name)];
 
-  // Helper to filter entities per section
-  const getEntitiesForSection = (categoryName: string) => {
+  const activeSectionConfigs =
+    selectedCategory === 'Semua'
+      ? categoryConfigs
+      : categoryConfigs.filter(
+          (c) => c.name === selectedCategory || c.id === selectedCategory
+        );
+
+  // Helper to filter entities per section config
+  const getEntitiesForSectionConfig = (catConfig: CategoryHeaderConfig) => {
     return entities.filter((ent) => {
       const matchesSearch =
         ent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         ent.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
         ent.category.toLowerCase().includes(searchTerm.toLowerCase());
 
+      const eCat = ent.category.toLowerCase();
+      const cId = catConfig.id.toLowerCase();
+      const cName = catConfig.name.toLowerCase();
+
       const matchesCategory =
-        ent.category.toLowerCase().includes(categoryName.toLowerCase()) ||
-        categoryName.toLowerCase().includes(ent.category.toLowerCase());
+        eCat.includes(cId) ||
+        eCat.includes(cName) ||
+        cId.includes(eCat) ||
+        cName.includes(eCat);
 
       return matchesSearch && matchesCategory;
     });
@@ -212,8 +204,16 @@ export default function App() {
 
     const matchesCategory =
       selectedCategory === 'Semua' ||
-      ent.category.toLowerCase().includes(selectedCategory.toLowerCase()) ||
-      selectedCategory.toLowerCase().includes(ent.category.toLowerCase());
+      categoryConfigs.some((c) => {
+        if (c.name !== selectedCategory && c.id !== selectedCategory) return false;
+        const eCat = ent.category.toLowerCase();
+        return (
+          eCat.includes(c.id.toLowerCase()) ||
+          eCat.includes(c.name.toLowerCase()) ||
+          c.id.toLowerCase().includes(eCat) ||
+          c.name.toLowerCase().includes(eCat)
+        );
+      });
 
     return matchesSearch && matchesCategory;
   }).length;
@@ -235,118 +235,169 @@ export default function App() {
 
       {/* Main Container */}
       <main className="flex-1">
-        {/* Hero Section */}
-        <Hero
-          onOpenCMS={() => handleOpenCMSWithAuth()}
-          totalEntities={entities.length}
-          logoUrl={siteSettings.logoUrl}
-        />
-
-        {/* View Tab 1: Entitas Kegiatan */}
+        {/* View Tab 1: Entitas Kegiatan (Home Page vs Entitas Category View) */}
         {activeTab === 'entities' && (
           <div>
-            {/* Category Filter Pills */}
+            {/* Category Filter Pills (Tab Semua -> Home Page) */}
             <CategoryFilter
-              categories={CATEGORIES}
+              categories={categoryNames}
               selectedCategory={selectedCategory}
               onSelectCategory={setSelectedCategory}
               entities={entities}
+              categoryConfigs={categoryConfigs}
             />
 
-            {/* Content Section - Grid Cards Per Section */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-              
-              {/* Category Title Header */}
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-stone-200 pb-3">
-                <div>
-                  <h2 className="text-lg sm:text-2xl font-bold text-stone-900 tracking-tight leading-snug">
-                    <span className="font-bold not-italic">{selectedCategory === 'Semua' ? 'Seluruh Entitas Warga' : selectedCategory}</span>
-                  </h2>
-                  <p className="text-xs sm:text-sm text-stone-500 mt-0.5">
-                    {selectedCategory === 'Semua'
-                      ? 'Daftar entitas dan kegiatan komplek Bintara Jaya Permai (RW 11)'
-                      : `Menampilkan unit kegiatan dalam ${selectedCategory}`}
-                  </p>
-                </div>
+            {/* Main Content Area */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+              {/* 1. HOME PAGE VIEW (When selectedCategory is 'Semua') */}
+              {selectedCategory === 'Semua' || selectedCategory === 'Home Page' ? (
+                <div className="space-y-8">
+                  {/* Home Page Header */}
+                  <HomePageHeader
+                    siteTitle={siteSettings.siteTitle}
+                    siteDescription={siteSettings.siteDescription}
+                    logoUrl={siteSettings.logoUrl}
+                    totalEntities={entities.length}
+                  />
 
-                {searchTerm && (
-                  <div className="flex items-center gap-2 bg-stone-200/70 text-stone-700 text-xs px-3 py-1.5 rounded-lg">
-                    <span>Hasil pencarian: "<strong>{searchTerm}</strong>"</span>
-                    <button
-                      onClick={() => setSearchTerm('')}
-                      className="text-stone-500 hover:text-stone-900 font-bold"
-                    >
-                      ✕ Clear
-                    </button>
-                  </div>
-                )}
-              </div>
+                  {/* Search Bar Feedback if User typed search term */}
+                  {searchTerm && (
+                    <div className="flex items-center justify-between bg-white p-4 rounded-2xl border border-stone-200 shadow-2xs">
+                      <div className="text-xs sm:text-sm text-stone-700 font-medium">
+                        Hasil pencarian untuk kata kunci: "<strong>{searchTerm}</strong>" ({totalFilteredCount} entitas)
+                      </div>
+                      <button
+                        onClick={() => setSearchTerm('')}
+                        className="text-xs bg-stone-100 hover:bg-stone-200 text-stone-800 font-bold px-3 py-1.5 rounded-xl cursor-pointer"
+                      >
+                        ✕ Clear Search
+                      </button>
+                    </div>
+                  )}
 
-              {/* Grid of Sections */}
-              {totalFilteredCount === 0 ? (
-                <div className="bg-white rounded-2xl p-12 text-center border border-stone-200 space-y-3 max-w-lg mx-auto my-8 shadow-xs">
-                  <SearchX className="w-12 h-12 text-stone-300 mx-auto" />
-                  <h3 className="text-base font-bold text-stone-800">Tidak Ditemukan Entitas Kegiatan</h3>
-                  <p className="text-xs text-stone-500">
-                    Coba kata kunci pencarian lain atau ganti filter kategori.
-                  </p>
-                  <button
-                    onClick={() => {
-                      setSearchTerm('');
-                      setSelectedCategory('Semua');
-                    }}
-                    className="inline-flex items-center gap-1.5 bg-emerald-800 text-white text-xs font-bold px-4 py-2 rounded-xl"
-                  >
-                    <span>Reset Filter</span>
-                  </button>
+                  {/* Entity Category Carousels */}
+                  {totalFilteredCount === 0 ? (
+                    <div className="bg-white rounded-2xl p-12 text-center border border-stone-200 space-y-3 max-w-lg mx-auto shadow-xs">
+                      <SearchX className="w-12 h-12 text-stone-300 mx-auto" />
+                      <h3 className="text-base font-bold text-stone-800">
+                        Tidak Ditemukan Entitas Kegiatan
+                      </h3>
+                      <p className="text-xs text-stone-500">
+                        Coba kata kunci pencarian lain atau ganti filter kategori.
+                      </p>
+                      <button
+                        onClick={() => {
+                          setSearchTerm('');
+                          setSelectedCategory('Semua');
+                        }}
+                        className="inline-flex items-center gap-1.5 bg-emerald-800 text-white text-xs font-bold px-4 py-2 rounded-xl cursor-pointer"
+                      >
+                        <span>Reset Filter</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="space-y-8">
+                      {categoryConfigs.map((catConfig) => {
+                        const sectionEntities = getEntitiesForSectionConfig(catConfig);
+
+                        // If user is searching and this section has no items, skip
+                        if (searchTerm && sectionEntities.length === 0) return null;
+
+                        return (
+                          <CategoryCarousel
+                            key={catConfig.id}
+                            catConfig={catConfig}
+                            entities={sectionEntities}
+                            onVisitCategory={(catName) => setSelectedCategory(catName)}
+                            onSelectEntity={setSelectedEntityForModal}
+                            onShareEntity={(ent) =>
+                              setShareModalItem({ item: ent, type: 'entity' })
+                            }
+                            onEditEntity={handleEditEntityInCMS}
+                            isCMSActive={true}
+                          />
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
               ) : (
-                <div className="space-y-8">
-                  {activeSections.map((sectionCat) => {
-                    const sectionEntities = getEntitiesForSection(sectionCat);
+                /* 2. PER ENTITY CATEGORY PAGE VIEW (When a specific category is selected) */
+                <div className="space-y-6">
+                  {(() => {
+                    const currentConfig =
+                      categoryConfigs.find(
+                        (c) => c.name === selectedCategory || c.id === selectedCategory
+                      ) || {
+                        id: selectedCategory,
+                        name: selectedCategory,
+                        description: `Daftar unit kegiatan dan entitas dalam ${selectedCategory}`,
+                        logoUrl: '',
+                      };
 
-                    // If user is searching and this section has no items, skip it
-                    if (searchTerm && sectionEntities.length === 0) return null;
+                    const categoryEntities = getEntitiesForSectionConfig(currentConfig);
 
                     return (
-                      <div
-                        key={sectionCat}
-                        className="bg-white p-5 sm:p-6 rounded-2xl border border-stone-200/90 shadow-2xs space-y-5"
-                      >
-                        {/* Section Header */}
-                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-stone-100 pb-3">
-                          <div>
-                            <h3 className="text-base sm:text-xl font-bold text-stone-900 tracking-tight leading-snug">
-                              <span>{sectionCat}</span>
-                            </h3>
-                            <p className="text-xs text-stone-500 mt-0.5">
-                              Unit entitas & kegiatan warga dalam kategori {sectionCat}
-                            </p>
-                          </div>
-                        </div>
+                      <>
+                        {/* Header Per Entitas Page with Seamless Share CTA */}
+                        <CategoryPageHeader
+                          catConfig={currentConfig}
+                          entities={entities}
+                          onBackToHome={() => setSelectedCategory('Semua')}
+                        />
 
-                        {/* Cards Grid for this Section */}
-                        {sectionEntities.length === 0 ? (
-                          <div className="p-8 rounded-2xl border border-dashed border-stone-200 text-center bg-stone-50/50">
-                            <p className="text-xs text-stone-400">Belum ada card di kategori "{sectionCat}".</p>
+                        {/* Search Term Bar if Active */}
+                        {searchTerm && (
+                          <div className="flex items-center justify-between bg-white p-4 rounded-2xl border border-stone-200">
+                            <span className="text-xs text-stone-600">
+                              Kata kunci: "<strong>{searchTerm}</strong>" ({categoryEntities.length} ditemukan)
+                            </span>
+                            <button
+                              onClick={() => setSearchTerm('')}
+                              className="text-xs text-stone-500 hover:text-stone-900 font-bold"
+                            >
+                              ✕ Hapus Filter
+                            </button>
+                          </div>
+                        )}
+
+                        {/* Grid of Cards for this Specific Category */}
+                        {categoryEntities.length === 0 ? (
+                          <div className="bg-white rounded-2xl p-12 text-center border border-stone-200 space-y-3 max-w-md mx-auto my-6">
+                            <SearchX className="w-10 h-10 text-stone-300 mx-auto" />
+                            <h3 className="text-sm font-bold text-stone-800">
+                              Belum Ada Card Entitas
+                            </h3>
+                            <p className="text-xs text-stone-500">
+                              Belum ada unit kegiatan tercatat dalam kategori "{currentConfig.name}".
+                            </p>
+                            <button
+                              onClick={() => handleOpenCMSWithAuth(currentConfig.name)}
+                              className="inline-flex items-center gap-1.5 bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold px-4 py-2 rounded-xl transition-colors cursor-pointer"
+                            >
+                              <Plus className="w-4 h-4 text-emerald-300" />
+                              <span>Tambah Entitas di {currentConfig.name}</span>
+                            </button>
                           </div>
                         ) : (
                           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {sectionEntities.map((entity) => (
+                            {categoryEntities.map((entity) => (
                               <EntityCard
                                 key={entity.id}
                                 entity={entity}
                                 onSelect={setSelectedEntityForModal}
-                                onShare={(ent) => setShareModalItem({ item: ent, type: 'entity' })}
+                                onShare={(ent) =>
+                                  setShareModalItem({ item: ent, type: 'entity' })
+                                }
                                 onEdit={handleEditEntityInCMS}
                                 isCMSActive={true}
                               />
                             ))}
                           </div>
                         )}
-                      </div>
+                      </>
                     );
-                  })}
+                  })()}
                 </div>
               )}
             </div>

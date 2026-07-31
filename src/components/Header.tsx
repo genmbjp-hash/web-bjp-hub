@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Search, Shield, Menu, X, LayoutGrid, Megaphone, HelpCircle } from 'lucide-react';
 import { BJP_LOGO_URL } from '../assets/logo';
 import { NavbarTabConfig } from '../types';
+import { formatImageUrl } from '../utils/imageUrl';
 
 interface HeaderProps {
   searchTerm: string;
@@ -28,7 +29,7 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const displayLogo = logoUrl || BJP_LOGO_URL;
+  const displayLogo = logoUrl ? formatImageUrl(logoUrl) : BJP_LOGO_URL;
 
   // Active enabled tabs sorted by order
   const activeNavbarTabs = (
@@ -55,7 +56,7 @@ export const Header: React.FC<HeaderProps> = ({
             <img
               src={displayLogo}
               alt="BJP HUB Logo"
-              className="w-10 h-10 rounded-md object-cover shadow-xs border border-amber-300 hover:scale-105 transition-transform"
+              className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl object-contain bg-white p-1 border border-amber-300/90 shadow-xs shrink-0 hover:scale-105 transition-transform"
             />
             <div>
               <div className="flex items-center gap-2">

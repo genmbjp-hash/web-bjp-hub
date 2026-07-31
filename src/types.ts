@@ -39,9 +39,19 @@ export interface NavbarTabConfig {
   order: number;
 }
 
+export interface CategoryHeaderConfig {
+  id: string;
+  name: string;
+  description: string;
+  logoUrl?: string;
+}
+
 export interface SiteSettings {
   logoUrl: string;
+  siteTitle?: string;
+  siteDescription?: string;
   navbarTabs: NavbarTabConfig[];
+  categoryConfigs?: CategoryHeaderConfig[];
 }
 
 export interface Announcement {

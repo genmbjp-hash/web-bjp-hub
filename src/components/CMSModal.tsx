@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Entity, Announcement, SiteSettings, NavbarTabConfig } from '../types';
+import { Entity, Announcement, SiteSettings, NavbarTabConfig, CategoryHeaderConfig } from '../types';
 import {
   X, Plus, Edit3, Trash2, Copy, Download, Upload, RefreshCw, Check,
   Image as ImageIcon, Sparkles, LayoutGrid, Megaphone, HelpCircle,
   Bold, Italic, List, Heading, ExternalLink, ShieldAlert, ArrowLeft,
   GripVertical, ArrowUp, ArrowDown, MapPin, Info, Globe, Sliders, Palette, Eye
 } from 'lucide-react';
-import { exportDataAsJSON, importDataFromJSON, resetToDefaults } from '../utils/storage';
+import { exportDataAsJSON, importDataFromJSON, resetToDefaults, DEFAULT_CATEGORY_CONFIGS } from '../utils/storage';
 import { formatImageUrl } from '../utils/imageUrl';
 import { BJP_LOGO_URL } from '../assets/logo';
 import { InstagramIcon, FacebookIcon, TikTokIcon, WhatsAppIcon, SocialBadges } from './SocialIcons';
@@ -98,22 +98,30 @@ export const CMSModal: React.FC<CMSModalProps> = ({
 
   // Local state for Site Settings (Branding & Navbar Tabs)
   const [tempLogoUrl, setTempLogoUrl] = useState<string>(siteSettings?.logoUrl || BJP_LOGO_URL);
+  const [tempSiteTitle, setTempSiteTitle] = useState<string>(siteSettings?.siteTitle || 'BJP HUB Bintara Jaya Permai');
+  const [tempSiteDescription, setTempSiteDescription] = useState<string>(siteSettings?.siteDescription || 'Portal Resmi Ekosistem & Kegiatan Warga Komplek Bintara Jaya Permai (RW 11)');
   const [tempNavbarTabs, setTempNavbarTabs] = useState<NavbarTabConfig[]>(
     siteSettings?.navbarTabs || [
       { id: 'entities', label: 'Entitas Kegiatan', enabled: true, order: 0 },
       { id: 'announcements', label: 'Pengumuman & Agenda', enabled: true, order: 1 },
     ]
   );
+  const [tempCategoryConfigs, setTempCategoryConfigs] = useState<CategoryHeaderConfig[]>(
+    siteSettings?.categoryConfigs || DEFAULT_CATEGORY_CONFIGS
+  );
 
   useEffect(() => {
     if (siteSettings) {
       setTempLogoUrl(siteSettings.logoUrl || BJP_LOGO_URL);
+      setTempSiteTitle(siteSettings.siteTitle || 'BJP HUB Bintara Jaya Permai');
+      setTempSiteDescription(siteSettings.siteDescription || 'Portal Resmi Ekosistem & Kegiatan Warga Komplek Bintara Jaya Permai (RW 11)');
       setTempNavbarTabs(
         siteSettings.navbarTabs || [
           { id: 'entities', label: 'Entitas Kegiatan', enabled: true, order: 0 },
           { id: 'announcements', label: 'Pengumuman & Agenda', enabled: true, order: 1 },
         ]
       );
+      setTempCategoryConfigs(siteSettings.categoryConfigs || DEFAULT_CATEGORY_CONFIGS);
     }
   }, [siteSettings, isOpen]);
 
@@ -685,9 +693,11 @@ export const CMSModal: React.FC<CMSModalProps> = ({
 
                       {/* Image Picker with Presets */}
                       <div className="space-y-2">
-                        <label className="text-xs font-bold text-stone-700 flex items-center justify-between">
-                          <span>3. URL Foto / Gambar Utama</span>
-                          <span className="text-[11px] text-stone-400">Support Google Drive & Direct URL</span>
+                        <label className="text-xs font-bold text-stone-700 flex flex-wrap items-center justify-between gap-1">
+                          <span>3. URL Foto / Gambar Utama Banner</span>
+                          <span className="text-[11px] text-emerald-800 font-semibold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                            Rekomendasi HD: 1200 x 675 px (Rasio 16:9)
+                          </span>
                         </label>
                         <input
                           type="text"
@@ -1806,6 +1816,19 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                   Logo yang diunggah/diatur di sini akan otomatis diterapkan pada <strong>Header Navbar</strong>, <strong>Footer Website</strong>, <strong>Hero Banner</strong>, <strong>Favicon Tab Browser</strong>, serta <strong>Open Graph (OG Image)</strong> saat link website dibagikan ke WhatsApp / media sosial.
                 </p>
 
+                {/* Recommendation Banner */}
+                <div className="bg-emerald-50/80 border border-emerald-200 rounded-xl p-3 flex items-start gap-2.5 text-xs text-emerald-950">
+                  <Sparkles className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="font-bold text-emerald-900 block">Rekomendasi Format & Ukuran Logo HD:</strong>
+                    <ul className="list-disc list-inside mt-1 space-y-0.5 text-[11px] text-emerald-850">
+                      <li><strong>Dimensi Ideal:</strong> <code className="bg-emerald-100 px-1 py-0.2 rounded font-mono font-bold">512 x 512 px</code> atau <code className="bg-emerald-100 px-1 py-0.2 rounded font-mono font-bold">1024 x 1024 px</code> (Rasio 1:1 Persegi).</li>
+                      <li><strong>Format File:</strong> PNG Transparan (tanpa background) atau SVG / JPG kualitas tinggi.</li>
+                      <li><strong>Tips HD:</strong> Logo resolusi tinggi otomatis akan tampil tajam di seluruh layar Retina, HP, dan Desktop.</li>
+                    </ul>
+                  </div>
+                </div>
+
                 {/* Logo Upload / URL Options */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
                   {/* Form Controls */}
@@ -1847,7 +1870,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                     {/* Option B: Direct URL Input */}
                     <div className="space-y-1.5">
                       <label className="text-xs font-bold text-stone-800 block">
-                        Tautan URL Gambar / Logo:
+                        Tautan URL Gambar / Logo Website:
                       </label>
                       <input
                         type="text"
@@ -1858,14 +1881,46 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                       />
                     </div>
 
+                    {/* Judul Website / Homepage Title */}
+                    <div className="space-y-1.5 pt-2 border-t border-stone-200">
+                      <label className="text-xs font-bold text-stone-800 block">
+                        Judul Utama Website (Home Page Title):
+                      </label>
+                      <input
+                        type="text"
+                        value={tempSiteTitle}
+                        onChange={(e) => setTempSiteTitle(e.target.value)}
+                        placeholder="BJP HUB Bintara Jaya Permai"
+                        className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-xs font-bold text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                      />
+                    </div>
+
+                    {/* Deskripsi Website / Homepage Description */}
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-bold text-stone-800 block">
+                        Deskripsi Penjelasan Homepage:
+                      </label>
+                      <textarea
+                        rows={2}
+                        value={tempSiteDescription}
+                        onChange={(e) => setTempSiteDescription(e.target.value)}
+                        placeholder="Portal Resmi Ekosistem & Kegiatan Warga Komplek Bintara Jaya Permai (RW 11)"
+                        className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-xs text-stone-800 focus:outline-none focus:ring-2 focus:ring-emerald-600 resize-none"
+                      />
+                    </div>
+
                     {/* Reset Button */}
                     <button
                       type="button"
-                      onClick={() => setTempLogoUrl(BJP_LOGO_URL)}
-                      className="inline-flex items-center gap-1.5 text-xs text-stone-600 hover:text-stone-900 bg-stone-100 hover:bg-stone-200 px-3 py-1.5 rounded-lg border border-stone-200 font-medium transition-colors"
+                      onClick={() => {
+                        setTempLogoUrl(BJP_LOGO_URL);
+                        setTempSiteTitle('BJP HUB Bintara Jaya Permai');
+                        setTempSiteDescription('Portal Resmi Ekosistem & Kegiatan Warga Komplek Bintara Jaya Permai (RW 11)');
+                      }}
+                      className="inline-flex items-center gap-1.5 text-xs text-stone-600 hover:text-stone-900 bg-stone-100 hover:bg-stone-200 px-3 py-1.5 rounded-lg border border-stone-200 font-medium transition-colors cursor-pointer"
                     >
                       <RefreshCw className="w-3.5 h-3.5 text-stone-500" />
-                      <span>Kembalikan ke Logo Default BJP HUB</span>
+                      <span>Kembalikan ke Identitas Default</span>
                     </button>
                   </div>
 
@@ -2058,12 +2113,208 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                 </div>
               </div>
 
+              {/* Section 3: Kelola Logo, Nama Tab & Deskripsi Header per Entitas / Kategori */}
+              <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-xs space-y-5">
+                <div className="flex items-center justify-between border-b border-stone-100 pb-3">
+                  <div className="flex items-center gap-2">
+                    <Palette className="w-5 h-5 text-emerald-700" />
+                    <h4 className="font-bold text-stone-900 text-sm sm:text-base">
+                      3. Edit Logo Header, Nama Entitas & Deskripsi per Kategori
+                    </h4>
+                  </div>
+                  <span className="text-xs bg-emerald-50 text-emerald-800 font-semibold px-2.5 py-1 rounded-full border border-emerald-200">
+                    Header & Tab Filter Landing Page
+                  </span>
+                </div>
+
+                <p className="text-xs text-stone-600 leading-relaxed">
+                  Atur logo khusus, ubah nama entitas (label tab filter navbar), dan sesuaikan deskripsi header yang tampil di atas halaman landing page untuk tiap kategori entitas.
+                </p>
+
+                {/* Recommendation Banner */}
+                <div className="bg-emerald-50/80 border border-emerald-200 rounded-xl p-3 flex items-start gap-2.5 text-xs text-emerald-950">
+                  <Sparkles className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="font-bold text-emerald-900 block">Rekomendasi Logo Kategori / Entitas:</strong>
+                    <span className="text-[11px] text-emerald-850 block mt-0.5">
+                      Gunakan gambar <strong>Rasio 1:1 (Persegi)</strong> dengan ukuran ideal <strong>512 x 512 px</strong> (PNG Transparan / JPG HD). Logo akan tampil besar, bersih, dan HD di Header Kategori dan Carousel.
+                    </span>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  {tempCategoryConfigs.map((catConfig) => (
+                    <div
+                      key={catConfig.id}
+                      className="p-4 sm:p-5 bg-stone-50 rounded-2xl border border-stone-200 space-y-4 shadow-2xs"
+                    >
+                      <div className="flex items-center justify-between border-b border-stone-200/80 pb-2.5">
+                        <span className="text-xs font-bold text-stone-900 flex items-center gap-2">
+                          <span className="w-2 h-2 rounded-full bg-emerald-600"></span>
+                          Kategori: <strong className="text-emerald-800">{catConfig.name}</strong>
+                          <span className="text-[10px] text-stone-400 font-mono font-normal">({catConfig.id})</span>
+                        </span>
+                        {catConfig.id === 'Sentra Usaha BJP' && (
+                          <span className="text-[10px] bg-amber-100 text-amber-900 border border-amber-300 px-2 py-0.5 rounded-full font-bold">
+                            Sentra Usaha Warga
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {/* Logo Upload Box */}
+                        <div className="space-y-2 md:col-span-2 bg-white p-3.5 rounded-xl border border-stone-200">
+                          <label className="text-xs font-bold text-stone-800 block">
+                            Logo Header Kategori:
+                          </label>
+                          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                            {catConfig.logoUrl ? (
+                              <img
+                                src={formatImageUrl(catConfig.logoUrl)}
+                                alt={catConfig.name}
+                                className="w-14 h-14 rounded-xl object-contain bg-stone-50 border border-stone-300 p-1 shadow-2xs shrink-0"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).style.display = 'none';
+                                }}
+                              />
+                            ) : (
+                              <div className="w-14 h-14 rounded-xl bg-stone-100 text-stone-400 flex items-center justify-center shrink-0 border border-dashed border-stone-300">
+                                <ImageIcon className="w-6 h-6" />
+                              </div>
+                            )}
+
+                            <div className="flex-1 space-y-2 w-full">
+                              <div className="flex flex-wrap items-center gap-2">
+                                <input
+                                  type="text"
+                                  value={catConfig.logoUrl || ''}
+                                  onChange={(e) => {
+                                    const newUrl = e.target.value;
+                                    setTempCategoryConfigs(
+                                      tempCategoryConfigs.map((c) =>
+                                        c.id === catConfig.id ? { ...c, logoUrl: newUrl } : c
+                                      )
+                                    );
+                                  }}
+                                  placeholder="Tautan URL Gambar (https://... / /images/...)"
+                                  className="flex-1 min-w-[220px] px-3 py-1.5 bg-stone-50 border border-stone-300 rounded-lg text-xs font-mono text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                                />
+
+                                <label className="cursor-pointer inline-flex items-center gap-1 px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-medium transition-colors shrink-0">
+                                  <Upload className="w-3.5 h-3.5" />
+                                  <span>Upload Logo</span>
+                                  <input
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    onChange={(e) => {
+                                      const file = e.target.files?.[0];
+                                      if (file) {
+                                        const reader = new FileReader();
+                                        reader.onload = (ev) => {
+                                          const result = ev.target?.result as string;
+                                          if (result) {
+                                            setTempCategoryConfigs(
+                                              tempCategoryConfigs.map((c) =>
+                                                c.id === catConfig.id ? { ...c, logoUrl: result } : c
+                                              )
+                                            );
+                                          }
+                                        };
+                                        reader.readAsDataURL(file);
+                                      }
+                                    }}
+                                  />
+                                </label>
+
+                                {catConfig.id === 'Sentra Usaha BJP' && (
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setTempCategoryConfigs(
+                                        tempCategoryConfigs.map((c) =>
+                                          c.id === catConfig.id ? { ...c, logoUrl: '/images/sentra_usaha_logo.jpg' } : c
+                                        )
+                                      );
+                                    }}
+                                    className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 rounded-lg text-xs font-medium transition-colors"
+                                  >
+                                    <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                                    <span>Logo Sentra Usaha Official</span>
+                                  </button>
+                                )}
+
+                                {catConfig.logoUrl && (
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setTempCategoryConfigs(
+                                        tempCategoryConfigs.map((c) =>
+                                          c.id === catConfig.id ? { ...c, logoUrl: '' } : c
+                                        )
+                                      );
+                                    }}
+                                    className="px-2.5 py-1.5 bg-stone-200 hover:bg-red-100 hover:text-red-700 text-stone-700 rounded-lg text-xs font-medium transition-colors"
+                                  >
+                                    Hapus
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Nama Kategori / Rename Tab */}
+                        <div className="space-y-1">
+                          <label className="text-xs font-bold text-stone-700 block">
+                            Nama Kategori (Judul & Tab Navbar):
+                          </label>
+                          <input
+                            type="text"
+                            value={catConfig.name}
+                            onChange={(e) => {
+                              const newName = e.target.value;
+                              setTempCategoryConfigs(
+                                tempCategoryConfigs.map((c) =>
+                                  c.id === catConfig.id ? { ...c, name: newName } : c
+                                )
+                              );
+                            }}
+                            className="w-full px-3 py-2 bg-white border border-stone-300 rounded-xl text-xs font-bold text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                          />
+                        </div>
+
+                        {/* Deskripsi Header */}
+                        <div className="space-y-1">
+                          <label className="text-xs font-bold text-stone-700 block">
+                            Deskripsi Penjelasan Header:
+                          </label>
+                          <input
+                            type="text"
+                            value={catConfig.description}
+                            onChange={(e) => {
+                              const newDesc = e.target.value;
+                              setTempCategoryConfigs(
+                                tempCategoryConfigs.map((c) =>
+                                  c.id === catConfig.id ? { ...c, description: newDesc } : c
+                                )
+                              );
+                            }}
+                            className="w-full px-3 py-2 bg-white border border-stone-300 rounded-xl text-xs text-stone-800 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               {/* Save All Settings Button */}
               <div className="bg-white p-5 rounded-2xl border border-stone-200 shadow-xs flex items-center justify-between">
                 <div>
-                  <h4 className="font-bold text-stone-900 text-sm">Simpan Perubahan Branding & Navbar</h4>
+                  <h4 className="font-bold text-stone-900 text-sm">Simpan Perubahan Branding, Navbar & Header Entitas</h4>
                   <p className="text-xs text-stone-500">
-                    Klik tombol di samping untuk menerapkan logo dan susunan tab navbar terbaru secara langsung.
+                    Klik tombol di samping untuk menerapkan seluruh logo, susunan tab navbar, dan header entitas secara langsung.
                   </p>
                 </div>
 
@@ -2072,9 +2323,12 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                   onClick={() => {
                     onSaveSiteSettings({
                       logoUrl: tempLogoUrl,
+                      siteTitle: tempSiteTitle,
+                      siteDescription: tempSiteDescription,
                       navbarTabs: tempNavbarTabs,
+                      categoryConfigs: tempCategoryConfigs,
                     });
-                    showToast('Pengaturan logo website & tab navbar berhasil disimpan!');
+                    showToast('Pengaturan logo, judul website, tab navbar, & header entitas berhasil disimpan!');
                   }}
                   className="flex items-center gap-2 px-5 py-2.5 bg-emerald-800 hover:bg-emerald-900 text-white rounded-xl font-semibold text-xs sm:text-sm shadow-md transition-all shrink-0 cursor-pointer"
                 >

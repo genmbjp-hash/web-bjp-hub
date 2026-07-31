@@ -1,4 +1,4 @@
-import { Entity, Announcement, SiteSettings } from '../types';
+import { Entity, Announcement, SiteSettings, CategoryHeaderConfig } from '../types';
 import { INITIAL_ENTITIES, INITIAL_ANNOUNCEMENTS } from '../data/initialData';
 import { BJP_LOGO_URL } from '../assets/logo';
 import { updateSiteFaviconAndOgImage } from './meta';
@@ -7,12 +7,72 @@ const STORAGE_KEY_ENTITIES = 'bjp_hub_entities_v1';
 const STORAGE_KEY_ANNOUNCEMENTS = 'bjp_hub_announcements_v1';
 const STORAGE_KEY_SITE_SETTINGS = 'bjp_hub_site_settings_v1';
 
+export const DEFAULT_CATEGORY_CONFIGS: CategoryHeaderConfig[] = [
+  {
+    id: 'Sentra Usaha BJP',
+    name: 'Sentra Usaha BJP',
+    description: 'Unit entitas, UMKM, dan kegiatan usaha warga Bintara Jaya Permai (RW 11)',
+    logoUrl: '/images/sentra_usaha_logo.jpg',
+  },
+  {
+    id: 'Pusat Hub',
+    name: 'Pusat Hub',
+    description: 'Pusat kegiatan, sekretariat, dan informasi utama RW 11',
+    logoUrl: '',
+  },
+  {
+    id: 'Administratif / Pemerintahan',
+    name: 'Administratif / Pemerintahan',
+    description: 'Layanan administrasi RT, RW, dan pemerintahan warga',
+    logoUrl: '',
+  },
+  {
+    id: 'Keagamaan',
+    name: 'Keagamaan',
+    description: 'Kegiatan ibadah, tempat ibadah, dan pengajian warga',
+    logoUrl: '',
+  },
+  {
+    id: 'Lingkungan',
+    name: 'Lingkungan',
+    description: 'Kegiatan kebersihan, pengolahan sampah, dan pertamanan',
+    logoUrl: '',
+  },
+  {
+    id: 'Kesejahteraan Keluarga',
+    name: 'Kesejahteraan Keluarga',
+    description: 'Kegiatan PKK, posyandu, dan pemberdayaan keluarga',
+    logoUrl: '',
+  },
+  {
+    id: 'Kesehatan',
+    name: 'Kesehatan',
+    description: 'Layanan kesehatan, posyandu lansia, dan ambulans warga',
+    logoUrl: '',
+  },
+  {
+    id: 'Kepemudaan',
+    name: 'Kepemudaan',
+    description: 'Karang Taruna dan wadah kreativitas pemuda Bintara Jaya Permai',
+    logoUrl: '',
+  },
+  {
+    id: 'Olahraga',
+    name: 'Olahraga',
+    description: 'Fasilitas dan klub olahraga warga RW 11',
+    logoUrl: '',
+  },
+];
+
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   logoUrl: BJP_LOGO_URL,
+  siteTitle: 'BJP HUB Bintara Jaya Permai',
+  siteDescription: 'Portal Resmi Ekosistem & Kegiatan Warga Komplek Bintara Jaya Permai (RW 11)',
   navbarTabs: [
     { id: 'entities', label: 'Entitas Kegiatan', enabled: true, order: 0 },
     { id: 'announcements', label: 'Pengumuman & Agenda', enabled: true, order: 1 },
   ],
+  categoryConfigs: DEFAULT_CATEGORY_CONFIGS,
 };
 
 export function getSiteSettings(): SiteSettings {
@@ -20,12 +80,28 @@ export function getSiteSettings(): SiteSettings {
     const data = localStorage.getItem(STORAGE_KEY_SITE_SETTINGS);
     if (data) {
       const parsed = JSON.parse(data);
+      const savedCategoryConfigs: CategoryHeaderConfig[] = Array.isArray(parsed.categoryConfigs) ? parsed.categoryConfigs : [];
+      const mergedCategoryConfigs = DEFAULT_CATEGORY_CONFIGS.map((def) => {
+        const found = savedCategoryConfigs.find((c) => c.id === def.id || c.name === def.id);
+        if (found) {
+          return {
+            ...def,
+            ...found,
+            logoUrl: (def.id === 'Sentra Usaha BJP' && !found.logoUrl) ? def.logoUrl : (found.logoUrl || ''),
+          };
+        }
+        return def;
+      });
+
       return {
         logoUrl: parsed.logoUrl || BJP_LOGO_URL,
+        siteTitle: parsed.siteTitle || DEFAULT_SITE_SETTINGS.siteTitle,
+        siteDescription: parsed.siteDescription || DEFAULT_SITE_SETTINGS.siteDescription,
         navbarTabs:
           Array.isArray(parsed.navbarTabs) && parsed.navbarTabs.length > 0
             ? parsed.navbarTabs
             : DEFAULT_SITE_SETTINGS.navbarTabs,
+        categoryConfigs: mergedCategoryConfigs,
       };
     }
   } catch (err) {
