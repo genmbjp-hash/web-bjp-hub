@@ -1,3 +1,15 @@
+export type UserRole = 'super_admin' | 'entity_admin';
+
+export interface User {
+  id: string;
+  username: string;
+  password: string;
+  name: string;
+  role: UserRole;
+  allowedEntityIds: string[]; // ['*'] for all entities or specific array of entity IDs
+  createdAt: string;
+}
+
 export interface SocialItem {
   enabled: boolean;
   url: string;

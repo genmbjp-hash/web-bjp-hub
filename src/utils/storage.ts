@@ -1,11 +1,45 @@
-import { Entity, Announcement, SiteSettings, CategoryHeaderConfig } from '../types';
+import { Entity, Announcement, SiteSettings, CategoryHeaderConfig, User } from '../types';
 import { INITIAL_ENTITIES, INITIAL_ANNOUNCEMENTS } from '../data/initialData';
 import { BJP_LOGO_URL } from '../assets/logo';
 import { updateSiteFaviconAndOgImage } from './meta';
+import {
+  isSupabaseConfigured,
+  saveUsersToSupabase,
+  saveEntitiesToSupabase,
+  saveAnnouncementsToSupabase,
+  saveSiteSettingsToSupabase,
+} from '../lib/supabase';
 
 const STORAGE_KEY_ENTITIES = 'bjp_hub_entities_v1';
 const STORAGE_KEY_ANNOUNCEMENTS = 'bjp_hub_announcements_v1';
 const STORAGE_KEY_SITE_SETTINGS = 'bjp_hub_site_settings_v1';
+const STORAGE_KEY_USERS = 'bjp_hub_users_v1';
+const STORAGE_KEY_LOGGED_IN_USER = 'bjp_hub_logged_in_user_v1';
+
+// Initial admin username & password loaded from environment variable or generated default
+const initialAdminUsername = import.meta.env.VITE_INITIAL_ADMIN_USERNAME || 'admin';
+const initialAdminPassword = import.meta.env.VITE_INITIAL_ADMIN_PASSWORD || 'Bjp01!';
+
+export const DEFAULT_USERS: User[] = [
+  {
+    id: 'usr-super-admin',
+    username: initialAdminUsername,
+    password: initialAdminPassword,
+    name: 'Super Admin BJP',
+    role: 'super_admin',
+    allowedEntityIds: ['*'],
+    createdAt: '2026-01-01T00:00:00.000Z',
+  },
+  {
+    id: 'usr-sentra-usaha',
+    username: 'admin_umkm',
+    password: initialAdminPassword,
+    name: 'Pengurus Sentra Usaha UMKM',
+    role: 'entity_admin',
+    allowedEntityIds: ['ent-umkm-1', 'ent-umkm-2', 'ent-4'],
+    createdAt: '2026-01-01T00:00:00.000Z',
+  },
+];
 
 export const DEFAULT_CATEGORY_CONFIGS: CategoryHeaderConfig[] = [
   {
@@ -114,6 +148,9 @@ export function saveSiteSettings(settings: SiteSettings): void {
   try {
     localStorage.setItem(STORAGE_KEY_SITE_SETTINGS, JSON.stringify(settings));
     updateSiteFaviconAndOgImage(settings.logoUrl);
+    if (isSupabaseConfigured()) {
+      saveSiteSettingsToSupabase(settings).catch((err) => console.error('Supabase sync error:', err));
+    }
   } catch (err) {
     console.error('Failed to save site settings', err);
   }
@@ -169,6 +206,9 @@ export function getEntities(): Entity[] {
 export function saveEntities(entities: Entity[]): void {
   try {
     localStorage.setItem(STORAGE_KEY_ENTITIES, JSON.stringify(entities));
+    if (isSupabaseConfigured()) {
+      saveEntitiesToSupabase(entities).catch((err) => console.error('Supabase sync error:', err));
+    }
   } catch (err) {
     console.error('Failed to save entities to storage', err);
   }
@@ -198,6 +238,9 @@ export function getAnnouncements(): Announcement[] {
 export function saveAnnouncements(announcements: Announcement[]): void {
   try {
     localStorage.setItem(STORAGE_KEY_ANNOUNCEMENTS, JSON.stringify(announcements));
+    if (isSupabaseConfigured()) {
+      saveAnnouncementsToSupabase(announcements).catch((err) => console.error('Supabase sync error:', err));
+    }
   } catch (err) {
     console.error('Failed to save announcements to storage', err);
   }
@@ -259,5 +302,62 @@ export function importDataFromJSON(
     };
   } catch (err) {
     return { success: false, message: 'Gagal membaca file JSON. Pastikan format file benar.' };
+  }
+}
+
+export function getUsers(): User[] {
+  try {
+    const data = localStorage.getItem(STORAGE_KEY_USERS);
+    if (data) {
+      const parsed = JSON.parse(data);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        // Ensure default super admin account exists in list
+        const superAdminExists = parsed.some((u: User) => u.username === 'admin');
+        if (!superAdminExists) {
+          parsed.unshift(DEFAULT_USERS[0]);
+        }
+        return parsed;
+      }
+    }
+  } catch (err) {
+    console.error('Failed to load users from storage', err);
+  }
+  // If empty or initial, save and return default users
+  saveUsers(DEFAULT_USERS);
+  return DEFAULT_USERS;
+}
+
+export function saveUsers(users: User[]): void {
+  try {
+    localStorage.setItem(STORAGE_KEY_USERS, JSON.stringify(users));
+    if (isSupabaseConfigured()) {
+      saveUsersToSupabase(users).catch((err) => console.error('Supabase sync error:', err));
+    }
+  } catch (err) {
+    console.error('Failed to save users to storage', err);
+  }
+}
+
+export function getLoggedInUser(): User | null {
+  try {
+    const data = localStorage.getItem(STORAGE_KEY_LOGGED_IN_USER);
+    if (data) {
+      return JSON.parse(data);
+    }
+  } catch (err) {
+    console.error('Failed to get logged in user', err);
+  }
+  return null;
+}
+
+export function saveLoggedInUser(user: User | null): void {
+  try {
+    if (user) {
+      localStorage.setItem(STORAGE_KEY_LOGGED_IN_USER, JSON.stringify(user));
+    } else {
+      localStorage.removeItem(STORAGE_KEY_LOGGED_IN_USER);
+    }
+  } catch (err) {
+    console.error('Failed to save logged in user', err);
   }
 }

@@ -1,15 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import { Entity, Announcement, SiteSettings, NavbarTabConfig, CategoryHeaderConfig } from '../types';
+import { Entity, Announcement, SiteSettings, NavbarTabConfig, CategoryHeaderConfig, User, UserRole } from '../types';
 import {
   X, Plus, Edit3, Trash2, Copy, Download, Upload, RefreshCw, Check,
   Image as ImageIcon, Sparkles, LayoutGrid, Megaphone, HelpCircle,
   Bold, Italic, List, Heading, ExternalLink, ShieldAlert, ArrowLeft,
-  GripVertical, ArrowUp, ArrowDown, MapPin, Info, Globe, Sliders, Palette, Eye
+  GripVertical, ArrowUp, ArrowDown, MapPin, Info, Globe, Sliders, Palette, Eye, EyeOff,
+  Users, UserPlus, ShieldCheck, Shield, Lock, LogOut, CheckSquare, Square, Search, User as UserIcon,
+  Database, Server, CheckCircle2, XCircle, Terminal, Code
 } from 'lucide-react';
 import { exportDataAsJSON, importDataFromJSON, resetToDefaults, DEFAULT_CATEGORY_CONFIGS } from '../utils/storage';
 import { formatImageUrl } from '../utils/imageUrl';
 import { BJP_LOGO_URL } from '../assets/logo';
 import { InstagramIcon, FacebookIcon, TikTokIcon, WhatsAppIcon, SocialBadges } from './SocialIcons';
+import {
+  isSupabaseConfigured,
+  testSupabaseConnection,
+  SUPABASE_SQL_SETUP_SCRIPT,
+  saveUsersToSupabase,
+  saveEntitiesToSupabase,
+  saveAnnouncementsToSupabase,
+  saveSiteSettingsToSupabase,
+  fetchUsersFromSupabase,
+  fetchEntitiesFromSupabase,
+  fetchAnnouncementsFromSupabase,
+  fetchSiteSettingsFromSupabase,
+} from '../lib/supabase';
 
 interface CMSModalProps {
   isOpen: boolean;
@@ -20,6 +35,10 @@ interface CMSModalProps {
   onSaveAnnouncements: (announcements: Announcement[]) => void;
   siteSettings: SiteSettings;
   onSaveSiteSettings: (settings: SiteSettings) => void;
+  users: User[];
+  onSaveUsers: (users: User[]) => void;
+  currentUser: User | null;
+  onLogout: () => void;
   editingEntityInit?: Entity | null;
   initialCategoryForNewEntity?: string | null;
 }
@@ -72,12 +91,139 @@ export const CMSModal: React.FC<CMSModalProps> = ({
   onSaveAnnouncements,
   siteSettings,
   onSaveSiteSettings,
+  users,
+  onSaveUsers,
+  currentUser,
+  onLogout,
   editingEntityInit,
   initialCategoryForNewEntity,
 }) => {
-  const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'settings' | 'backup'>('entities');
+  const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'settings' | 'users' | 'supabase' | 'backup'>('entities');
+  
+  // Supabase State & Handlers
+  const [supabaseTesting, setSupabaseTesting] = useState<boolean>(false);
+  const [supabaseTestResult, setSupabaseTestResult] = useState<{ success: boolean; message: string } | null>(null);
+  const [supabaseSyncing, setSupabaseSyncing] = useState<boolean>(false);
+  const [copiedSql, setCopiedSql] = useState<boolean>(false);
+
+  const handleTestSupabase = async () => {
+    setSupabaseTesting(true);
+    setSupabaseTestResult(null);
+    const res = await testSupabaseConnection();
+    setSupabaseTestResult(res);
+    setSupabaseTesting(false);
+  };
+
+  const handlePushToSupabase = async () => {
+    if (!isSupabaseConfigured()) {
+      alert('Supabase belum dikonfigurasi di environment!');
+      return;
+    }
+    setSupabaseSyncing(true);
+    try {
+      const resUsers = await saveUsersToSupabase(users);
+      const resEnt = await saveEntitiesToSupabase(entities);
+      const resAnn = await saveAnnouncementsToSupabase(announcements);
+      const resSet = await saveSiteSettingsToSupabase(siteSettings);
+
+      if (resUsers && resEnt && resAnn && resSet) {
+        alert('Berhasil mengunggah seluruh data (Pengguna, Entitas, Pengumuman, Settings) ke Supabase!');
+      } else {
+        alert('Sebagian data berhasil diunggah. Pastikan seluruh tabel (bjp_users, bjp_entities, bjp_announcements, bjp_site_settings) sudah dibuat di Supabase.');
+      }
+    } catch (err: any) {
+      alert(`Gagal sync data ke Supabase: ${err?.message || 'Unknown error'}`);
+    } finally {
+      setSupabaseSyncing(false);
+    }
+  };
+
+  const handlePullFromSupabase = async () => {
+    if (!isSupabaseConfigured()) {
+      alert('Supabase belum dikonfigurasi!');
+      return;
+    }
+    setSupabaseSyncing(true);
+    try {
+      const remoteUsers = await fetchUsersFromSupabase();
+      const remoteEntities = await fetchEntitiesFromSupabase();
+      const remoteAnnouncements = await fetchAnnouncementsFromSupabase();
+      const remoteSettings = await fetchSiteSettingsFromSupabase();
+
+      let count = 0;
+      if (remoteUsers && remoteUsers.length > 0) {
+        onSaveUsers(remoteUsers);
+        count++;
+      }
+      if (remoteEntities && remoteEntities.length > 0) {
+        onSaveEntities(remoteEntities);
+        count++;
+      }
+      if (remoteAnnouncements && remoteAnnouncements.length > 0) {
+        onSaveAnnouncements(remoteAnnouncements);
+        count++;
+      }
+      if (remoteSettings) {
+        onSaveSiteSettings(remoteSettings);
+        count++;
+      }
+
+      if (count > 0) {
+        alert(`Berhasil mengunduh dan memperbarui ${count} kategori data dari Supabase!`);
+      } else {
+        alert('Tidak ada data baru di Supabase atau tabel belum terisi data.');
+      }
+    } catch (err: any) {
+      alert(`Gagal menarik data dari Supabase: ${err?.message || 'Unknown error'}`);
+    } finally {
+      setSupabaseSyncing(false);
+    }
+  };
+
+  const handleCopySqlScript = () => {
+    navigator.clipboard.writeText(SUPABASE_SQL_SETUP_SCRIPT);
+    setCopiedSql(true);
+    setTimeout(() => setCopiedSql(false), 2000);
+  };
+  
+  // Permission helpers
+  const isSuperAdmin = currentUser?.role === 'super_admin';
+
+  const canEditEntity = (entityId: string) => {
+    if (!currentUser) return false;
+    if (isSuperAdmin) return true;
+    return currentUser.allowedEntityIds.includes('*') || currentUser.allowedEntityIds.includes(entityId);
+  };
+
+  // Filter entities visible to current user in CMS
+  const allowedEntitiesInCMS = isSuperAdmin
+    ? entities
+    : entities.filter((e) => canEditEntity(e.id));
+
   const [editingEntity, setEditingEntity] = useState<Entity | null>(editingEntityInit || null);
   const [isCreatingNewEntity, setIsCreatingNewEntity] = useState(false);
+
+  // User Management Local States
+  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [isCreatingUser, setIsCreatingUser] = useState<boolean>(false);
+  const [userSearchQuery, setUserSearchQuery] = useState<string>('');
+  const [entitySearchFilter, setEntitySearchFilter] = useState<string>('');
+  const [showFormPassword, setShowFormPassword] = useState<boolean>(false);
+  const [visiblePasswordUserId, setVisiblePasswordUserId] = useState<string | null>(null);
+
+  const [formUser, setFormUser] = useState<{
+    name: string;
+    username: string;
+    password: string;
+    role: UserRole;
+    allowedEntityIds: string[];
+  }>({
+    name: '',
+    username: '',
+    password: '',
+    role: 'entity_admin',
+    allowedEntityIds: [],
+  });
 
   // Form State for Entity
   const [formEntity, setFormEntity] = useState<Partial<Entity>>({
@@ -368,6 +514,16 @@ export const CMSModal: React.FC<CMSModalProps> = ({
       };
       onSaveEntities([newEnt, ...entities]);
       showToast(`Entitas "${newEnt.name}" berhasil ditambahkan!`);
+
+      // If current user is entity_admin, automatically append permission for this new entity
+      if (!isSuperAdmin && currentUser) {
+        const updatedUser: User = {
+          ...currentUser,
+          allowedEntityIds: Array.from(new Set([...(currentUser.allowedEntityIds || []), newEnt.id])),
+        };
+        const updatedUsersList = users.map((u) => (u.id === currentUser.id ? updatedUser : u));
+        onSaveUsers(updatedUsersList);
+      }
     }
 
     setEditingEntity(null);
@@ -518,6 +674,120 @@ export const CMSModal: React.FC<CMSModalProps> = ({
     if (tag === 'heading') setFormEntity({ ...formEntity, description: current + '\n<p><strong>Judul Bagian:</strong></p>' });
   };
 
+  // USER MANAGEMENT HANDLERS
+  const handleStartNewUser = () => {
+    setEditingUser(null);
+    setIsCreatingUser(true);
+    setFormUser({
+      name: '',
+      username: '',
+      password: 'Bjp' + Math.floor(100 + Math.random() * 900) + '!',
+      role: 'entity_admin',
+      allowedEntityIds: [],
+    });
+    setShowFormPassword(true);
+    setEntitySearchFilter('');
+  };
+
+  const handleStartEditUser = (u: User) => {
+    setEditingUser(u);
+    setIsCreatingUser(false);
+    setFormUser({
+      name: u.name,
+      username: u.username,
+      password: u.password,
+      role: u.role,
+      allowedEntityIds: u.allowedEntityIds || [],
+    });
+    setShowFormPassword(true);
+    setEntitySearchFilter('');
+  };
+
+  const handleSaveUserSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formUser.name.trim() || !formUser.username.trim() || !formUser.password.trim()) {
+      alert('Nama lengkap, username, dan password wajib diisi!');
+      return;
+    }
+
+    const cleanUsername = formUser.username.trim().toLowerCase();
+    const isDuplicate = users.some(
+      (u) => u.id !== editingUser?.id && u.username.toLowerCase() === cleanUsername
+    );
+
+    if (isDuplicate) {
+      alert(`Username "@${cleanUsername}" sudah digunakan oleh akun lain. Silakan gunakan username lain.`);
+      return;
+    }
+
+    const finalAllowedIds =
+      formUser.role === 'super_admin' ? ['*'] : formUser.allowedEntityIds;
+
+    const now = new Date().toISOString();
+
+    if (editingUser) {
+      const updatedList = users.map((u) =>
+        u.id === editingUser.id
+          ? {
+              ...u,
+              name: formUser.name.trim(),
+              username: cleanUsername,
+              password: formUser.password,
+              role: formUser.role,
+              allowedEntityIds: finalAllowedIds,
+            }
+          : u
+      );
+      onSaveUsers(updatedList);
+      showToast(`Akun pengurus "@${cleanUsername}" berhasil diperbarui!`);
+    } else {
+      const newUser: User = {
+        id: `usr-${Date.now()}`,
+        name: formUser.name.trim(),
+        username: cleanUsername,
+        password: formUser.password,
+        role: formUser.role,
+        allowedEntityIds: finalAllowedIds,
+        createdAt: now,
+      };
+      onSaveUsers([newUser, ...users]);
+      showToast(`Akun pengurus baru "@${cleanUsername}" berhasil dibuat!`);
+    }
+
+    setEditingUser(null);
+    setIsCreatingUser(false);
+  };
+
+  const handleDeleteUser = (userId: string, targetUsername: string) => {
+    if (userId === currentUser?.id) {
+      alert('Anda tidak dapat menghapus akun Anda sendiri yang sedang aktif.');
+      return;
+    }
+    if (targetUsername === 'admin') {
+      alert('Akun Super Admin bawaan sistem (@admin) tidak dapat dihapus.');
+      return;
+    }
+    if (confirm(`Apakah Anda yakin ingin menghapus akun pengurus "@${targetUsername}"?`)) {
+      const updated = users.filter((u) => u.id !== userId);
+      onSaveUsers(updated);
+      showToast(`Akun "@${targetUsername}" berhasil dihapus.`);
+    }
+  };
+
+  const toggleEntityPermissionInForm = (entityId: string) => {
+    if (formUser.allowedEntityIds.includes(entityId)) {
+      setFormUser({
+        ...formUser,
+        allowedEntityIds: formUser.allowedEntityIds.filter((id) => id !== entityId),
+      });
+    } else {
+      setFormUser({
+        ...formUser,
+        allowedEntityIds: [...formUser.allowedEntityIds, entityId],
+      });
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-stone-900/80 backdrop-blur-md animate-fade-in">
       <div className="bg-stone-50 rounded-2xl w-full max-w-5xl h-[92vh] flex flex-col shadow-2xl border border-stone-300 overflow-hidden relative">
@@ -531,21 +801,35 @@ export const CMSModal: React.FC<CMSModalProps> = ({
         )}
 
         {/* Header Bar */}
-        <div className="bg-stone-900 text-white p-4 sm:p-5 flex items-center justify-between border-b border-stone-800">
+        <div className="bg-stone-900 text-white p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-stone-800">
           <div className="flex items-center gap-3">
             <img
               src={BJP_LOGO_URL}
               alt="BJP HUB"
-              className="w-10 h-10 rounded-md object-cover border border-amber-400/50 shadow-xs"
+              className="w-10 h-10 rounded-md object-cover border border-amber-400/50 shadow-xs shrink-0"
             />
             <div>
               <h2 className="font-bold text-base sm:text-lg tracking-tight">
                 CMS Pengurus Komplek Bintara Jaya Permai (RW 11)
               </h2>
+              {currentUser && (
+                <div className="flex items-center gap-2 mt-0.5 text-xs text-stone-300 flex-wrap">
+                  <span className="font-semibold text-amber-300 flex items-center gap-1">
+                    <UserIcon className="w-3.5 h-3.5 text-amber-400" />
+                    {currentUser.name} (@{currentUser.username})
+                  </span>
+                  <span className="text-stone-500">•</span>
+                  <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] sm:text-[11px] ${
+                    isSuperAdmin ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-blue-950 text-blue-300 border border-blue-800'
+                  }`}>
+                    {isSuperAdmin ? 'Super Admin (Akses Penuh)' : `Admin Entitas (${allowedEntitiesInCMS.length} Entitas)`}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 self-end sm:self-auto">
             <button
               type="button"
               onClick={handleExport}
@@ -555,6 +839,18 @@ export const CMSModal: React.FC<CMSModalProps> = ({
               <Download className="w-3.5 h-3.5 text-emerald-400" />
               <span>Backup JSON</span>
             </button>
+
+            {currentUser && (
+              <button
+                type="button"
+                onClick={onLogout}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-red-950/80 hover:bg-red-900 text-red-200 rounded-xl text-xs font-bold border border-red-800/80 transition-colors cursor-pointer"
+                title="Keluar dari Akun CMS"
+              >
+                <LogOut className="w-3.5 h-3.5 text-red-300" />
+                <span>Keluar</span>
+              </button>
+            )}
 
             <button
               onClick={onClose}
@@ -581,7 +877,9 @@ export const CMSModal: React.FC<CMSModalProps> = ({
             }`}
           >
             <LayoutGrid className="w-4 h-4 text-emerald-700" />
-            <span>Kelola Entitas Kegiatan ({entities.length})</span>
+            <span>
+              Kelola Entitas Kegiatan ({isSuperAdmin ? entities.length : `${allowedEntitiesInCMS.length}/${entities.length}`})
+            </span>
           </button>
 
           <button
@@ -612,6 +910,41 @@ export const CMSModal: React.FC<CMSModalProps> = ({
           >
             <Globe className="w-4 h-4 text-emerald-700" />
             <span>Logo Web & Tab Navbar</span>
+          </button>
+
+          <button
+            onClick={() => {
+              setActiveTab('users');
+              setEditingUser(null);
+              setIsCreatingUser(false);
+            }}
+            className={`flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-semibold border-b-2 transition-all whitespace-nowrap ${
+              activeTab === 'users'
+                ? 'border-emerald-700 text-emerald-900 bg-emerald-50/50 rounded-t-lg'
+                : 'border-transparent text-stone-600 hover:text-stone-900'
+            }`}
+          >
+            <Users className="w-4 h-4 text-emerald-700" />
+            <span>Manajemen Akun ({users.length})</span>
+          </button>
+
+          <button
+            onClick={() => {
+              setActiveTab('supabase');
+            }}
+            className={`flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-semibold border-b-2 transition-all whitespace-nowrap ${
+              activeTab === 'supabase'
+                ? 'border-emerald-700 text-emerald-900 bg-emerald-50/50 rounded-t-lg'
+                : 'border-transparent text-stone-600 hover:text-stone-900'
+            }`}
+          >
+            <Database className="w-4 h-4 text-emerald-700" />
+            <span>Integrasi Supabase DB</span>
+            {isSupabaseConfigured() ? (
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" title="Supabase Terhubung"></span>
+            ) : (
+              <span className="w-2 h-2 rounded-full bg-amber-400" title="Supabase Belum Dikonfigurasi"></span>
+            )}
           </button>
 
           <button
@@ -1300,10 +1633,27 @@ export const CMSModal: React.FC<CMSModalProps> = ({
               ) : (
                 /* ENTITIES LIST BY SECTION / CATEGORY */
                 <div className="space-y-6">
+                  {/* Access Restriction Notice Banner if Entity Admin */}
+                  {!isSuperAdmin && currentUser && (
+                    <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 flex items-start gap-3 text-xs text-blue-900 shadow-2xs">
+                      <Shield className="w-5 h-5 text-blue-700 shrink-0 mt-0.5" />
+                      <div>
+                        <strong className="font-bold text-blue-950 block text-sm">
+                          Mode Akses Terbatas (@{currentUser.username})
+                        </strong>
+                        <p className="mt-0.5 leading-relaxed text-blue-800">
+                          Akun Anda terdaftar sebagai <strong>Admin Entitas</strong>. Anda memiliki wewenang khusus untuk mengedit <strong>{allowedEntitiesInCMS.length} entitas</strong> berikut. Jika Anda menambah card baru, hak akses akan otomatis diberikan kepada Anda.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-stone-200 shadow-2xs">
                     <div>
-                      <h3 className="font-bold text-stone-900 text-base">Kelola Entitas & Card Per Section ({entities.length} Card Total)</h3>
-                      <p className="text-xs text-stone-500">Anda dapat menambah card baru di setiap section atau mengedit card yang sudah ada.</p>
+                      <h3 className="font-bold text-stone-900 text-base">
+                        Kelola Entitas & Card Per Section ({isSuperAdmin ? `${entities.length} Card Total` : `${allowedEntitiesInCMS.length} Dari ${entities.length} Card Dikelola`})
+                      </h3>
+                      <p className="text-xs text-stone-500">Anda dapat menambah card baru di setiap section atau mengedit card yang memiliki hak akses.</p>
                     </div>
 
                     <button
@@ -1317,7 +1667,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
 
                   {/* Grouped by Section Category */}
                   {CATEGORY_PRESETS.map((cat) => {
-                    const sectionEntities = entities.filter(
+                    const sectionEntities = allowedEntitiesInCMS.filter(
                       (item) =>
                         item.category.toLowerCase().includes(cat.toLowerCase()) ||
                         cat.toLowerCase().includes(item.category.toLowerCase())
@@ -2335,6 +2685,648 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                   <Check className="w-4 h-4 text-emerald-300" />
                   <span>Simpan Pengaturan</span>
                 </button>
+              </div>
+            </div>
+          )}
+
+          {/* TAB: USER MANAGEMENT */}
+          {activeTab === 'users' && (
+            <div className="space-y-6 max-w-5xl mx-auto pb-6">
+              {/* IF CREATING OR EDITING USER */}
+              {isCreatingUser || editingUser ? (
+                <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-xs space-y-6">
+                  <div className="flex items-center justify-between border-b border-stone-100 pb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2.5 bg-emerald-100 text-emerald-800 rounded-xl">
+                        {editingUser ? <Edit3 className="w-5 h-5" /> : <UserPlus className="w-5 h-5" />}
+                      </div>
+                      <div>
+                        <h3 className="font-extrabold text-stone-900 text-base sm:text-lg">
+                          {editingUser ? `Edit Akun Pengurus: @${editingUser.username}` : 'Buat Akun Pengurus Baru'}
+                        </h3>
+                        <p className="text-xs text-stone-500">
+                          Tentukan username, password, peran pengurus, dan entitas spesifik yang boleh dikelola.
+                        </p>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEditingUser(null);
+                        setIsCreatingUser(false);
+                      }}
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-stone-600 hover:text-stone-900 bg-stone-100 hover:bg-stone-200 px-3.5 py-2 rounded-xl transition-colors cursor-pointer"
+                    >
+                      <ArrowLeft className="w-4 h-4" />
+                      <span>Kembali ke Daftar Akun</span>
+                    </button>
+                  </div>
+
+                  <form onSubmit={handleSaveUserSubmit} className="space-y-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {/* Name / Penanggung Jawab */}
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-bold text-stone-800">
+                          Nama Lengkap / Penanggung Jawab <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={formUser.name}
+                          onChange={(e) => setFormUser({ ...formUser, name: e.target.value })}
+                          placeholder="Contoh: Pengurus Masjid Al-Aqwam, Ibu Sri (Warung Bu Muncak)"
+                          className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs sm:text-sm text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:bg-white"
+                        />
+                      </div>
+
+                      {/* Username */}
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-bold text-stone-800">
+                          Username Login <span className="text-red-500">*</span>
+                        </label>
+                        <div className="relative">
+                          <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-stone-400">@</span>
+                          <input
+                            type="text"
+                            required
+                            value={formUser.username}
+                            onChange={(e) => setFormUser({ ...formUser, username: e.target.value.toLowerCase().replace(/[^a-z0-9_.]/g, '') })}
+                            placeholder="admin_masjid"
+                            className="w-full pl-8 pr-3.5 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs sm:text-sm text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:bg-white font-mono"
+                          />
+                        </div>
+                        <p className="text-[10px] text-stone-500">Gunakan huruf kecil, angka, atau garis bawah (contoh: <code>admin_posyandu</code>).</p>
+                      </div>
+
+                      {/* Password */}
+                      <div className="space-y-1.5 sm:col-span-2">
+                        <label className="text-xs font-bold text-stone-800">
+                          Password Login <span className="text-red-500">*</span>
+                        </label>
+                        <div className="relative max-w-md">
+                          <input
+                            type={showFormPassword ? 'text' : 'password'}
+                            required
+                            value={formUser.password}
+                            onChange={(e) => setFormUser({ ...formUser, password: e.target.value })}
+                            placeholder="Password login..."
+                            className="w-full pl-3.5 pr-10 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs sm:text-sm text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:bg-white font-mono"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowFormPassword(!showFormPassword)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-700 p-1 cursor-pointer"
+                            title={showFormPassword ? 'Sembunyikan password' : 'Tampilkan password'}
+                          >
+                            {showFormPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Role Selection */}
+                    <div className="space-y-3 pt-2 border-t border-stone-100">
+                      <label className="text-xs font-bold text-stone-800 block">
+                        Peran & Level Hak Akses <span className="text-red-500">*</span>
+                      </label>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {/* Option 1: Entity Admin */}
+                        <div
+                          onClick={() => setFormUser({ ...formUser, role: 'entity_admin' })}
+                          className={`p-4 rounded-2xl border-2 cursor-pointer transition-all ${
+                            formUser.role === 'entity_admin'
+                              ? 'border-blue-600 bg-blue-50/50 shadow-xs'
+                              : 'border-stone-200 hover:border-stone-300 bg-white'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2 mb-1.5">
+                            <Shield className={`w-5 h-5 ${formUser.role === 'entity_admin' ? 'text-blue-700' : 'text-stone-400'}`} />
+                            <strong className="text-sm font-bold text-stone-900">Admin Entitas (Akses Terbatas)</strong>
+                          </div>
+                          <p className="text-xs text-stone-600 leading-relaxed">
+                            Hanya dapat melihat dan mengedit entitas yang Anda pilihkan di bawah ini. Sangat disarankan untuk pengurus unit kegiatan / UMKM tertentu.
+                          </p>
+                        </div>
+
+                        {/* Option 2: Super Admin */}
+                        <div
+                          onClick={() => setFormUser({ ...formUser, role: 'super_admin' })}
+                          className={`p-4 rounded-2xl border-2 cursor-pointer transition-all ${
+                            formUser.role === 'super_admin'
+                              ? 'border-emerald-600 bg-emerald-50/50 shadow-xs'
+                              : 'border-stone-200 hover:border-stone-300 bg-white'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2 mb-1.5">
+                            <ShieldCheck className={`w-5 h-5 ${formUser.role === 'super_admin' ? 'text-emerald-700' : 'text-stone-400'}`} />
+                            <strong className="text-sm font-bold text-stone-900">Super Admin (Akses Penuh)</strong>
+                          </div>
+                          <p className="text-xs text-stone-600 leading-relaxed">
+                            Dapat mengedit seluruh entitas, mengelola pengumuman, mengubah logo & judul website, serta membuat/menghapus akun pengurus lain.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Entity Permissions Selector (Only if role === 'entity_admin') */}
+                    {formUser.role === 'entity_admin' && (
+                      <div className="space-y-3 pt-2 border-t border-stone-100">
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                          <div>
+                            <label className="text-xs font-bold text-stone-900 flex items-center gap-1.5">
+                              <span>Pilih Entitas yang Boleh Dikelola Akun Ini:</span>
+                              <span className="text-xs bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded-full">
+                                {formUser.allowedEntityIds.length} Dipilih
+                              </span>
+                            </label>
+                            <p className="text-[11px] text-stone-500">Centang entitas yang diizinkan untuk diakses & diedit oleh pengguna ini.</p>
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() => setFormUser({ ...formUser, allowedEntityIds: entities.map((e) => e.id) })}
+                              className="text-xs font-semibold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+                            >
+                              Pilih Semua ({entities.length})
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setFormUser({ ...formUser, allowedEntityIds: [] })}
+                              className="text-xs font-semibold text-stone-600 bg-stone-100 hover:bg-stone-200 border border-stone-200 px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+                            >
+                              Batalkan Semua
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Search Filter for Entities list */}
+                        <div className="relative max-w-sm">
+                          <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
+                          <input
+                            type="text"
+                            value={entitySearchFilter}
+                            onChange={(e) => setEntitySearchFilter(e.target.value)}
+                            placeholder="Cari nama entitas..."
+                            className="w-full pl-8 pr-3 py-1.5 bg-stone-50 border border-stone-200 rounded-lg text-xs text-stone-800 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                          />
+                        </div>
+
+                        {/* Scrollable Entities Checkbox Grid */}
+                        <div className="max-h-72 overflow-y-auto border border-stone-200 rounded-xl p-3 bg-stone-50/50 space-y-2">
+                          {entities
+                            .filter((e) => e.name.toLowerCase().includes(entitySearchFilter.toLowerCase()) || e.category.toLowerCase().includes(entitySearchFilter.toLowerCase()))
+                            .map((e) => {
+                              const isChecked = formUser.allowedEntityIds.includes(e.id);
+                              return (
+                                <div
+                                  key={e.id}
+                                  onClick={() => toggleEntityPermissionInForm(e.id)}
+                                  className={`p-2.5 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${
+                                    isChecked
+                                      ? 'bg-blue-50/80 border-blue-300 text-blue-950 font-semibold shadow-2xs'
+                                      : 'bg-white border-stone-200 text-stone-700 hover:border-stone-300'
+                                  }`}
+                                >
+                                  <div className="flex items-center gap-3">
+                                    <div className={`p-1 rounded-md ${isChecked ? 'text-blue-700' : 'text-stone-300'}`}>
+                                      {isChecked ? <CheckSquare className="w-5 h-5" /> : <Square className="w-5 h-5" />}
+                                    </div>
+                                    <img
+                                      src={formatImageUrl(e.image)}
+                                      alt={e.name}
+                                      className="w-8 h-8 rounded-lg object-cover border border-stone-200 shrink-0"
+                                    />
+                                    <div>
+                                      <h5 className="text-xs font-bold text-stone-900">{e.name}</h5>
+                                      <span className="text-[10px] text-stone-500 bg-stone-100 px-1.5 py-0.5 rounded font-normal">
+                                        {e.category}
+                                      </span>
+                                    </div>
+                                  </div>
+
+                                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                                    isChecked ? 'bg-blue-100 text-blue-800' : 'bg-stone-100 text-stone-400'
+                                  }`}>
+                                    {isChecked ? 'Diizinkan' : 'Dilarang'}
+                                  </span>
+                                </div>
+                              );
+                            })}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Submit Actions */}
+                    <div className="pt-4 border-t border-stone-200 flex items-center justify-end gap-3">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditingUser(null);
+                          setIsCreatingUser(false);
+                        }}
+                        className="px-4 py-2.5 text-stone-600 hover:text-stone-900 text-xs font-semibold rounded-xl border border-stone-200 transition-colors cursor-pointer"
+                      >
+                        Batal
+                      </button>
+
+                      <button
+                        type="submit"
+                        className="flex items-center gap-2 bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-xs sm:text-sm px-6 py-2.5 rounded-xl transition-all shadow-md cursor-pointer"
+                      >
+                        <Check className="w-4 h-4 text-emerald-300" />
+                        <span>{editingUser ? 'Simpan Perubahan Akun' : 'Buat Akun Pengurus'}</span>
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              ) : (
+                /* USER LIST VIEW */
+                <div className="space-y-6">
+                  {/* Top Header Card */}
+                  <div className="bg-white p-5 rounded-2xl border border-stone-200 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div>
+                      <h3 className="font-extrabold text-stone-900 text-base sm:text-lg flex items-center gap-2">
+                        <Users className="w-5 h-5 text-emerald-700" />
+                        <span>Manajemen Akun Pengurus & Hak Akses ({users.length})</span>
+                      </h3>
+                      <p className="text-xs text-stone-500 mt-0.5">
+                        Kelola akun login pengurus, password, dan tentukan entitas mana saja yang boleh dikelola oleh tiap akun.
+                      </p>
+                    </div>
+
+                    {isSuperAdmin && (
+                      <button
+                        onClick={handleStartNewUser}
+                        className="flex items-center gap-2 bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-xs sm:text-sm px-4 py-2.5 rounded-xl transition-all shadow-xs shrink-0 cursor-pointer"
+                      >
+                        <UserPlus className="w-4 h-4" />
+                        <span>+ Tambah Akun Pengurus</span>
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Search Bar */}
+                  <div className="relative">
+                    <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400" />
+                    <input
+                      type="text"
+                      value={userSearchQuery}
+                      onChange={(e) => setUserSearchQuery(e.target.value)}
+                      placeholder="Cari pengurus berdasarkan nama atau @username..."
+                      className="w-full pl-10 pr-4 py-2.5 bg-white border border-stone-200 rounded-xl text-xs sm:text-sm text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 shadow-2xs"
+                    />
+                  </div>
+
+                  {/* Users Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {users
+                      .filter(
+                        (u) =>
+                          u.name.toLowerCase().includes(userSearchQuery.toLowerCase()) ||
+                          u.username.toLowerCase().includes(userSearchQuery.toLowerCase())
+                      )
+                      .map((u) => {
+                        const isSuper = u.role === 'super_admin';
+                        const allowedEntities = entities.filter(
+                          (e) => u.allowedEntityIds?.includes('*') || u.allowedEntityIds?.includes(e.id)
+                        );
+                        const isSelf = u.id === currentUser?.id;
+
+                        return (
+                          <div
+                            key={u.id}
+                            className={`p-5 rounded-2xl border transition-all space-y-4 bg-white ${
+                              isSelf ? 'border-emerald-300 ring-2 ring-emerald-600/20 shadow-sm' : 'border-stone-200 shadow-2xs'
+                            }`}
+                          >
+                            <div className="flex items-start justify-between gap-3">
+                              <div className="flex items-center gap-3">
+                                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0 ${
+                                  isSuper ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'
+                                }`}>
+                                  {isSuper ? <ShieldCheck className="w-5 h-5" /> : <Shield className="w-5 h-5" />}
+                                </div>
+                                <div>
+                                  <div className="flex items-center gap-1.5 flex-wrap">
+                                    <h4 className="font-bold text-stone-900 text-sm sm:text-base">{u.name}</h4>
+                                    {isSelf && (
+                                      <span className="bg-amber-100 text-amber-800 text-[10px] font-extrabold px-2 py-0.5 rounded-full border border-amber-300">
+                                        Akun Anda Saat Ini
+                                      </span>
+                                    )}
+                                  </div>
+                                  <p className="text-xs font-mono font-bold text-stone-500">@{u.username}</p>
+                                </div>
+                              </div>
+
+                              <span className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold tracking-wide uppercase border shrink-0 ${
+                                isSuper
+                                  ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                                  : 'bg-blue-50 text-blue-800 border-blue-200'
+                              }`}>
+                                {isSuper ? 'Super Admin' : 'Admin Entitas'}
+                              </span>
+                            </div>
+
+                            {/* Password Box */}
+                            <div className="p-3 bg-stone-50 rounded-xl border border-stone-200/80 flex items-center justify-between text-xs font-mono">
+                              <span className="text-stone-500 font-sans font-medium text-[11px]">Password:</span>
+                              <div className="flex items-center gap-2">
+                                <span className="font-bold text-stone-900">
+                                  {visiblePasswordUserId === u.id ? u.password : '••••••••'}
+                                </span>
+                                <button
+                                  type="button"
+                                  onClick={() => setVisiblePasswordUserId(visiblePasswordUserId === u.id ? null : u.id)}
+                                  className="text-stone-400 hover:text-stone-700 p-1 cursor-pointer"
+                                  title={visiblePasswordUserId === u.id ? 'Sembunyikan' : 'Lihat Password'}
+                                >
+                                  {visiblePasswordUserId === u.id ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                                </button>
+                              </div>
+                            </div>
+
+                            {/* Hak Akses Entitas List */}
+                            <div className="space-y-1.5">
+                              <span className="text-[11px] font-bold text-stone-600 block">Hak Akses Pengelolaan:</span>
+                              {isSuper || u.allowedEntityIds?.includes('*') ? (
+                                <div className="bg-emerald-50 text-emerald-900 border border-emerald-200 text-xs font-semibold px-3 py-1.5 rounded-xl flex items-center gap-1.5">
+                                  <Check className="w-3.5 h-3.5 text-emerald-700" />
+                                  <span>Bebas Kelola Semua Entitas ({entities.length} Entitas)</span>
+                                </div>
+                              ) : allowedEntities.length === 0 ? (
+                                <div className="bg-amber-50 text-amber-900 border border-amber-200 text-xs px-3 py-1.5 rounded-xl">
+                                  Belum diberikan akses entitas manapun.
+                                </div>
+                              ) : (
+                                <div className="space-y-1">
+                                  <span className="text-[10px] text-blue-800 bg-blue-50 px-2 py-0.5 rounded font-bold border border-blue-200">
+                                    Diberikan Akses Ke {allowedEntities.length} Entitas Spesifik:
+                                  </span>
+                                  <div className="flex flex-wrap gap-1 pt-1 max-h-24 overflow-y-auto">
+                                    {allowedEntities.map((ent) => (
+                                      <span key={ent.id} className="text-[11px] bg-stone-100 text-stone-800 font-medium px-2 py-0.5 rounded-md border border-stone-200">
+                                        {ent.name}
+                                      </span>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Action Buttons */}
+                            {isSuperAdmin && (
+                              <div className="pt-3 border-t border-stone-100 flex items-center justify-end gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() => handleStartEditUser(u)}
+                                  className="flex items-center gap-1.5 px-3 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-800 rounded-lg text-xs font-bold transition-colors cursor-pointer"
+                                >
+                                  <Edit3 className="w-3.5 h-3.5 text-stone-600" />
+                                  <span>Edit Akun</span>
+                                </button>
+
+                                {u.username !== 'admin' && !isSelf && (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleDeleteUser(u.id, u.username)}
+                                    className="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-700 rounded-lg text-xs font-bold transition-colors cursor-pointer border border-red-200"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5 text-red-600" />
+                                    <span>Hapus</span>
+                                  </button>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* TAB 5: INTEGRASI SUPABASE DATABASE */}
+          {activeTab === 'supabase' && (
+            <div className="space-y-6 max-w-4xl mx-auto pb-6">
+              {/* Header Box */}
+              <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-xs space-y-3">
+                <div className="flex items-center justify-between flex-wrap gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 bg-emerald-100 text-emerald-800 rounded-xl shrink-0">
+                      <Database className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h3 className="font-extrabold text-stone-900 text-base sm:text-lg flex items-center gap-2">
+                        <span>Integrasi Supabase Cloud Database</span>
+                      </h3>
+                      <p className="text-xs text-stone-500">
+                        Simpan credentials akun pengurus, entitas kegiatan, pengumuman, dan konfigurasi portal secara real-time di cloud database Supabase.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Status Badge */}
+                  <div>
+                    {isSupabaseConfigured() ? (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-800 border border-emerald-300 rounded-full text-xs font-bold shadow-2xs">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                        <span>Supabase Dikonfigurasi</span>
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 text-amber-800 border border-amber-300 rounded-full text-xs font-bold shadow-2xs">
+                        <XCircle className="w-4 h-4 text-amber-600" />
+                        <span>Supabase Belum Dikonfigurasi</span>
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Status & Quick Action Card */}
+              <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-xs space-y-4">
+                <h4 className="font-bold text-stone-900 text-sm sm:text-base border-b border-stone-100 pb-2 flex items-center gap-2">
+                  <Server className="w-4 h-4 text-emerald-700" />
+                  <span>Status Koneksi & Sinkronisasi Data</span>
+                </h4>
+
+                <p className="text-xs text-stone-600 leading-relaxed">
+                  Gunakan kontrol di bawah ini untuk menguji koneksi ke Supabase atau melakukan sinkronisasi data antara penyimpanan lokal dan Supabase.
+                </p>
+
+                {/* Test Result Banner */}
+                {supabaseTestResult && (
+                  <div
+                    className={`p-4 rounded-xl border text-xs font-medium space-y-1 ${
+                      supabaseTestResult.success
+                        ? 'bg-emerald-50 border-emerald-300 text-emerald-900'
+                        : 'bg-red-50 border-red-300 text-red-900'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 font-bold text-sm">
+                      {supabaseTestResult.success ? (
+                        <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0" />
+                      ) : (
+                        <XCircle className="w-4 h-4 text-red-700 shrink-0" />
+                      )}
+                      <span>{supabaseTestResult.success ? 'Koneksi Berhasil!' : 'Koneksi Gagal'}</span>
+                    </div>
+                    <p className="pl-6 text-stone-700">{supabaseTestResult.message}</p>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={handleTestSupabase}
+                    disabled={supabaseTesting}
+                    className="flex items-center justify-center gap-2 px-4 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-900 border border-stone-300 rounded-xl font-bold text-xs transition-all cursor-pointer disabled:opacity-50"
+                  >
+                    <RefreshCw className={`w-4 h-4 text-stone-700 ${supabaseTesting ? 'animate-spin' : ''}`} />
+                    <span>{supabaseTesting ? 'Menguji...' : 'Uji Koneksi Supabase'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handlePushToSupabase}
+                    disabled={supabaseSyncing || !isSupabaseConfigured()}
+                    className="flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-800 hover:bg-emerald-900 text-white rounded-xl font-bold text-xs transition-all shadow-xs cursor-pointer disabled:opacity-50"
+                  >
+                    <Upload className="w-4 h-4 text-emerald-300" />
+                    <span>{supabaseSyncing ? 'Mengirim...' : 'Upload Data Lokal ke Supabase'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handlePullFromSupabase}
+                    disabled={supabaseSyncing || !isSupabaseConfigured()}
+                    className="flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-700 hover:bg-blue-800 text-white rounded-xl font-bold text-xs transition-all shadow-xs cursor-pointer disabled:opacity-50"
+                  >
+                    <Download className="w-4 h-4 text-blue-200" />
+                    <span>{supabaseSyncing ? 'Mengunduh...' : 'Tarik Data dari Supabase'}</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Panduan Langkah Demi Langkah Integrasi */}
+              <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-xs space-y-4">
+                <div className="flex items-center justify-between border-b border-stone-100 pb-3">
+                  <h4 className="font-bold text-stone-900 text-sm sm:text-base flex items-center gap-2">
+                    <Code className="w-4 h-4 text-emerald-700" />
+                    <span>Panduan Integrasi Supabase (Step-by-Step)</span>
+                  </h4>
+                  <a
+                    href="https://supabase.com"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1 text-xs text-emerald-800 font-bold hover:underline"
+                  >
+                    <span>Buka Supabase Dashboard</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                  <div className="p-4 bg-stone-50 rounded-xl border border-stone-200 space-y-2">
+                    <div className="flex items-center gap-2 font-bold text-stone-900">
+                      <span className="w-5 h-5 rounded-full bg-emerald-800 text-white text-[10px] flex items-center justify-center font-bold">1</span>
+                      <span>Buat Project Supabase Gratis</span>
+                    </div>
+                    <p className="text-stone-600 leading-relaxed">
+                      Daftar akun gratis di <a href="https://supabase.com" target="_blank" rel="noreferrer" className="text-emerald-800 font-bold underline">supabase.com</a> dan buat project baru bernama <code>bjp-hub-db</code>.
+                    </p>
+                  </div>
+
+                  <div className="p-4 bg-stone-50 rounded-xl border border-stone-200 space-y-2">
+                    <div className="flex items-center gap-2 font-bold text-stone-900">
+                      <span className="w-5 h-5 rounded-full bg-emerald-800 text-white text-[10px] flex items-center justify-center font-bold">2</span>
+                      <span>Salin Project URL & API Key</span>
+                    </div>
+                    <p className="text-stone-600 leading-relaxed">
+                      Buka menu <strong>Project Settings -&gt; API</strong> di Supabase. Salin <strong>Project URL</strong> dan <strong>anon / public API key</strong> Anda.
+                    </p>
+                  </div>
+
+                  <div className="p-4 bg-stone-50 rounded-xl border border-stone-200 space-y-2">
+                    <div className="flex items-center gap-2 font-bold text-stone-900">
+                      <span className="w-5 h-5 rounded-full bg-emerald-800 text-white text-[10px] flex items-center justify-center font-bold">3</span>
+                      <span>Atur Environment Variable</span>
+                    </div>
+                    <p className="text-stone-600 leading-relaxed">
+                      Tambahkan kunci berikut di pengaturan environment AI Studio / file <code>.env</code>:
+                    </p>
+                    <div className="p-2 bg-stone-900 text-emerald-400 font-mono text-[11px] rounded-lg">
+                      VITE_SUPABASE_URL=https://xyz.supabase.co<br />
+                      VITE_SUPABASE_ANON_KEY=eyJhbGci...
+                    </div>
+                  </div>
+
+                  <div className="p-4 bg-stone-50 rounded-xl border border-stone-200 space-y-2">
+                    <div className="flex items-center gap-2 font-bold text-stone-900">
+                      <span className="w-5 h-5 rounded-full bg-emerald-800 text-white text-[10px] flex items-center justify-center font-bold">4</span>
+                      <span>Jalankan Skrip Tabel SQL</span>
+                    </div>
+                    <p className="text-stone-600 leading-relaxed">
+                      Buka menu <strong>SQL Editor</strong> di Supabase Dashboard, lalu jalankan skrip SQL otomatis di bawah ini untuk membuat seluruh tabel yang dibutuhkan.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Card Skrip SQL Setup */}
+              <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-xs space-y-4">
+                <div className="flex items-center justify-between border-b border-stone-100 pb-3 flex-wrap gap-2">
+                  <div className="flex items-center gap-2">
+                    <Terminal className="w-5 h-5 text-emerald-700" />
+                    <div>
+                      <h4 className="font-bold text-stone-900 text-sm sm:text-base">
+                        Skrip SQL Editor Supabase
+                      </h4>
+                      <p className="text-xs text-stone-500">
+                        Salin dan jalankan skrip ini di SQL Editor Supabase untuk membuat tabel <code>bjp_users</code>, <code>bjp_entities</code>, <code>bjp_announcements</code>, dan <code>bjp_site_settings</code>.
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleCopySqlScript}
+                    className="flex items-center gap-1.5 px-4 py-2 bg-emerald-800 hover:bg-emerald-900 text-white rounded-xl text-xs font-bold transition-all cursor-pointer shadow-xs"
+                  >
+                    {copiedSql ? (
+                      <>
+                        <Check className="w-4 h-4 text-emerald-300" />
+                        <span>Tersalin!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-4 h-4 text-emerald-300" />
+                        <span>Salin Skrip SQL</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                <div className="relative rounded-xl overflow-hidden bg-stone-900 border border-stone-800">
+                  <pre className="p-4 text-emerald-400 font-mono text-[11px] leading-relaxed overflow-x-auto max-h-72 no-scrollbar">
+                    {SUPABASE_SQL_SETUP_SCRIPT}
+                  </pre>
+                </div>
+              </div>
+
+              {/* Card Keamanan Password & Environment Variable */}
+              <div className="bg-emerald-50/60 p-5 rounded-2xl border border-emerald-200 text-xs text-emerald-900 space-y-2">
+                <div className="flex items-center gap-2 font-extrabold text-sm text-emerald-950">
+                  <ShieldCheck className="w-5 h-5 text-emerald-700" />
+                  <span>Jaminan Keamanan: Bebas Hardcode Credentials</span>
+                </div>
+                <p className="text-emerald-800 leading-relaxed">
+                  Aplikasi ini <strong>tidak pernah menyimpan kata sandi secara hardcode di dalam kode JavaScript</strong>. Seluruh credential akun pengurus disimpan secara aman di dalam tabel database (Supabase <code>bjp_users</code> atau enkripsi local storage) dan dapat dikonfigurasi secara fleksibel melalui variabel lingkungan <code>VITE_INITIAL_ADMIN_PASSWORD</code>.
+                </p>
               </div>
             </div>
           )}

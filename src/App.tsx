@@ -11,8 +11,15 @@ import { CMSModal } from './components/CMSModal';
 import { PasswordModal } from './components/PasswordModal';
 import { Footer } from './components/Footer';
 
-import { Entity, Announcement, SiteSettings, CategoryHeaderConfig } from './types';
-import { getEntities, saveEntities, getAnnouncements, saveAnnouncements, getSiteSettings, saveSiteSettings, DEFAULT_CATEGORY_CONFIGS } from './utils/storage';
+import { Entity, Announcement, SiteSettings, CategoryHeaderConfig, User } from './types';
+import {
+  getEntities, saveEntities,
+  getAnnouncements, saveAnnouncements,
+  getSiteSettings, saveSiteSettings,
+  getUsers, saveUsers,
+  getLoggedInUser, saveLoggedInUser,
+  DEFAULT_CATEGORY_CONFIGS
+} from './utils/storage';
 import { setEntityMetaTags, setAnnouncementMetaTags, resetMetaTags } from './utils/meta';
 import { ShareModal } from './components/ShareModal';
 import { SearchX, Plus } from 'lucide-react';
@@ -31,10 +38,12 @@ export default function App() {
     type: 'entity' | 'announcement';
   } | null>(null);
 
-  // CMS & Password Auth State
+  // User Management & Login Auth State
+  const [users, setUsers] = useState<User[]>(() => getUsers());
+  const [currentUser, setCurrentUser] = useState<User | null>(() => getLoggedInUser());
   const [isCMSOpen, setIsCMSOpen] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
-  const [isAuthAuthenticated, setIsAuthAuthenticated] = useState(false);
+  const [isAuthAuthenticated, setIsAuthAuthenticated] = useState<boolean>(() => Boolean(getLoggedInUser()));
   const [editingEntityForCMS, setEditingEntityForCMS] = useState<Entity | null>(null);
   const [pendingCategoryForCard, setPendingCategoryForCard] = useState<string | null>(null);
 
@@ -136,10 +145,23 @@ export default function App() {
     resetMetaTags(updatedSettings.logoUrl);
   };
 
-  // CMS access handler with password check
+  const handleSaveUsers = (updatedUsers: User[]) => {
+    setUsers(updatedUsers);
+    saveUsers(updatedUsers);
+
+    if (currentUser) {
+      const updatedSelf = updatedUsers.find((u) => u.id === currentUser.id);
+      if (updatedSelf) {
+        setCurrentUser(updatedSelf);
+        saveLoggedInUser(updatedSelf);
+      }
+    }
+  };
+
+  // CMS access handler with authentication check
   const handleOpenCMSWithAuth = (presetCat?: string) => {
     setPendingCategoryForCard(presetCat || null);
-    if (isAuthAuthenticated) {
+    if (isAuthAuthenticated && currentUser) {
       setEditingEntityForCMS(null);
       setIsCMSOpen(true);
     } else {
@@ -150,17 +172,26 @@ export default function App() {
   const handleEditEntityInCMS = (ent: Entity) => {
     setEditingEntityForCMS(ent);
     setPendingCategoryForCard(null);
-    if (isAuthAuthenticated) {
+    if (isAuthAuthenticated && currentUser) {
       setIsCMSOpen(true);
     } else {
       setIsPasswordModalOpen(true);
     }
   };
 
-  const handlePasswordSuccess = () => {
+  const handleLoginSuccess = (user: User) => {
+    setCurrentUser(user);
+    saveLoggedInUser(user);
     setIsAuthAuthenticated(true);
     setIsPasswordModalOpen(false);
     setIsCMSOpen(true);
+  };
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    saveLoggedInUser(null);
+    setIsAuthAuthenticated(false);
+    setIsCMSOpen(false);
   };
 
   // Filter sections & category configs
@@ -433,11 +464,12 @@ export default function App() {
         />
       )}
 
-      {/* Password Modal */}
+      {/* Password Modal / Login Modal */}
       <PasswordModal
         isOpen={isPasswordModalOpen}
         onClose={() => setIsPasswordModalOpen(false)}
-        onSuccess={handlePasswordSuccess}
+        onSuccess={handleLoginSuccess}
+        users={users}
         logoUrl={siteSettings.logoUrl}
       />
 
@@ -455,6 +487,10 @@ export default function App() {
         onSaveAnnouncements={handleSaveAnnouncements}
         siteSettings={siteSettings}
         onSaveSiteSettings={handleSaveSiteSettings}
+        users={users}
+        onSaveUsers={handleSaveUsers}
+        currentUser={currentUser}
+        onLogout={handleLogout}
         editingEntityInit={editingEntityForCMS}
         initialCategoryForNewEntity={pendingCategoryForCard}
       />
