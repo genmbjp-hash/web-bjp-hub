@@ -7,6 +7,7 @@ import { CategoryFilter } from './components/CategoryFilter';
 import { EntityCard } from './components/EntityCard';
 import { PhotoAlbumCard } from './components/PhotoAlbumCard';
 import { SinglePageView } from './components/SinglePageView';
+import { RtRwView } from './components/RtRwView';
 import { SocialFeedsSection } from './components/SocialFeedsSection';
 import { DocumentGeneratorPage } from './components/DocumentGeneratorPage';
 import { PollingPage } from './components/PollingPage';
@@ -23,7 +24,8 @@ import {
   getSiteSettings, saveSiteSettings,
   getUsers, saveUsers,
   getLoggedInUser, saveLoggedInUser,
-  DEFAULT_CATEGORY_CONFIGS
+  DEFAULT_CATEGORY_CONFIGS,
+  DEFAULT_RTRW_CONFIG
 } from './utils/storage';
 import { setEntityMetaTags, setAnnouncementMetaTags, resetMetaTags } from './utils/meta';
 import { ShareModal } from './components/ShareModal';
@@ -388,7 +390,13 @@ export default function App() {
                         )}
 
                         {/* Layout Switch Rendering */}
-                        {layoutType === 'single_page' ? (
+                        {currentConfig.name === 'Informasi RT/RW' || selectedCategory === 'Informasi RT/RW' ? (
+                          <RtRwView
+                            config={siteSettings.rtRwConfig || DEFAULT_RTRW_CONFIG}
+                            onBack={() => setSelectedCategory('Semua')}
+                            onOpenCMS={() => handleOpenCMSWithAuth()}
+                          />
+                        ) : layoutType === 'single_page' ? (
                           /* LAYOUT TYPE 3: SINGLE PAGE VIEW */
                           <SinglePageView
                             title={currentConfig.name}

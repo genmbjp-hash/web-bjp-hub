@@ -12,6 +12,9 @@ import {
   PollingSection,
   PageLayoutType,
   RunningTextConfig,
+  RtRwPageConfig,
+  RtDetailItem,
+  RtRwValueItem,
 } from '../types';
 import {
   X, Plus, Edit3, Trash2, Copy, Download, Upload, RefreshCw, Check,
@@ -19,9 +22,10 @@ import {
   Bold, Italic, List, Heading, ExternalLink, ShieldAlert, ArrowLeft,
   GripVertical, ArrowUp, ArrowDown, MapPin, Info, Globe, Sliders, Palette, Eye, EyeOff,
   Users, UserPlus, ShieldCheck, Shield, Lock, LogOut, CheckSquare, Square, Search, User as UserIcon,
-  Database, Server, CheckCircle2, XCircle, Terminal, Code, FileText, Vote, Images, Layout, Layers, UploadCloud
+  Database, Server, CheckCircle2, XCircle, Terminal, Code, FileText, Vote, Images, Layout, Layers, UploadCloud,
+  ChevronDown, ChevronUp, Building, Phone, Calendar
 } from 'lucide-react';
-import { exportDataAsJSON, importDataFromJSON, resetToDefaults, DEFAULT_CATEGORY_CONFIGS } from '../utils/storage';
+import { exportDataAsJSON, importDataFromJSON, resetToDefaults, DEFAULT_CATEGORY_CONFIGS, DEFAULT_RTRW_CONFIG } from '../utils/storage';
 import { formatImageUrl } from '../utils/imageUrl';
 import { BJP_LOGO_URL } from '../assets/logo';
 import { InstagramIcon, FacebookIcon, TikTokIcon, WhatsAppIcon, SocialBadges } from './SocialIcons';
@@ -55,6 +59,59 @@ interface CMSModalProps {
   editingEntityInit?: Entity | null;
   initialCategoryForNewEntity?: string | null;
 }
+
+// Collapsible Card helper component for CMS main sections & cards
+interface CollapsibleCardProps {
+  title: React.ReactNode;
+  subtitle?: React.ReactNode;
+  icon?: React.ReactNode;
+  badge?: React.ReactNode;
+  defaultOpen?: boolean;
+  children: React.ReactNode;
+  className?: string;
+  headerAction?: React.ReactNode;
+}
+
+const CollapsibleCard: React.FC<CollapsibleCardProps> = ({
+  title,
+  subtitle,
+  icon,
+  badge,
+  defaultOpen = true,
+  children,
+  className = '',
+  headerAction,
+}) => {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+
+  return (
+    <div className={`bg-white rounded-2xl border border-stone-200/90 shadow-2xs overflow-hidden transition-all ${className}`}>
+      <div
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full px-4 py-3 bg-stone-50/90 hover:bg-stone-100/90 flex items-center justify-between cursor-pointer select-none transition-colors border-b border-stone-200/70"
+      >
+        <div className="flex items-center gap-2.5 min-w-0 pr-2">
+          {icon && <div className="text-emerald-800 shrink-0">{icon}</div>}
+          <div className="truncate text-left">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-xs sm:text-sm font-bold text-stone-900">{title}</span>
+              {badge}
+            </div>
+            {subtitle && <p className="text-[11px] text-stone-500 font-normal truncate mt-0.5">{subtitle}</p>}
+          </div>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          {headerAction && <div onClick={(e) => e.stopPropagation()}>{headerAction}</div>}
+          <div className="p-1 px-2 rounded-lg text-stone-600 hover:text-stone-900 bg-stone-200/50 hover:bg-stone-200 transition-colors flex items-center gap-1 text-[11px] font-bold">
+            <span>{isOpen ? 'Tutup' : 'Buka'}</span>
+            {isOpen ? <ChevronUp className="w-3.5 h-3.5 text-emerald-800" /> : <ChevronDown className="w-3.5 h-3.5 text-stone-600" />}
+          </div>
+        </div>
+      </div>
+      {isOpen && <div className="p-4 sm:p-5">{children}</div>}
+    </div>
+  );
+};
 
 // Preset Images for board members without photo links
 const IMAGE_PRESETS = [
@@ -219,7 +276,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
   editingEntityInit,
   initialCategoryForNewEntity,
 }) => {
-  const [activeTab, setActiveTab] = useState<'entities' | 'entity_pages' | 'announcements' | 'settings' | 'documents' | 'polling' | 'users' | 'supabase' | 'backup'>('entities');
+  const [activeTab, setActiveTab] = useState<'entities' | 'entity_pages' | 'announcements' | 'settings' | 'rtrw' | 'documents' | 'polling' | 'users' | 'supabase' | 'backup'>('entities');
   
   // Supabase State & Handlers
   const [supabaseTesting, setSupabaseTesting] = useState<boolean>(false);
@@ -429,6 +486,11 @@ export const CMSModal: React.FC<CMSModalProps> = ({
     }
   );
 
+  // RT/RW Page Config State
+  const [tempRtRwConfig, setTempRtRwConfig] = useState<RtRwPageConfig>(
+    siteSettings?.rtRwConfig || DEFAULT_RTRW_CONFIG
+  );
+
   // Category / Page Config CRUD State
   const [editingCategoryConfig, setEditingCategoryConfig] = useState<CategoryHeaderConfig | null>(null);
   const [isCreatingCategoryConfig, setIsCreatingCategoryConfig] = useState<boolean>(false);
@@ -463,6 +525,9 @@ export const CMSModal: React.FC<CMSModalProps> = ({
       }
       if (siteSettings.pollingConfig) {
         setTempPollingConfig(siteSettings.pollingConfig);
+      }
+      if (siteSettings.rtRwConfig) {
+        setTempRtRwConfig(siteSettings.rtRwConfig);
       }
     }
   }, [siteSettings, isOpen]);
@@ -1187,6 +1252,20 @@ export const CMSModal: React.FC<CMSModalProps> = ({
           >
             <Vote className="w-4 h-4 text-emerald-700" />
             <span>Polling & Google Form</span>
+          </button>
+
+          <button
+            onClick={() => {
+              setActiveTab('rtrw');
+            }}
+            className={`flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-semibold border-b-2 transition-all whitespace-nowrap ${
+              activeTab === 'rtrw'
+                ? 'border-emerald-700 text-emerald-900 bg-emerald-50/50 rounded-t-lg'
+                : 'border-transparent text-stone-600 hover:text-stone-900'
+            }`}
+          >
+            <Building className="w-4 h-4 text-emerald-700" />
+            <span>Pengaturan RT/RW ({tempRtRwConfig.rts ? tempRtRwConfig.rts.length : 0})</span>
           </button>
 
           <button
@@ -2113,32 +2192,38 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                     );
 
                     return (
-                      <div key={cat} className="bg-white p-4 sm:p-5 rounded-2xl border border-stone-200/90 shadow-2xs space-y-4">
-                        {/* Section Header */}
-                        <div className="flex items-center justify-between border-b border-stone-100 pb-3">
-                          <div className="flex items-center gap-2.5">
-                            <h4 className="font-bold text-stone-900 text-sm sm:text-base">{cat}</h4>
-                            <span className="text-xs font-semibold bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full">
-                              {sectionEntities.length} Card
-                            </span>
-                          </div>
-
+                      <CollapsibleCard
+                        key={cat}
+                        title={cat}
+                        subtitle={`Daftar card entitas di kategori ${cat}`}
+                        badge={
+                          <span className="text-xs font-bold bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                            {sectionEntities.length} Card
+                          </span>
+                        }
+                        icon={<LayoutGrid className="w-4 h-4 text-emerald-700" />}
+                        defaultOpen={true}
+                        headerAction={
                           <button
-                            onClick={() => handleStartNewEntity(cat)}
-                            className="flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1.5 rounded-lg border border-emerald-200 transition-colors"
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleStartNewEntity(cat);
+                            }}
+                            className="flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1.5 rounded-lg border border-emerald-200 transition-colors cursor-pointer"
                           >
                             <Plus className="w-3.5 h-3.5" />
-                            <span>Tambah Card di {cat}</span>
+                            <span>+ Tambah Card</span>
                           </button>
-                        </div>
-
+                        }
+                      >
                         {/* Cards Grid for this Section */}
                         {sectionEntities.length === 0 ? (
                           <div className="p-4 rounded-xl border border-dashed border-stone-200 text-center bg-stone-50/50 space-y-2">
                             <p className="text-xs text-stone-400 italic">Belum ada card di section "{cat}".</p>
                             <button
                               onClick={() => handleStartNewEntity(cat)}
-                              className="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 hover:underline"
+                              className="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 hover:underline cursor-pointer"
                             >
                               <Plus className="w-3.5 h-3.5" />
                               <span>Tambah card pertama di {cat}</span>
@@ -2159,14 +2244,14 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                                     <div className="flex items-center gap-1">
                                       <button
                                         onClick={() => handleDuplicateEntity(item)}
-                                        className="p-1 hover:bg-stone-200 text-stone-500 rounded-md"
+                                        className="p-1 hover:bg-stone-200 text-stone-500 rounded-md cursor-pointer"
                                         title="Salin Entitas Ini"
                                       >
                                         <Copy className="w-3.5 h-3.5" />
                                       </button>
                                       <button
                                         onClick={() => handleDeleteEntity(item.id, item.name)}
-                                        className="p-1 hover:bg-red-50 text-red-600 rounded-md"
+                                        className="p-1 hover:bg-red-50 text-red-600 rounded-md cursor-pointer"
                                         title="Hapus Entitas"
                                       >
                                         <Trash2 className="w-3.5 h-3.5" />
@@ -2201,7 +2286,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                                   </span>
                                   <button
                                     onClick={() => handleStartEditEntity(item)}
-                                    className="flex items-center gap-1 bg-white hover:bg-emerald-50 text-emerald-800 text-xs font-bold px-3 py-1.5 rounded-lg border border-stone-200 hover:border-emerald-300 transition-colors"
+                                    className="flex items-center gap-1 bg-white hover:bg-emerald-50 text-emerald-800 text-xs font-bold px-3 py-1.5 rounded-lg border border-stone-200 hover:border-emerald-300 transition-colors cursor-pointer"
                                   >
                                     <Edit3 className="w-3.5 h-3.5" />
                                     <span>Edit Detail</span>
@@ -2211,7 +2296,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                             ))}
                           </div>
                         )}
-                      </div>
+                      </CollapsibleCard>
                     );
                   })}
                 </div>
@@ -2270,45 +2355,44 @@ export const CMSModal: React.FC<CMSModalProps> = ({
 
                 <div className="space-y-6">
                   {tempCategoryConfigs.map((catConfig) => (
-                    <div
+                    <CollapsibleCard
                       key={catConfig.id}
-                      className="p-4 sm:p-5 bg-stone-50 rounded-2xl border border-stone-200 space-y-4 shadow-2xs"
-                    >
-                      {/* Header info & delete */}
-                      <div className="flex items-center justify-between border-b border-stone-200/80 pb-2.5 flex-wrap gap-2">
-                        <span className="text-xs font-bold text-stone-900 flex items-center gap-2">
-                          <span className="w-2.5 h-2.5 rounded-full bg-emerald-600"></span>
+                      title={
+                        <span>
                           Halaman / Entitas: <strong className="text-emerald-800">{catConfig.name}</strong>
-                          <span className="text-[10px] text-stone-400 font-mono font-normal">({catConfig.id})</span>
                         </span>
-
-                        <div className="flex items-center gap-2">
-                          <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase ${
-                            catConfig.layoutType === 'single_page'
-                              ? 'bg-purple-100 text-purple-800 border border-purple-200'
-                              : catConfig.layoutType === 'photo_album'
-                              ? 'bg-blue-100 text-blue-800 border border-blue-200'
-                              : 'bg-emerald-100 text-emerald-800 border border-emerald-200'
-                          }`}>
-                            Layout: {catConfig.layoutType === 'single_page' ? 'Single Page' : catConfig.layoutType === 'photo_album' ? 'Photo Album' : 'Default Card'}
-                          </span>
-
-                          <button
-                            type="button"
-                            onClick={() => {
-                              if (confirm(`Apakah Anda yakin ingin menghapus entitas "${catConfig.name}"?`)) {
-                                setTempCategoryConfigs(tempCategoryConfigs.filter((c) => c.id !== catConfig.id));
-                                showToast(`Entitas "${catConfig.name}" dihapus dari daftar halaman.`);
-                              }
-                            }}
-                            className="p-1 text-stone-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                            title="Hapus Entitas"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </div>
-
+                      }
+                      subtitle={`ID: ${catConfig.id}`}
+                      badge={
+                        <span className={`text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase ${
+                          catConfig.layoutType === 'single_page'
+                            ? 'bg-purple-100 text-purple-800 border border-purple-200'
+                            : catConfig.layoutType === 'photo_album'
+                            ? 'bg-blue-100 text-blue-800 border border-blue-200'
+                            : 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                        }`}>
+                          Layout: {catConfig.layoutType === 'single_page' ? 'Single Page' : catConfig.layoutType === 'photo_album' ? 'Photo Album' : 'Default Card'}
+                        </span>
+                      }
+                      icon={<Layers className="w-4 h-4 text-emerald-700" />}
+                      defaultOpen={true}
+                      headerAction={
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (confirm(`Apakah Anda yakin ingin menghapus entitas "${catConfig.name}"?`)) {
+                              setTempCategoryConfigs(tempCategoryConfigs.filter((c) => c.id !== catConfig.id));
+                              showToast(`Entitas "${catConfig.name}" dihapus dari daftar halaman.`);
+                            }
+                          }}
+                          className="p-1 text-stone-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                          title="Hapus Entitas"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      }
+                    >
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {/* Option Layout Selector */}
                         <div className="space-y-2 md:col-span-2 bg-white p-3.5 rounded-xl border border-stone-200">
@@ -2629,7 +2713,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                           <LayoutPreviewCard catConfig={catConfig} />
                         </div>
                       </div>
-                    </div>
+                    </CollapsibleCard>
                   ))}
                 </div>
 
@@ -4557,6 +4641,516 @@ Adalah benar warga Bintara Jaya Permai yang memerlukan surat untuk keperluan: [K
                   >
                     <Check className="w-4 h-4 text-emerald-300" />
                     <span>Simpan Pengaturan Polling</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB: PENGATURAN RT/RW CONFIG */}
+          {activeTab === 'rtrw' && (
+            <div className="space-y-6 max-w-5xl mx-auto pb-6">
+              <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-xs space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-stone-100 pb-4">
+                  <div>
+                    <h3 className="font-extrabold text-stone-900 text-base sm:text-lg flex items-center gap-2">
+                      <Building className="w-5 h-5 text-emerald-700" />
+                      <span>Pengaturan Kelola Halaman Informasi RT/RW</span>
+                    </h3>
+                    <p className="text-xs text-stone-500 mt-0.5">
+                      Kelola Visi Misi RW 11, Banner Hero, serta Rincian Informasi Ketua RT, Wilayah, & Program Unggulan.
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <label className="flex items-center gap-2 cursor-pointer bg-emerald-50 p-2.5 rounded-xl border border-emerald-200">
+                      <input
+                        type="checkbox"
+                        checked={tempRtRwConfig.enabled}
+                        onChange={(e) => setTempRtRwConfig({ ...tempRtRwConfig, enabled: e.target.checked })}
+                        className="w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500"
+                      />
+                      <span className="text-xs font-bold text-emerald-950">Aktifkan Halaman RT/RW</span>
+                    </label>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onSaveSiteSettings({
+                          ...siteSettings,
+                          rtRwConfig: tempRtRwConfig,
+                        });
+                        showToast('Pengaturan halaman Informasi RT/RW berhasil disimpan!');
+                      }}
+                      className="flex items-center gap-2 px-5 py-2.5 bg-emerald-800 hover:bg-emerald-900 text-white rounded-xl font-bold text-xs sm:text-sm shadow-md transition-all cursor-pointer"
+                    >
+                      <Check className="w-4 h-4 text-emerald-300" />
+                      <span>Simpan Perubahan</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* CARD 1: HEADER & HERO BANNER */}
+                <CollapsibleCard
+                  title="1. Header & Banner Hero Halaman RT/RW"
+                  subtitle="Judul, deskripsi penjelasan, dan latar gambar hero banner halaman RT/RW"
+                  icon={<Building className="w-4 h-4 text-emerald-700" />}
+                  defaultOpen={true}
+                >
+                  <div className="grid grid-cols-1 gap-4">
+                    <div className="space-y-1">
+                      <label className="text-xs font-bold text-stone-800">Judul Utama Halaman RT/RW:</label>
+                      <input
+                        type="text"
+                        value={tempRtRwConfig.pageTitle || ''}
+                        onChange={(e) => setTempRtRwConfig({ ...tempRtRwConfig, pageTitle: e.target.value })}
+                        placeholder="Contoh: Informasi RT/RW 11 Bintara Jaya Permai"
+                        className="w-full px-3 py-2 bg-white border border-stone-300 rounded-xl text-xs font-bold text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-xs font-bold text-stone-800">Deskripsi Penjelasan Sub-Header:</label>
+                      <textarea
+                        rows={2}
+                        value={tempRtRwConfig.pageDescription || ''}
+                        onChange={(e) => setTempRtRwConfig({ ...tempRtRwConfig, pageDescription: e.target.value })}
+                        placeholder="Deskripsi singkat struktur organisasi..."
+                        className="w-full px-3 py-2 bg-white border border-stone-300 rounded-xl text-xs text-stone-800 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-xs font-bold text-stone-800">URL Gambar Banner Hero:</label>
+                      <input
+                        type="text"
+                        value={tempRtRwConfig.heroImage || ''}
+                        onChange={(e) => setTempRtRwConfig({ ...tempRtRwConfig, heroImage: e.target.value })}
+                        placeholder="https://images.unsplash.com/..."
+                        className="w-full px-3 py-2 bg-white border border-stone-300 rounded-xl text-xs font-mono text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                      />
+                    </div>
+                  </div>
+                </CollapsibleCard>
+
+                {/* CARD 2: VISI & MISI RW 11 */}
+                <CollapsibleCard
+                  title="2. Pengaturan Visi, Misi, & Nilai-Nilai Utama RW 11"
+                  subtitle="Konten visi kepengurusan, poin-poin misi, dan nilai gotong royong warga"
+                  icon={<Sparkles className="w-4 h-4 text-amber-600" />}
+                  defaultOpen={true}
+                >
+                  <div className="space-y-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="space-y-1">
+                        <label className="text-xs font-bold text-stone-800">Label Badge Seksi Visi:</label>
+                        <input
+                          type="text"
+                          value={tempRtRwConfig.visionTitle || ''}
+                          onChange={(e) => setTempRtRwConfig({ ...tempRtRwConfig, visionTitle: e.target.value })}
+                          placeholder="🏛️ Visi & Misi Resmi RW 11"
+                          className="w-full px-3 py-2 bg-white border border-stone-300 rounded-xl text-xs font-bold text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-xs font-bold text-stone-800">Judul Banner Visi & Misi:</label>
+                        <input
+                          type="text"
+                          value={tempRtRwConfig.visionHeading || ''}
+                          onChange={(e) => setTempRtRwConfig({ ...tempRtRwConfig, visionHeading: e.target.value })}
+                          placeholder="Visi & Misi Pengurus RW 11 Bintara Jaya Permai"
+                          className="w-full px-3 py-2 bg-white border border-stone-300 rounded-xl text-xs font-bold text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-xs font-bold text-stone-800">Pernyataan Teks Visi Utama RW 11:</label>
+                      <textarea
+                        rows={2}
+                        value={tempRtRwConfig.visionText || ''}
+                        onChange={(e) => setTempRtRwConfig({ ...tempRtRwConfig, visionText: e.target.value })}
+                        className="w-full px-3 py-2 bg-white border border-stone-300 rounded-xl text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 font-medium"
+                      />
+                    </div>
+
+                    {/* Misi List */}
+                    <div className="bg-stone-50 p-4 rounded-xl border border-stone-200 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-stone-900 flex items-center gap-1.5">
+                          <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                          <span>Daftar Poin Misi Utama ({tempRtRwConfig.missions ? tempRtRwConfig.missions.length : 0})</span>
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const updated = [...(tempRtRwConfig.missions || [])];
+                            updated.push('Misi baru kepengurusan RW 11...');
+                            setTempRtRwConfig({ ...tempRtRwConfig, missions: updated });
+                          }}
+                          className="inline-flex items-center gap-1 text-xs font-bold text-emerald-800 bg-emerald-100 hover:bg-emerald-200 px-2.5 py-1 rounded-lg border border-emerald-300 transition-colors cursor-pointer"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                          <span>Tambah Misi</span>
+                        </button>
+                      </div>
+
+                      <div className="space-y-2">
+                        {(tempRtRwConfig.missions || []).map((misi, idx) => (
+                          <div key={idx} className="flex items-center gap-2">
+                            <span className="w-6 h-6 rounded-full bg-emerald-800 text-white text-[10px] font-extrabold flex items-center justify-center shrink-0">
+                              {idx + 1}
+                            </span>
+                            <input
+                              type="text"
+                              value={misi}
+                              onChange={(e) => {
+                                const updated = [...(tempRtRwConfig.missions || [])];
+                                updated[idx] = e.target.value;
+                                setTempRtRwConfig({ ...tempRtRwConfig, missions: updated });
+                              }}
+                              className="flex-1 px-3 py-1.5 bg-white border border-stone-300 rounded-lg text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const updated = (tempRtRwConfig.missions || []).filter((_, i) => i !== idx);
+                                setTempRtRwConfig({ ...tempRtRwConfig, missions: updated });
+                              }}
+                              className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                              title="Hapus Misi Ini"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Nilai-Nilai Utama List */}
+                    <div className="bg-stone-50 p-4 rounded-xl border border-stone-200 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-stone-900 flex items-center gap-1.5">
+                          <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" />
+                          <span>Daftar Nilai-Nilai Utama Warga ({tempRtRwConfig.values ? tempRtRwConfig.values.length : 0})</span>
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const updated = [...(tempRtRwConfig.values || [])];
+                            updated.push({ title: 'Nilai Baru', description: 'Penjelasan nilai utama...' });
+                            setTempRtRwConfig({ ...tempRtRwConfig, values: updated });
+                          }}
+                          className="inline-flex items-center gap-1 text-xs font-bold text-emerald-800 bg-emerald-100 hover:bg-emerald-200 px-2.5 py-1 rounded-lg border border-emerald-300 transition-colors cursor-pointer"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                          <span>Tambah Nilai</span>
+                        </button>
+                      </div>
+
+                      <div className="space-y-2.5">
+                        {(tempRtRwConfig.values || []).map((val, idx) => (
+                          <div key={idx} className="p-3 bg-white rounded-xl border border-stone-200 space-y-2">
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs font-bold text-stone-800">Nilai #{idx + 1}</span>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const updated = (tempRtRwConfig.values || []).filter((_, i) => i !== idx);
+                                  setTempRtRwConfig({ ...tempRtRwConfig, values: updated });
+                                }}
+                                className="text-xs text-red-600 hover:underline font-semibold flex items-center gap-1 cursor-pointer"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" /> Hapus
+                              </button>
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                              <input
+                                type="text"
+                                placeholder="Judul Nilai (e.g. Gotong Royong)"
+                                value={val.title}
+                                onChange={(e) => {
+                                  const updated = [...(tempRtRwConfig.values || [])];
+                                  updated[idx] = { ...updated[idx], title: e.target.value };
+                                  setTempRtRwConfig({ ...tempRtRwConfig, values: updated });
+                                }}
+                                className="px-2.5 py-1.5 bg-stone-50 border border-stone-300 rounded-lg text-xs font-bold text-stone-900"
+                              />
+                              <input
+                                type="text"
+                                placeholder="Penjelasan deskripsi nilai..."
+                                value={val.description}
+                                onChange={(e) => {
+                                  const updated = [...(tempRtRwConfig.values || [])];
+                                  updated[idx] = { ...updated[idx], description: e.target.value };
+                                  setTempRtRwConfig({ ...tempRtRwConfig, values: updated });
+                                }}
+                                className="sm:col-span-2 px-2.5 py-1.5 bg-stone-50 border border-stone-300 rounded-lg text-xs text-stone-800"
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </CollapsibleCard>
+
+                {/* CARD 3: RINCIAN WILAYAH RT 01 S/D RT 07 */}
+                <CollapsibleCard
+                  title="3. Kelola Rincian Data RT (RT 01 s/d RT 07)"
+                  subtitle="Ketua RT, cakupan blok, jumlah KK, jadwal kerja bakti, & program unggulan per RT"
+                  icon={<MapPin className="w-4 h-4 text-emerald-700" />}
+                  badge={
+                    <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2.5 py-0.5 rounded-full border border-emerald-200">
+                      {tempRtRwConfig.rts ? tempRtRwConfig.rts.length : 0} RT Terdaftar
+                    </span>
+                  }
+                  defaultOpen={true}
+                >
+                  <div className="space-y-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3.5 bg-stone-50 rounded-xl border border-stone-200">
+                      <div className="space-y-1">
+                        <label className="text-xs font-bold text-stone-800">Judul Seksi Daftar RT:</label>
+                        <input
+                          type="text"
+                          value={tempRtRwConfig.rtListTitle || ''}
+                          onChange={(e) => setTempRtRwConfig({ ...tempRtRwConfig, rtListTitle: e.target.value })}
+                          placeholder="Rincian Informasi Wilayah per RT"
+                          className="w-full px-3 py-1.5 bg-white border border-stone-300 rounded-lg text-xs font-bold text-stone-900"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-xs font-bold text-stone-800">Deskripsi Seksi Daftar RT:</label>
+                        <input
+                          type="text"
+                          value={tempRtRwConfig.rtListDescription || ''}
+                          onChange={(e) => setTempRtRwConfig({ ...tempRtRwConfig, rtListDescription: e.target.value })}
+                          placeholder="Daftar ketua RT, cakupan wilayah..."
+                          className="w-full px-3 py-1.5 bg-white border border-stone-300 rounded-lg text-xs text-stone-800"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-xs font-bold text-stone-800 uppercase tracking-wider">
+                        Daftar Unit RT (Klik Kartu RT Untuk Expand / Collapse)
+                      </h4>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const nextNum = (tempRtRwConfig.rts?.length || 0) + 1;
+                          const formattedNum = nextNum < 10 ? `0${nextNum}` : `${nextNum}`;
+                          const newRt: RtDetailItem = {
+                            id: `rt-${Date.now()}`,
+                            rtNumber: formattedNum,
+                            rwNumber: '11',
+                            chairmanName: 'Bpk. Nama Ketua RT',
+                            kkCount: '50 KK',
+                            coverageArea: 'Blok ...',
+                            workSchedule: 'Minggu Ke-1',
+                            featuredProgram: 'Program Unggulan RT',
+                            contactPhone: '0812-0000-0000',
+                            enabled: true,
+                          };
+                          setTempRtRwConfig({
+                            ...tempRtRwConfig,
+                            rts: [...(tempRtRwConfig.rts || []), newRt],
+                          });
+                        }}
+                        className="inline-flex items-center gap-1.5 bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold px-3.5 py-1.5 rounded-xl shadow-2xs transition-colors cursor-pointer"
+                      >
+                        <Plus className="w-3.5 h-3.5 text-emerald-300" />
+                        <span>+ Tambah Unit RT Baru</span>
+                      </button>
+                    </div>
+
+                    {/* RT Cards Collapsible Stack */}
+                    <div className="space-y-3">
+                      {(tempRtRwConfig.rts || []).map((rtItem, index) => (
+                        <CollapsibleCard
+                          key={rtItem.id || index}
+                          title={`RT ${rtItem.rtNumber} / RW ${rtItem.rwNumber} — ${rtItem.chairmanName}`}
+                          subtitle={`Cakupan: ${rtItem.coverageArea} • ${rtItem.kkCount}`}
+                          badge={
+                            <span
+                              className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                                rtItem.enabled ? 'bg-emerald-100 text-emerald-800' : 'bg-stone-200 text-stone-600'
+                              }`}
+                            >
+                              {rtItem.enabled ? 'Aktif' : 'Nonaktif'}
+                            </span>
+                          }
+                          defaultOpen={index === 0}
+                          headerAction={
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (confirm(`Hapus data RT ${rtItem.rtNumber}?`)) {
+                                  const updated = (tempRtRwConfig.rts || []).filter((_, i) => i !== index);
+                                  setTempRtRwConfig({ ...tempRtRwConfig, rts: updated });
+                                }
+                              }}
+                              className="p-1 text-red-600 hover:bg-red-100 rounded-lg transition-colors cursor-pointer"
+                              title="Hapus RT Ini"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          }
+                        >
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                            <div className="space-y-1">
+                              <label className="text-[11px] font-bold text-stone-700 block">Nomor RT:</label>
+                              <input
+                                type="text"
+                                value={rtItem.rtNumber}
+                                onChange={(e) => {
+                                  const updated = [...(tempRtRwConfig.rts || [])];
+                                  updated[index].rtNumber = e.target.value;
+                                  setTempRtRwConfig({ ...tempRtRwConfig, rts: updated });
+                                }}
+                                className="w-full px-2.5 py-1.5 bg-stone-50 border border-stone-300 rounded-lg text-xs font-bold text-stone-900"
+                              />
+                            </div>
+
+                            <div className="space-y-1">
+                              <label className="text-[11px] font-bold text-stone-700 block">Nomor RW:</label>
+                              <input
+                                type="text"
+                                value={rtItem.rwNumber}
+                                onChange={(e) => {
+                                  const updated = [...(tempRtRwConfig.rts || [])];
+                                  updated[index].rwNumber = e.target.value;
+                                  setTempRtRwConfig({ ...tempRtRwConfig, rts: updated });
+                                }}
+                                className="w-full px-2.5 py-1.5 bg-stone-50 border border-stone-300 rounded-lg text-xs text-stone-900"
+                              />
+                            </div>
+
+                            <div className="space-y-1">
+                              <label className="text-[11px] font-bold text-stone-700 block">Nama Ketua RT:</label>
+                              <input
+                                type="text"
+                                value={rtItem.chairmanName}
+                                onChange={(e) => {
+                                  const updated = [...(tempRtRwConfig.rts || [])];
+                                  updated[index].chairmanName = e.target.value;
+                                  setTempRtRwConfig({ ...tempRtRwConfig, rts: updated });
+                                }}
+                                className="w-full px-2.5 py-1.5 bg-stone-50 border border-stone-300 rounded-lg text-xs font-bold text-stone-900"
+                              />
+                            </div>
+
+                            <div className="space-y-1">
+                              <label className="text-[11px] font-bold text-stone-700 block">Jumlah KK:</label>
+                              <input
+                                type="text"
+                                value={rtItem.kkCount}
+                                onChange={(e) => {
+                                  const updated = [...(tempRtRwConfig.rts || [])];
+                                  updated[index].kkCount = e.target.value;
+                                  setTempRtRwConfig({ ...tempRtRwConfig, rts: updated });
+                                }}
+                                className="w-full px-2.5 py-1.5 bg-stone-50 border border-stone-300 rounded-lg text-xs text-stone-900"
+                              />
+                            </div>
+
+                            <div className="space-y-1">
+                              <label className="text-[11px] font-bold text-stone-700 block">Cakupan Wilayah / Blok:</label>
+                              <input
+                                type="text"
+                                value={rtItem.coverageArea}
+                                onChange={(e) => {
+                                  const updated = [...(tempRtRwConfig.rts || [])];
+                                  updated[index].coverageArea = e.target.value;
+                                  setTempRtRwConfig({ ...tempRtRwConfig, rts: updated });
+                                }}
+                                className="w-full px-2.5 py-1.5 bg-stone-50 border border-stone-300 rounded-lg text-xs text-stone-900"
+                              />
+                            </div>
+
+                            <div className="space-y-1">
+                              <label className="text-[11px] font-bold text-stone-700 block">Jadwal Kerja Bakti:</label>
+                              <input
+                                type="text"
+                                value={rtItem.workSchedule}
+                                onChange={(e) => {
+                                  const updated = [...(tempRtRwConfig.rts || [])];
+                                  updated[index].workSchedule = e.target.value;
+                                  setTempRtRwConfig({ ...tempRtRwConfig, rts: updated });
+                                }}
+                                className="w-full px-2.5 py-1.5 bg-stone-50 border border-stone-300 rounded-lg text-xs text-stone-900"
+                              />
+                            </div>
+
+                            <div className="space-y-1 sm:col-span-2">
+                              <label className="text-[11px] font-bold text-stone-700 block">Program Unggulan RT:</label>
+                              <input
+                                type="text"
+                                value={rtItem.featuredProgram}
+                                onChange={(e) => {
+                                  const updated = [...(tempRtRwConfig.rts || [])];
+                                  updated[index].featuredProgram = e.target.value;
+                                  setTempRtRwConfig({ ...tempRtRwConfig, rts: updated });
+                                }}
+                                className="w-full px-2.5 py-1.5 bg-stone-50 border border-stone-300 rounded-lg text-xs text-stone-900 font-medium"
+                              />
+                            </div>
+
+                            <div className="space-y-1">
+                              <label className="text-[11px] font-bold text-stone-700 block">No. Kontak WA Ketua RT:</label>
+                              <input
+                                type="text"
+                                value={rtItem.contactPhone || ''}
+                                onChange={(e) => {
+                                  const updated = [...(tempRtRwConfig.rts || [])];
+                                  updated[index].contactPhone = e.target.value;
+                                  setTempRtRwConfig({ ...tempRtRwConfig, rts: updated });
+                                }}
+                                placeholder="0812-xxxx-xxxx"
+                                className="w-full px-2.5 py-1.5 bg-stone-50 border border-stone-300 rounded-lg text-xs font-mono text-stone-900"
+                              />
+                            </div>
+
+                            <div className="sm:col-span-3 flex items-center justify-between pt-2 border-t border-stone-100">
+                              <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-stone-800">
+                                <input
+                                  type="checkbox"
+                                  checked={rtItem.enabled}
+                                  onChange={(e) => {
+                                    const updated = [...(tempRtRwConfig.rts || [])];
+                                    updated[index].enabled = e.target.checked;
+                                    setTempRtRwConfig({ ...tempRtRwConfig, rts: updated });
+                                  }}
+                                  className="w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500"
+                                />
+                                <span>Tampilkan RT Ini di Halaman Depan</span>
+                              </label>
+                            </div>
+                          </div>
+                        </CollapsibleCard>
+                      ))}
+                    </div>
+                  </div>
+                </CollapsibleCard>
+
+                {/* BOTTOM SAVE BUTTON */}
+                <div className="flex justify-end pt-2 border-t border-stone-100">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onSaveSiteSettings({
+                        ...siteSettings,
+                        rtRwConfig: tempRtRwConfig,
+                      });
+                      showToast('Pengaturan halaman Informasi RT/RW berhasil disimpan!');
+                    }}
+                    className="flex items-center gap-2 px-6 py-2.5 bg-emerald-800 hover:bg-emerald-900 text-white rounded-xl font-bold text-xs sm:text-sm shadow-md transition-all cursor-pointer"
+                  >
+                    <Check className="w-4 h-4 text-emerald-300" />
+                    <span>Simpan Pengaturan RT/RW</span>
                   </button>
                 </div>
               </div>

@@ -1,4 +1,4 @@
-import { Entity, Announcement, SiteSettings, CategoryHeaderConfig, User } from '../types';
+import { Entity, Announcement, SiteSettings, CategoryHeaderConfig, User, RtRwPageConfig } from '../types';
 import { INITIAL_ENTITIES, INITIAL_ANNOUNCEMENTS } from '../data/initialData';
 import { BJP_LOGO_URL } from '../assets/logo';
 import { updateSiteFaviconAndOgImage } from './meta';
@@ -268,6 +268,116 @@ export const DEFAULT_CATEGORY_CONFIGS: CategoryHeaderConfig[] = [
   },
 ];
 
+export const DEFAULT_RTRW_CONFIG: RtRwPageConfig = {
+  enabled: true,
+  pageTitle: 'Informasi RT/RW 11 Bintara Jaya Permai',
+  pageDescription: 'Struktur Organisasi, Visi Misi Pengurus RW 11, serta Breakdown Rincian Informasi RT 01 s/d RT 07 Bintara Jaya Permai',
+  heroImage: 'https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=1200&q=80',
+  visionTitle: '🏛️ Visi & Misi Resmi RW 11',
+  visionHeading: 'Visi & Misi Pengurus RW 11 Bintara Jaya Permai',
+  visionText: 'Mewujudkan Lingkungan RW 11 Komplek Bintara Jaya Permai yang Aman, Asri, Religius, Harmonis, dan Inovatif Berbasis Pelayanan Digital & Gotong Royong Warga.',
+  missions: [
+    'Meningkatkan pelayanan administrasi kependudukan cepat, transparan, dan terintegrasi digital.',
+    'Menjaga ketertiban & keamanan lingkungan melalui Siskamling terpadu dan CCTV 24 jam.',
+    'Mengembangkan Sentra Usaha UMKM BJP untuk kemandirian ekonomi warga rumahan.',
+    'Menggalakkan kerja bakti berkala dan pengelolaan sampah mandiri berbasis lingkungan asri.',
+  ],
+  values: [
+    { title: 'Gotong Royong', description: 'Kebersamaan dalam membangun fasilitas dan kebersihan komplek.' },
+    { title: 'Transparansi', description: 'Pengelolaan keuangan dan informasi pengumuman secara terbuka.' },
+    { title: 'Inklusif', description: 'Merangkul seluruh komponen usia dari anak-anak, remaja, hingga lansia.' },
+    { title: 'Inovatif', description: 'Digitalisasi layanan surat online mandiri dan portal informasi terpadu.' },
+  ],
+  rtListTitle: 'Rincian Informasi Wilayah per RT (RT 01 s/d RT 07)',
+  rtListDescription: 'Daftar ketua RT, cakupan wilayah blok, jumlah KK, dan program unggulan masing-masing RT di RW 11.',
+  rts: [
+    {
+      id: 'rt-01',
+      rtNumber: '01',
+      rwNumber: '11',
+      chairmanName: 'Bpk. H. Bambang Sugiarto',
+      kkCount: '48 KK',
+      coverageArea: 'Blok A1 — A15',
+      workSchedule: 'Minggu Ke-1 Setiap Bulan',
+      featuredProgram: 'Penghijauan Taman RT & Bank Sampah Mandiri',
+      contactPhone: '0812-1111-2201',
+      enabled: true,
+    },
+    {
+      id: 'rt-02',
+      rtNumber: '02',
+      rwNumber: '11',
+      chairmanName: 'Bpk. Drs. Suherman',
+      kkCount: '52 KK',
+      coverageArea: 'Blok B1 — B20',
+      workSchedule: 'Minggu Ke-2 Setiap Bulan',
+      featuredProgram: 'Pos Ronda Digital & CCTV Terpadu',
+      contactPhone: '0812-1111-2202',
+      enabled: true,
+    },
+    {
+      id: 'rt-03',
+      rtNumber: '03',
+      rwNumber: '11',
+      chairmanName: 'Bpk. Ahmad Fauzi, S.E.',
+      kkCount: '45 KK',
+      coverageArea: 'Blok C1 — C18',
+      workSchedule: 'Minggu Ke-3 Setiap Bulan',
+      featuredProgram: 'Pembinaan Olahraga Remaja & Bulutangkis',
+      contactPhone: '0812-1111-2203',
+      enabled: true,
+    },
+    {
+      id: 'rt-04',
+      rtNumber: '04',
+      rwNumber: '11',
+      chairmanName: 'Bpk. Ir. Rahmat Hidayat',
+      kkCount: '50 KK',
+      coverageArea: 'Blok D1 — D22',
+      workSchedule: 'Minggu Ke-1 Setiap Bulan',
+      featuredProgram: 'Taman Tanaman Obat (TOGA) & Komposting',
+      contactPhone: '0812-1111-2204',
+      enabled: true,
+    },
+    {
+      id: 'rt-05',
+      rtNumber: '05',
+      rwNumber: '11',
+      chairmanName: 'Bpk. Hendra Gunawan',
+      kkCount: '42 KK',
+      coverageArea: 'Blok E1 — E16',
+      workSchedule: 'Minggu Ke-2 Setiap Bulan',
+      featuredProgram: 'Sentra Usaha UMKM Kuliner Warga',
+      contactPhone: '0812-1111-2205',
+      enabled: true,
+    },
+    {
+      id: 'rt-06',
+      rtNumber: '06',
+      rwNumber: '11',
+      chairmanName: 'Bpk. Dr. Ir. M. Yusuf',
+      kkCount: '49 KK',
+      coverageArea: 'Blok F1 — F19',
+      workSchedule: 'Minggu Ke-3 Setiap Bulan',
+      featuredProgram: 'Posyandu Lansia & Balita Terintegrasi',
+      contactPhone: '0812-1111-2206',
+      enabled: true,
+    },
+    {
+      id: 'rt-07',
+      rtNumber: '07',
+      rwNumber: '11',
+      chairmanName: 'Bpk. Budi Santoso',
+      kkCount: '47 KK',
+      coverageArea: 'Blok G1 — G14',
+      workSchedule: 'Minggu Ke-4 Setiap Bulan',
+      featuredProgram: 'Gerakan Maghrib Mengaji & Karang Taruna',
+      contactPhone: '0812-1111-2207',
+      enabled: true,
+    },
+  ],
+};
+
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   logoUrl: BJP_LOGO_URL,
   siteTitle: 'BJP HUB Bintara Jaya Permai',
@@ -351,6 +461,7 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
       formUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSc_sample2/viewform?embedded=true',
     },
   },
+  rtRwConfig: DEFAULT_RTRW_CONFIG,
 };
 
 export function getSiteSettings(): SiteSettings {
@@ -393,6 +504,7 @@ export function getSiteSettings(): SiteSettings {
         socialFeeds: Array.isArray(parsed.socialFeeds) ? parsed.socialFeeds : DEFAULT_SITE_SETTINGS.socialFeeds,
         documentTemplates: Array.isArray(parsed.documentTemplates) ? parsed.documentTemplates : DEFAULT_SITE_SETTINGS.documentTemplates,
         pollingConfig: parsed.pollingConfig || DEFAULT_SITE_SETTINGS.pollingConfig,
+        rtRwConfig: parsed.rtRwConfig || DEFAULT_RTRW_CONFIG,
       };
     }
   } catch (err) {

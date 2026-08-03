@@ -50,7 +50,7 @@ export const SinglePageView: React.FC<SinglePageViewProps> = ({
       <div className="relative h-64 sm:h-80 md:h-96 w-full bg-stone-900 overflow-hidden">
         <img
           src={heroImage}
-          alt={categoryConfig.name}
+          alt={pageTitle}
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/40 to-transparent flex flex-col justify-end p-6 sm:p-10 text-white">
@@ -60,9 +60,9 @@ export const SinglePageView: React.FC<SinglePageViewProps> = ({
             </span>
             <span className="text-xs text-stone-300 font-medium">BJP HUB RW 11</span>
           </div>
-          <h1 className="text-2xl sm:text-4xl font-black tracking-tight">{categoryConfig.name}</h1>
+          <h1 className="text-2xl sm:text-4xl font-black tracking-tight">{pageTitle}</h1>
           <p className="text-stone-200 text-xs sm:text-base max-w-3xl mt-2 leading-relaxed">
-            {categoryConfig.description}
+            {pageDesc}
           </p>
         </div>
       </div>

@@ -134,6 +134,39 @@ export interface LetterRequest {
   createdAt: string;
 }
 
+export interface RtDetailItem {
+  id: string;
+  rtNumber: string; // e.g. "01"
+  rwNumber: string; // e.g. "11"
+  chairmanName: string; // e.g. "Bpk. H. Bambang Sugiarto"
+  kkCount: string; // e.g. "48 KK"
+  coverageArea: string; // e.g. "Blok A1 — A15"
+  workSchedule: string; // e.g. "Minggu Ke-1 Setiap Bulan"
+  featuredProgram: string; // e.g. "Penghijauan Taman RT & Bank Sampah Mandiri"
+  contactPhone: string; // e.g. "0812-1111-2201"
+  enabled: boolean;
+}
+
+export interface RtRwValueItem {
+  title: string;
+  description: string;
+}
+
+export interface RtRwPageConfig {
+  enabled: boolean;
+  pageTitle: string;
+  pageDescription: string;
+  heroImage: string;
+  visionTitle: string;
+  visionHeading: string;
+  visionText: string;
+  missions: string[];
+  values: RtRwValueItem[];
+  rtListTitle: string;
+  rtListDescription: string;
+  rts: RtDetailItem[];
+}
+
 export interface SiteSettings {
   logoUrl: string;
   siteTitle?: string;
@@ -144,6 +177,7 @@ export interface SiteSettings {
   runningText?: RunningTextConfig;
   documentTemplates?: DocumentTemplate[];
   pollingConfig?: PollingPageConfig;
+  rtRwConfig?: RtRwPageConfig;
 }
 
 export interface Announcement {

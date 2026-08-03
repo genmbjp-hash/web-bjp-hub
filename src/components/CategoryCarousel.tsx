@@ -110,20 +110,20 @@ export const CategoryCarousel: React.FC<CategoryCarouselProps> = ({
             />
           ) : (
             <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-emerald-800 text-white flex items-center justify-center font-bold text-base shrink-0 border border-emerald-900">
-              {catConfig.name.charAt(0).toUpperCase()}
+              {(catConfig?.name || 'A').charAt(0).toUpperCase()}
             </div>
           )}
           <div>
             <div className="flex items-center gap-2">
               <h3 className="text-base sm:text-xl font-bold text-stone-900 tracking-tight leading-snug">
-                {catConfig.name}
+                {catConfig?.name || 'Kategori'}
               </h3>
               <span className="bg-emerald-100 text-emerald-800 text-[11px] font-bold px-2 py-0.5 rounded-full border border-emerald-200/70">
                 {entities.length} Card
               </span>
             </div>
             <p className="text-xs text-stone-500 mt-0.5 max-w-2xl line-clamp-1">
-              {catConfig.description || `Unit entitas & kegiatan warga dalam kategori ${catConfig.name}`}
+              {catConfig?.description || `Unit entitas & kegiatan warga dalam kategori ${catConfig?.name || ''}`}
             </p>
           </div>
         </div>
@@ -131,10 +131,10 @@ export const CategoryCarousel: React.FC<CategoryCarouselProps> = ({
         {/* Small Simple CTA "Kunjungi [Nama Entitas/Kategori]" */}
         <div className="flex items-center gap-2 self-start sm:self-center shrink-0">
           <button
-            onClick={() => onVisitCategory(catConfig.name)}
+            onClick={() => onVisitCategory(catConfig?.name || '')}
             className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 hover:text-emerald-900 border border-emerald-200/80 text-xs font-bold rounded-xl transition-all shadow-2xs cursor-pointer group"
           >
-            <span>Kunjungi {catConfig.name}</span>
+            <span>Kunjungi {catConfig?.name || 'Kategori'}</span>
             <ArrowRight className="w-3.5 h-3.5 text-emerald-600 group-hover:translate-x-0.5 transition-transform" />
           </button>
 

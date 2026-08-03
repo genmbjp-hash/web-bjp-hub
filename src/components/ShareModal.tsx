@@ -19,15 +19,15 @@ export const ShareModal: React.FC<ShareModalProps> = ({ item, type, onClose }) =
   const entity = isEntity ? (item as Entity) : null;
   const ann = !isEntity ? (item as Announcement) : null;
 
-  const title = isEntity ? entity!.name : ann!.title;
-  const category = isEntity ? entity!.category : ann!.category;
-  const rawDescription = isEntity ? entity!.description : ann!.content;
+  const title = isEntity ? (entity?.name || '') : (ann?.title || '');
+  const category = isEntity ? (entity?.category || '') : (ann?.category || '');
+  const rawDescription = isEntity ? (entity?.description || '') : (ann?.content || '');
   const cleanDesc = stripHtml(rawDescription);
   const snippet = cleanDesc.length > 150 ? cleanDesc.slice(0, 150) + '...' : cleanDesc;
 
   const rawImage = isEntity
-    ? entity!.image || (entity!.productPhotos?.[0]) || 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80'
-    : ann!.image || 'https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=800&q=80';
+    ? (entity?.image || entity?.productPhotos?.[0] || 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80')
+    : (ann?.image || 'https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=800&q=80');
 
   const thumbnail = getAbsoluteImageUrl(rawImage);
   const shareParamKey = isEntity ? 'entity' : 'announcement';
