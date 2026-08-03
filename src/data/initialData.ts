@@ -791,6 +791,79 @@ export const INITIAL_ENTITIES: Entity[] = [
     isFeatured: false,
     createdAt: '2026-01-01T00:00:00Z',
     updatedAt: '2026-01-01T00:00:00Z'
+  },
+  {
+    id: 'ent-galeri-1',
+    name: 'Dokumentasi Kerja Bakti & Gotong Royong RW 11',
+    category: 'Galeri Warga',
+    description: 'Rangkaian foto dokumentasi kegiatan kerja bakti kebersihan gotong royong warga komplek Bintara Jaya Permai RW 11.',
+    image: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?auto=format&fit=crop&w=800&q=80',
+    ctaUrl: '#',
+    ctaWording: 'Lihat Foto Galeri',
+    cardType: 'photo_album',
+    albumPhotos: [
+      { id: 'g1-1', url: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?auto=format&fit=crop&w=800&q=80', caption: 'Gotong royong pembersihan saluran air dan perapihan tanaman', enabled: true },
+      { id: 'g1-2', url: 'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?auto=format&fit=crop&w=800&q=80', caption: 'Warga bahu membahu mengecat kanstin & marka jalan utama komplek', enabled: true },
+      { id: 'g1-3', url: 'https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?auto=format&fit=crop&w=800&q=80', caption: 'Santap siang bersama usai kerja bakti warga', enabled: true },
+      { id: 'g1-4', url: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=800&q=80', caption: 'Perbaikan fasilitas penerangan jalan umum (PJU) swadaya', enabled: true },
+    ],
+    isFeatured: true,
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z'
+  },
+  {
+    id: 'ent-galeri-2',
+    name: 'Dokumentasi Bazar Kuliner & Fest Sentra UMKM',
+    category: 'Galeri Warga',
+    description: 'Galeri momen perayaan Bazar Kuliner dan Pameran Produk UMKM olahan rumahan binaan Sentra Usaha Bintara Jaya Permai.',
+    image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80',
+    ctaUrl: '#',
+    ctaWording: 'Lihat Foto Galeri',
+    cardType: 'photo_album',
+    albumPhotos: [
+      { id: 'g2-1', url: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80', caption: 'Kemeriahan Bazar Kuliner UMKM Bintara Jaya Permai Minggu Pagi', enabled: true },
+      { id: 'g2-2', url: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80', caption: 'Aneka kuliner tradisional & jajanan kekinian olahan rumahan', enabled: true },
+      { id: 'g2-3', url: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80', caption: 'Pameran kerajinan tangan & batik karya Ibu-Ibu PKK RW 11', enabled: true },
+      { id: 'g2-4', url: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=800&q=80', caption: 'Penyerahan piagam apresiasi UMKM terfavorit pilihan warga', enabled: true },
+    ],
+    isFeatured: true,
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z'
+  },
+  {
+    id: 'ent-galeri-3',
+    name: 'Peringatan HUT RI & Jalan Sehat Keluarga Besar BJP',
+    category: 'Galeri Warga',
+    description: 'Foto keseruan pesta rakyat, jalan sehat, dan perlombaan HUT Kemerdekaan RI di Komplek Bintara Jaya Permai.',
+    image: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=800&q=80',
+    ctaUrl: '#',
+    ctaWording: 'Lihat Foto Galeri',
+    cardType: 'photo_album',
+    albumPhotos: [
+      { id: 'g3-1', url: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=800&q=80', caption: 'Pelepasan peserta Jalan Sehat Keluarga Besar RW 11', enabled: true },
+      { id: 'g3-2', url: 'https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=800&q=80', caption: 'Perlombaan tradisional anak-anak komplek', enabled: true },
+      { id: 'g3-3', url: 'https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&w=800&q=80', caption: 'Pengundian doorprize utama dan penyerahan piala lomba', enabled: true },
+    ],
+    isFeatured: true,
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z'
+  },
+  {
+    id: 'ent-galeri-4',
+    name: 'Kegiatan Posyandu Balita & Posyandu Lansia RW 11',
+    category: 'Galeri Warga',
+    description: 'Dokumentasi rutin pelayanan Posyandu Balita, penimbangan, imunisasi, dan senam lansia di Gedung Sekretariat RW 11.',
+    image: 'https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&w=800&q=80',
+    ctaUrl: '#',
+    ctaWording: 'Lihat Foto Galeri',
+    cardType: 'photo_album',
+    albumPhotos: [
+      { id: 'g4-1', url: 'https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&w=800&q=80', caption: 'Pemeriksaan kesehatan & penimbangan balita rutin bulanan', enabled: true },
+      { id: 'g4-2', url: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=800&q=80', caption: 'Senam sehat & cek tekanan darah berkala untuk para lansia', enabled: true },
+    ],
+    isFeatured: true,
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z'
   }
 ];
 

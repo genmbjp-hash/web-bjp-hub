@@ -1,12 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { Entity, Announcement, SiteSettings, NavbarTabConfig, CategoryHeaderConfig, User, UserRole } from '../types';
+import {
+  Entity,
+  Announcement,
+  SiteSettings,
+  NavbarTabConfig,
+  CategoryHeaderConfig,
+  User,
+  UserRole,
+  DocumentTemplate,
+  PollingPageConfig,
+  PollingSection,
+  PageLayoutType,
+  RunningTextConfig,
+} from '../types';
 import {
   X, Plus, Edit3, Trash2, Copy, Download, Upload, RefreshCw, Check,
   Image as ImageIcon, Sparkles, LayoutGrid, Megaphone, HelpCircle,
   Bold, Italic, List, Heading, ExternalLink, ShieldAlert, ArrowLeft,
   GripVertical, ArrowUp, ArrowDown, MapPin, Info, Globe, Sliders, Palette, Eye, EyeOff,
   Users, UserPlus, ShieldCheck, Shield, Lock, LogOut, CheckSquare, Square, Search, User as UserIcon,
-  Database, Server, CheckCircle2, XCircle, Terminal, Code
+  Database, Server, CheckCircle2, XCircle, Terminal, Code, FileText, Vote, Images, Layout, Layers, UploadCloud
 } from 'lucide-react';
 import { exportDataAsJSON, importDataFromJSON, resetToDefaults, DEFAULT_CATEGORY_CONFIGS } from '../utils/storage';
 import { formatImageUrl } from '../utils/imageUrl';
@@ -73,6 +86,8 @@ const WORDING_PRESETS = [
 const CATEGORY_PRESETS = [
   'Sentra Usaha BJP',
   'Pusat Hub',
+  'Galeri Warga',
+  'Informasi RT/RW',
   'Administratif / Pemerintahan',
   'Keagamaan',
   'Lingkungan',
@@ -81,6 +96,112 @@ const CATEGORY_PRESETS = [
   'Kepemudaan',
   'Olahraga',
 ];
+
+// Layout Live Preview Box Component for Entity Page Layout Selection
+const LayoutPreviewCard: React.FC<{ catConfig: CategoryHeaderConfig }> = ({ catConfig }) => {
+  const layout = catConfig.layoutType || 'default';
+
+  return (
+    <div className="mt-3 p-4 bg-stone-900 text-white rounded-2xl border border-stone-800 space-y-3">
+      <div className="flex items-center justify-between border-b border-stone-800 pb-2 flex-wrap gap-2">
+        <span className="text-xs font-bold text-emerald-400 flex items-center gap-1.5 uppercase tracking-wider">
+          <Eye className="w-3.5 h-3.5" />
+          Preview Tampilan Layar Pengunjung ({catConfig.name || 'Halaman Entitas'})
+        </span>
+        <span className="text-[10px] bg-stone-800 text-stone-300 font-mono px-2 py-0.5 rounded border border-stone-700">
+          Format Layout: {layout === 'single_page' ? 'Single Page Artikel' : layout === 'photo_album' ? 'Photo Album Gallery' : 'Default Card Grid'}
+        </span>
+      </div>
+
+      {layout === 'default' && (
+        <div className="bg-stone-950 p-3 rounded-xl border border-stone-800 space-y-2">
+          <div className="text-[11px] text-stone-400 font-medium">Pratinjau Format Card Grid Standar:</div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="bg-stone-900 p-3 rounded-xl border border-stone-800 space-y-2">
+              <div className="h-20 bg-stone-800 rounded-lg overflow-hidden relative">
+                <img
+                  src={catConfig.logoUrl ? formatImageUrl(catConfig.logoUrl) : 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=500&q=80'}
+                  alt=""
+                  className="w-full h-full object-cover opacity-80"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=500&q=80';
+                  }}
+                />
+                <span className="absolute top-1.5 left-1.5 bg-emerald-700 text-white text-[9px] px-2 py-0.5 rounded font-bold">
+                  {catConfig.name}
+                </span>
+              </div>
+              <div className="text-xs font-bold text-white">Contoh Unit Kegiatan 1</div>
+              <div className="text-[10px] text-stone-400 line-clamp-2">Deskripsi rincian kegiatan, jadwal, dan kontak unit.</div>
+              <div className="text-[10px] bg-emerald-800 text-white px-2.5 py-1 rounded-lg text-center font-bold">Buka Rincian</div>
+            </div>
+
+            <div className="bg-stone-900 p-3 rounded-xl border border-stone-800 space-y-2 opacity-75 hidden sm:block">
+              <div className="h-20 bg-stone-800 rounded-lg flex items-center justify-center text-stone-600 text-xs">
+                Gambar Unit 2
+              </div>
+              <div className="text-xs font-bold text-stone-300">Contoh Unit Kegiatan 2</div>
+              <div className="text-[10px] text-stone-500 line-clamp-2">Informasi kegiatan warga Bintara Jaya Permai.</div>
+              <div className="text-[10px] bg-stone-800 text-stone-400 px-2.5 py-1 rounded-lg text-center font-bold">Buka Rincian</div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {layout === 'photo_album' && (
+        <div className="bg-stone-950 p-3 rounded-xl border border-stone-800 space-y-2">
+          <div className="text-[11px] text-stone-400 font-medium">Pratinjau Format Gallery Carousel Slide Foto:</div>
+          <div className="relative h-32 bg-stone-900 rounded-xl overflow-hidden border border-stone-800 flex items-center justify-center">
+            <img
+              src={catConfig.logoUrl ? formatImageUrl(catConfig.logoUrl) : 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=800&q=80'}
+              alt=""
+              className="w-full h-full object-cover opacity-75"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=800&q=80';
+              }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent p-3 flex flex-col justify-between">
+              <span className="self-end text-[9px] bg-blue-600 text-white font-bold px-2 py-0.5 rounded-full">
+                Slide 1 dari 5 Foto
+              </span>
+              <div>
+                <div className="text-xs font-bold text-white">Album Dokumentasi {catConfig.name}</div>
+                <div className="text-[10px] text-stone-300">Galeri foto kegiatan warga, acara bazar, & dokumentasi resmi.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {layout === 'single_page' && (
+        <div className="bg-stone-950 p-3 rounded-xl border border-stone-800 space-y-2">
+          <div className="text-[11px] text-stone-400 font-medium">Pratinjau Format Hero Banner & Single Article:</div>
+          <div className="relative h-28 bg-stone-900 rounded-xl overflow-hidden border border-stone-800 mb-2">
+            <img
+              src={catConfig.singlePageHeroImage ? formatImageUrl(catConfig.singlePageHeroImage) : 'https://images.unsplash.com/photo-1577495508048-b635879837f1?w=1000&q=80'}
+              alt=""
+              className="w-full h-full object-cover opacity-60"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1577495508048-b635879837f1?w=1000&q=80';
+              }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent p-3 flex flex-col justify-end">
+              <span className="text-[9px] text-purple-300 font-bold uppercase tracking-wide">Halaman Single Page</span>
+              <div className="text-xs font-black text-white">{catConfig.name}</div>
+            </div>
+          </div>
+          <div className="p-3 bg-stone-900 rounded-lg text-[11px] text-stone-300 space-y-1.5 max-h-28 overflow-y-auto">
+            {catConfig.singlePageContent ? (
+              <div dangerouslySetInnerHTML={{ __html: catConfig.singlePageContent }} />
+            ) : (
+              <div className="text-stone-500 italic">Konten artikel rich text belum diisi. Tuliskan teks di editor di atas untuk melihat hasilnya.</div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 export const CMSModal: React.FC<CMSModalProps> = ({
   isOpen,
@@ -98,7 +219,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
   editingEntityInit,
   initialCategoryForNewEntity,
 }) => {
-  const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'settings' | 'users' | 'supabase' | 'backup'>('entities');
+  const [activeTab, setActiveTab] = useState<'entities' | 'entity_pages' | 'announcements' | 'settings' | 'documents' | 'polling' | 'users' | 'supabase' | 'backup'>('entities');
   
   // Supabase State & Handlers
   const [supabaseTesting, setSupabaseTesting] = useState<boolean>(false);
@@ -242,6 +363,9 @@ export const CMSModal: React.FC<CMSModalProps> = ({
     isFeatured: false,
   });
 
+  // Local state for album photos in entity form
+  const [tempAlbumPhotos, setTempAlbumPhotos] = useState<Array<{ id: string; url: string; caption: string }>>([]);
+
   // Local state for Site Settings (Branding & Navbar Tabs)
   const [tempLogoUrl, setTempLogoUrl] = useState<string>(siteSettings?.logoUrl || BJP_LOGO_URL);
   const [tempSiteTitle, setTempSiteTitle] = useState<string>(siteSettings?.siteTitle || 'BJP HUB Bintara Jaya Permai');
@@ -250,11 +374,72 @@ export const CMSModal: React.FC<CMSModalProps> = ({
     siteSettings?.navbarTabs || [
       { id: 'entities', label: 'Entitas Kegiatan', enabled: true, order: 0 },
       { id: 'announcements', label: 'Pengumuman & Agenda', enabled: true, order: 1 },
+      { id: 'document_service', label: 'Layanan Surat Online', enabled: true, order: 2 },
+      { id: 'polling', label: 'Polling & Aspirasi', enabled: true, order: 3 },
     ]
   );
   const [tempCategoryConfigs, setTempCategoryConfigs] = useState<CategoryHeaderConfig[]>(
     siteSettings?.categoryConfigs || DEFAULT_CATEGORY_CONFIGS
   );
+
+  // Running Text Config State
+  const [tempRunningText, setTempRunningText] = useState<RunningTextConfig>(
+    siteSettings?.runningText || {
+      enabled: true,
+      text: '📢 SELAMAT DATANG DI PORTAL BJP HUB RW 11 — Informasi Resmi Kegiatan Warga, Sentra UMKM, Agenda RW, & Layanan Surat Menyurat Online Mandiri!',
+    }
+  );
+
+  // Document Templates State
+  const [tempDocumentTemplates, setTempDocumentTemplates] = useState<DocumentTemplate[]>(
+    siteSettings?.documentTemplates || []
+  );
+  const [editingDocTemplate, setEditingDocTemplate] = useState<DocumentTemplate | null>(null);
+  const [isCreatingDocTemplate, setIsCreatingDocTemplate] = useState<boolean>(false);
+  const [docTemplateMode, setDocTemplateMode] = useState<'upload' | 'template'>('upload');
+  const [formDocTemplate, setFormDocTemplate] = useState<Partial<DocumentTemplate>>({
+    title: '',
+    code: '',
+    category: 'Pemerintahan / Kependudukan',
+    description: '',
+    templateBody: '',
+    enabled: true,
+  });
+
+  // Polling Page Config State
+  const [tempPollingConfig, setTempPollingConfig] = useState<PollingPageConfig>(
+    siteSettings?.pollingConfig || {
+      enabled: true,
+      pageTitle: 'Polling & Suara Aspirasi Warga RW 11',
+      pageDescription: 'Partisipasi aktif warga Komplek Bintara Jaya Permai melalui jajak pendapat dan permohonan aspirasi resmi.',
+      section1: {
+        id: 'sec-1',
+        enabled: true,
+        title: 'Survei Evaluasi & Aspirasi Fasilitas Lingkungan',
+        description: 'Silakan isi formulir survei evaluasi kebersihan, keamanan, dan fasilitas bersama RW 11.',
+        formUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSc_sample1/viewform?embedded=true',
+      },
+      section2: {
+        id: 'sec-2',
+        enabled: true,
+        title: 'Polling Usulan Kegiatan Bazar & Fest Sentra UMKM',
+        description: 'Sampaikan ide, saran, dan voting kegiatan bazar/fest bulanan warga Bintara Jaya Permai.',
+        formUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSc_sample2/viewform?embedded=true',
+      },
+    }
+  );
+
+  // Category / Page Config CRUD State
+  const [editingCategoryConfig, setEditingCategoryConfig] = useState<CategoryHeaderConfig | null>(null);
+  const [isCreatingCategoryConfig, setIsCreatingCategoryConfig] = useState<boolean>(false);
+  const [formCategoryConfig, setFormCategoryConfig] = useState<Partial<CategoryHeaderConfig>>({
+    name: '',
+    description: '',
+    logoUrl: '',
+    layoutType: 'default',
+    singlePageHeroImage: '',
+    singlePageContent: '',
+  });
 
   useEffect(() => {
     if (siteSettings) {
@@ -265,9 +450,20 @@ export const CMSModal: React.FC<CMSModalProps> = ({
         siteSettings.navbarTabs || [
           { id: 'entities', label: 'Entitas Kegiatan', enabled: true, order: 0 },
           { id: 'announcements', label: 'Pengumuman & Agenda', enabled: true, order: 1 },
+          { id: 'document_service', label: 'Layanan Surat Online', enabled: true, order: 2 },
+          { id: 'polling', label: 'Polling & Aspirasi', enabled: true, order: 3 },
         ]
       );
       setTempCategoryConfigs(siteSettings.categoryConfigs || DEFAULT_CATEGORY_CONFIGS);
+      if (siteSettings.runningText) {
+        setTempRunningText(siteSettings.runningText);
+      }
+      if (siteSettings.documentTemplates) {
+        setTempDocumentTemplates(siteSettings.documentTemplates);
+      }
+      if (siteSettings.pollingConfig) {
+        setTempPollingConfig(siteSettings.pollingConfig);
+      }
     }
   }, [siteSettings, isOpen]);
 
@@ -287,6 +483,10 @@ export const CMSModal: React.FC<CMSModalProps> = ({
   });
 
   const [notification, setNotification] = useState<string | null>(null);
+  const showToast = (msg: string) => {
+    setNotification(msg);
+    setTimeout(() => setNotification(null), 3000);
+  };
 
   // Product Photos 5 slots state
   const [isProductPhotosEnabled, setIsProductPhotosEnabled] = useState<boolean>(false);
@@ -415,11 +615,6 @@ export const CMSModal: React.FC<CMSModalProps> = ({
 
   if (!isOpen) return null;
 
-  const showToast = (msg: string) => {
-    setNotification(msg);
-    setTimeout(() => setNotification(null), 3000);
-  };
-
   const handleStartEditEntity = (ent: Entity) => {
     setEditingEntity(ent);
     setIsCreatingNewEntity(false);
@@ -429,7 +624,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
       tiktok: { enabled: false, url: '' },
       whatsapp: { enabled: false, url: '' },
     };
-    setFormEntity({ ...ent, socials });
+    setFormEntity({ ...ent, cardType: ent.cardType || 'standard', socials });
 
     const photos = ent.productPhotos || [];
     const captions = ent.productPhotoCaptions || [];
@@ -437,9 +632,22 @@ export const CMSModal: React.FC<CMSModalProps> = ({
     setPhotoSlot1(photos[0] || ''); setPhotoCaption1(captions[0] || '');
     setPhotoSlot2(photos[1] || ''); setPhotoCaption2(captions[1] || '');
     setPhotoSlot3(photos[2] || ''); setPhotoCaption3(captions[2] || '');
-    setPhotoSlot4(photos[3] || ''); setPhotoCaption4(captions[3] || '');
+    setPhotoSlot4(photos[3] || ''); setPhotoCaption4(captions[4] || '');
     setPhotoSlot5(photos[4] || ''); setPhotoCaption5(captions[4] || '');
     setPhotoError(null);
+
+    const existingAlbumPhotos = ent.albumPhotos || (photos.length > 0 ? photos.map((url, idx) => ({
+      id: `ph-${idx}`,
+      url,
+      caption: captions[idx] || '',
+      enabled: true,
+    })) : []);
+
+    if (existingAlbumPhotos.length > 0) {
+      setTempAlbumPhotos(existingAlbumPhotos.map((p, idx) => ({ id: p.id || `ph-${idx}`, url: p.url, caption: p.caption || '' })));
+    } else {
+      setTempAlbumPhotos([{ id: 'ph-0', url: ent.image || '', caption: '' }]);
+    }
   };
 
   const handleSaveEntity = (e: React.FormEvent) => {
@@ -470,11 +678,34 @@ export const CMSModal: React.FC<CMSModalProps> = ({
     }
     setPhotoError(null);
 
+    // Validate Photo Album Photos if cardType === 'photo_album'
+    let finalAlbumPhotos: any[] = [];
+    if (formEntity.cardType === 'photo_album') {
+      const validPhotos = tempAlbumPhotos.filter((p) => p.url.trim().length > 0).slice(0, 10);
+      if (validPhotos.length === 0) {
+        alert('Mohon masukkan minimal 1 foto untuk Format Photo Album!');
+        return;
+      }
+      finalAlbumPhotos = validPhotos.map((p, idx) => ({
+        id: p.id || `ph-${idx}`,
+        url: p.url.trim(),
+        caption: p.caption?.trim() || '',
+        enabled: true,
+      }));
+    }
+
     const now = new Date().toISOString();
+    const mainBannerImage = formEntity.cardType === 'photo_album' && finalAlbumPhotos.length > 0
+      ? finalAlbumPhotos[0].url
+      : (formEntity.image || IMAGE_PRESETS[0].url);
+
     const updatedEntityData = {
       ...formEntity,
+      cardType: formEntity.cardType || 'standard',
+      albumPhotos: finalAlbumPhotos,
       productPhotos: finalPhotos,
       productPhotoCaptions: finalCaptions,
+      image: mainBannerImage,
     };
 
     if (editingEntity) {
@@ -497,7 +728,9 @@ export const CMSModal: React.FC<CMSModalProps> = ({
         name: formEntity.name || 'Entitas Baru',
         category: formEntity.category || 'Pusat Hub',
         description: formEntity.description || '',
-        image: formEntity.image || IMAGE_PRESETS[0].url,
+        image: mainBannerImage,
+        cardType: formEntity.cardType || 'standard',
+        albumPhotos: finalAlbumPhotos,
         ctaUrl: formEntity.ctaUrl || '#',
         ctaWording: formEntity.ctaWording || 'Kunjungi Tautan',
         instagram: formEntity.instagram || '',
@@ -878,8 +1111,22 @@ export const CMSModal: React.FC<CMSModalProps> = ({
           >
             <LayoutGrid className="w-4 h-4 text-emerald-700" />
             <span>
-              Kelola Entitas Kegiatan ({isSuperAdmin ? entities.length : `${allowedEntitiesInCMS.length}/${entities.length}`})
+              Data Unit Entitas ({isSuperAdmin ? entities.length : `${allowedEntitiesInCMS.length}/${entities.length}`})
             </span>
+          </button>
+
+          <button
+            onClick={() => {
+              setActiveTab('entity_pages');
+            }}
+            className={`flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-semibold border-b-2 transition-all whitespace-nowrap ${
+              activeTab === 'entity_pages'
+                ? 'border-emerald-700 text-emerald-900 bg-emerald-50/50 rounded-t-lg'
+                : 'border-transparent text-stone-600 hover:text-stone-900'
+            }`}
+          >
+            <Layers className="w-4 h-4 text-emerald-700" />
+            <span>Kelola Halaman & Layout Entitas ({tempCategoryConfigs.length})</span>
           </button>
 
           <button
@@ -895,7 +1142,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
             }`}
           >
             <Megaphone className="w-4 h-4 text-emerald-700" />
-            <span>Kelola Pengumuman ({announcements.length})</span>
+            <span>Pengumuman & Running Text ({announcements.length})</span>
           </button>
 
           <button
@@ -909,7 +1156,37 @@ export const CMSModal: React.FC<CMSModalProps> = ({
             }`}
           >
             <Globe className="w-4 h-4 text-emerald-700" />
-            <span>Logo Web & Tab Navbar</span>
+            <span>Navigasi & Branding Site</span>
+          </button>
+
+          <button
+            onClick={() => {
+              setActiveTab('documents');
+              setEditingDocTemplate(null);
+              setIsCreatingDocTemplate(false);
+            }}
+            className={`flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-semibold border-b-2 transition-all whitespace-nowrap ${
+              activeTab === 'documents'
+                ? 'border-emerald-700 text-emerald-900 bg-emerald-50/50 rounded-t-lg'
+                : 'border-transparent text-stone-600 hover:text-stone-900'
+            }`}
+          >
+            <FileText className="w-4 h-4 text-emerald-700" />
+            <span>Template Dokumen ({tempDocumentTemplates.length})</span>
+          </button>
+
+          <button
+            onClick={() => {
+              setActiveTab('polling');
+            }}
+            className={`flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-semibold border-b-2 transition-all whitespace-nowrap ${
+              activeTab === 'polling'
+                ? 'border-emerald-700 text-emerald-900 bg-emerald-50/50 rounded-t-lg'
+                : 'border-transparent text-stone-600 hover:text-stone-900'
+            }`}
+          >
+            <Vote className="w-4 h-4 text-emerald-700" />
+            <span>Polling & Google Form</span>
           </button>
 
           <button
@@ -1023,6 +1300,168 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                           </select>
                         </div>
                       </div>
+
+                      {/* Card Format Selector (Default Standard vs Photo Album Carousel) */}
+                      <div className="space-y-2 bg-emerald-50/70 p-3.5 rounded-2xl border border-emerald-200/80">
+                        <label className="text-xs font-bold text-emerald-950 flex items-center justify-between">
+                          <span>3. Pilih Format Tampilan Card Entitas *</span>
+                          <span className="text-[10px] bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full font-bold border border-emerald-300">
+                            {formEntity.cardType === 'photo_album' ? '📷 Format Album Foto (Carousel)' : '🎴 Format Default Standard'}
+                          </span>
+                        </label>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                          <button
+                            type="button"
+                            onClick={() => setFormEntity({ ...formEntity, cardType: 'standard' })}
+                            className={`p-3 rounded-xl text-left border text-xs font-semibold flex items-center gap-2.5 transition-all cursor-pointer ${
+                              formEntity.cardType !== 'photo_album'
+                                ? 'bg-emerald-800 text-white border-emerald-900 shadow-xs'
+                                : 'bg-white text-stone-700 border-stone-200 hover:bg-stone-100'
+                            }`}
+                          >
+                            <LayoutGrid className="w-4 h-4 shrink-0" />
+                            <div>
+                              <div className="font-bold">Default Standard</div>
+                              <div className="text-[10px] opacity-80 font-normal">Gambar banner, deskripsi, info & CTA</div>
+                            </div>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setFormEntity({ ...formEntity, cardType: 'photo_album' });
+                              if (tempAlbumPhotos.length === 0) {
+                                setTempAlbumPhotos([{ id: 'ph-0', url: formEntity.image || IMAGE_PRESETS[0].url, caption: '' }]);
+                              }
+                            }}
+                            className={`p-3 rounded-xl text-left border text-xs font-semibold flex items-center gap-2.5 transition-all cursor-pointer ${
+                              formEntity.cardType === 'photo_album'
+                                ? 'bg-emerald-800 text-white border-emerald-900 shadow-xs'
+                                : 'bg-white text-stone-700 border-stone-200 hover:bg-stone-100'
+                            }`}
+                          >
+                            <Images className="w-4 h-4 shrink-0 text-amber-300" />
+                            <div>
+                              <div className="font-bold">Photo Album (Carousel)</div>
+                              <div className="text-[10px] opacity-80 font-normal">Carousel foto (max 10), caption & enlarge</div>
+                            </div>
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Photo Album Manager Section (Shown if cardType === 'photo_album') */}
+                      {formEntity.cardType === 'photo_album' && (
+                        <div className="bg-white p-4 rounded-2xl border-2 border-emerald-500/50 space-y-3 shadow-xs">
+                          <div className="flex items-center justify-between border-b border-stone-100 pb-2">
+                            <div className="flex items-center gap-2">
+                              <Images className="w-4 h-4 text-emerald-700" />
+                              <h4 className="text-xs font-bold text-stone-900">
+                                Kelola Foto Album Carousel ({tempAlbumPhotos.length}/10 Foto)
+                              </h4>
+                            </div>
+                            <span className="text-[10px] font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                              Maksimal 10 Foto per Card
+                            </span>
+                          </div>
+
+                          <p className="text-[11px] text-stone-500">
+                            Setiap foto di dalam album memiliki judul/keterangan foto (caption). Pengunjung dapat menggeser foto carousel dan mengklik foto untuk memperbesar tampilan (enlarge).
+                          </p>
+
+                          <div className="space-y-3 max-h-96 overflow-y-auto pr-1">
+                            {tempAlbumPhotos.map((photo, index) => (
+                              <div key={photo.id || index} className="p-3 bg-stone-50 rounded-xl border border-stone-200 space-y-2 relative">
+                                <div className="flex items-center justify-between text-xs font-bold text-stone-700">
+                                  <span className="flex items-center gap-1.5">
+                                    <span className="w-5 h-5 rounded-full bg-emerald-800 text-white text-[10px] flex items-center justify-center font-extrabold">
+                                      {index + 1}
+                                    </span>
+                                    <span>Foto Album #{index + 1}</span>
+                                  </span>
+                                  {tempAlbumPhotos.length > 1 && (
+                                    <button
+                                      type="button"
+                                      onClick={() => setTempAlbumPhotos(tempAlbumPhotos.filter((_, i) => i !== index))}
+                                      className="text-red-600 hover:text-red-700 text-[11px] flex items-center gap-1 font-semibold cursor-pointer"
+                                    >
+                                      <Trash2 className="w-3.5 h-3.5" /> Hapus
+                                    </button>
+                                  )}
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-center">
+                                  <div className="sm:col-span-8 space-y-2">
+                                    <div>
+                                      <label className="text-[10px] font-bold text-stone-600 block mb-0.5">
+                                        URL Foto / Link Gambar *
+                                      </label>
+                                      <input
+                                        type="text"
+                                        value={photo.url}
+                                        onChange={(e) => {
+                                          const updated = [...tempAlbumPhotos];
+                                          updated[index].url = e.target.value;
+                                          setTempAlbumPhotos(updated);
+                                        }}
+                                        placeholder="https://images.unsplash.com/... atau link Google Drive"
+                                        className="w-full px-2.5 py-1.5 bg-white border border-stone-200 rounded-lg text-xs font-mono"
+                                      />
+                                    </div>
+                                    <div>
+                                      <label className="text-[10px] font-bold text-stone-600 block mb-0.5">
+                                        Caption / Teks Keterangan Foto
+                                      </label>
+                                      <input
+                                        type="text"
+                                        value={photo.caption}
+                                        onChange={(e) => {
+                                          const updated = [...tempAlbumPhotos];
+                                          updated[index].caption = e.target.value;
+                                          setTempAlbumPhotos(updated);
+                                        }}
+                                        placeholder="Contoh: Gotong royong pembersihan saluran air"
+                                        className="w-full px-2.5 py-1.5 bg-white border border-stone-200 rounded-lg text-xs"
+                                      />
+                                    </div>
+                                  </div>
+
+                                  <div className="sm:col-span-4 h-24 bg-stone-200 rounded-lg overflow-hidden border border-stone-300 relative flex items-center justify-center">
+                                    {photo.url ? (
+                                      <img
+                                        src={formatImageUrl(photo.url)}
+                                        alt={`Preview ${index + 1}`}
+                                        className="w-full h-full object-cover"
+                                        onError={(e) => {
+                                          (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=600&q=80';
+                                        }}
+                                      />
+                                    ) : (
+                                      <span className="text-[10px] text-stone-400 font-medium">Belum ada foto</span>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+
+                          {tempAlbumPhotos.length < 10 && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setTempAlbumPhotos([
+                                  ...tempAlbumPhotos,
+                                  { id: `ph-${Date.now()}`, url: '', caption: '' }
+                                ]);
+                              }}
+                              className="w-full py-2.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 rounded-xl text-xs font-bold border border-emerald-200 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                            >
+                              <Plus className="w-4 h-4" />
+                              <span>Tambah Foto Album (+{10 - tempAlbumPhotos.length} Sisa Slot)</span>
+                            </button>
+                          )}
+                        </div>
+                      )}
 
                       {/* Image Picker with Presets */}
                       <div className="space-y-2">
@@ -1780,9 +2219,510 @@ export const CMSModal: React.FC<CMSModalProps> = ({
             </div>
           )}
 
-          {/* TAB 2: ANNOUNCEMENTS MANAGER */}
+          {/* TAB: KELOLA HALAMAN & LAYOUT ENTITAS */}
+          {activeTab === 'entity_pages' && (
+            <div className="space-y-6 max-w-5xl mx-auto pb-6">
+              <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-xs space-y-5">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-stone-100 pb-3">
+                  <div className="flex items-center gap-2">
+                    <Layers className="w-5 h-5 text-emerald-700" />
+                    <h4 className="font-bold text-stone-900 text-sm sm:text-base">
+                      Kelola Halaman Kategori Entitas & Opsi Layout
+                    </h4>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newId = `Entitas Baru ${tempCategoryConfigs.length + 1}`;
+                      setTempCategoryConfigs([
+                        ...tempCategoryConfigs,
+                        {
+                          id: newId,
+                          name: newId,
+                          description: 'Deskripsi halaman entitas baru...',
+                          logoUrl: '',
+                          layoutType: 'default',
+                        },
+                      ]);
+                      showToast('Entitas/Halaman baru telah ditambahkan. Silakan atur konfigurasi layout!');
+                    }}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-emerald-800 hover:bg-emerald-900 text-white rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0 shadow-xs"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Tambah Entitas / Page Baru</span>
+                  </button>
+                </div>
+
+                <p className="text-xs text-stone-600 leading-relaxed">
+                  Di menu ini, Anda dapat menambahkan halaman entitas baru, mengunggah logo header kategori, dan memilih format layout halaman: <strong>Default Existing</strong> (format card grid), <strong>Photo Album</strong> (format album foto carousel), atau <strong>Single Page</strong> (halaman tunggal artikel hero image & rich text editor). Setiap pilihan layout langsung memiliki <strong>Preview Tampilan Live</strong>!
+                </p>
+
+                {/* Recommendation Banner */}
+                <div className="bg-emerald-50/80 border border-emerald-200 rounded-xl p-3 flex items-start gap-2.5 text-xs text-emerald-950">
+                  <Sparkles className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="font-bold text-emerald-900 block">Rekomendasi Logo & Content Layout:</strong>
+                    <span className="text-[11px] text-emerald-850 block mt-0.5">
+                      Gunakan logo persegi HD (512x512px). Jika memilih tipe <strong>Single Page</strong>, pengunjung akan langsung melihat artikel / hero image utuh tanpa opsi pembuatan card.
+                    </span>
+                  </div>
+                </div>
+
+                <div className="space-y-6">
+                  {tempCategoryConfigs.map((catConfig) => (
+                    <div
+                      key={catConfig.id}
+                      className="p-4 sm:p-5 bg-stone-50 rounded-2xl border border-stone-200 space-y-4 shadow-2xs"
+                    >
+                      {/* Header info & delete */}
+                      <div className="flex items-center justify-between border-b border-stone-200/80 pb-2.5 flex-wrap gap-2">
+                        <span className="text-xs font-bold text-stone-900 flex items-center gap-2">
+                          <span className="w-2.5 h-2.5 rounded-full bg-emerald-600"></span>
+                          Halaman / Entitas: <strong className="text-emerald-800">{catConfig.name}</strong>
+                          <span className="text-[10px] text-stone-400 font-mono font-normal">({catConfig.id})</span>
+                        </span>
+
+                        <div className="flex items-center gap-2">
+                          <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase ${
+                            catConfig.layoutType === 'single_page'
+                              ? 'bg-purple-100 text-purple-800 border border-purple-200'
+                              : catConfig.layoutType === 'photo_album'
+                              ? 'bg-blue-100 text-blue-800 border border-blue-200'
+                              : 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                          }`}>
+                            Layout: {catConfig.layoutType === 'single_page' ? 'Single Page' : catConfig.layoutType === 'photo_album' ? 'Photo Album' : 'Default Card'}
+                          </span>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (confirm(`Apakah Anda yakin ingin menghapus entitas "${catConfig.name}"?`)) {
+                                setTempCategoryConfigs(tempCategoryConfigs.filter((c) => c.id !== catConfig.id));
+                                showToast(`Entitas "${catConfig.name}" dihapus dari daftar halaman.`);
+                              }
+                            }}
+                            className="p-1 text-stone-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            title="Hapus Entitas"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {/* Option Layout Selector */}
+                        <div className="space-y-2 md:col-span-2 bg-white p-3.5 rounded-xl border border-stone-200">
+                          <label className="text-xs font-bold text-stone-800 block">
+                            Pilih Format Layout Halaman Entitas Ini:
+                          </label>
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setTempCategoryConfigs(
+                                  tempCategoryConfigs.map((c) =>
+                                    c.id === catConfig.id ? { ...c, layoutType: 'default' } : c
+                                  )
+                                );
+                              }}
+                              className={`p-3 rounded-xl border-2 text-left transition-all cursor-pointer ${
+                                (catConfig.layoutType || 'default') === 'default'
+                                  ? 'border-emerald-600 bg-emerald-50/60 shadow-2xs'
+                                  : 'border-stone-200 bg-stone-50 hover:bg-stone-100'
+                              }`}
+                            >
+                              <div className="flex items-center gap-2 mb-1">
+                                <Layout className="w-4 h-4 text-emerald-700" />
+                                <span className="font-bold text-xs text-stone-900">1. Default Existing</span>
+                              </div>
+                              <p className="text-[11px] text-stone-500 leading-tight">
+                                Menggunakan format daftar card standar (seperti kegiatan / UMKM existing).
+                              </p>
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setTempCategoryConfigs(
+                                  tempCategoryConfigs.map((c) =>
+                                    c.id === catConfig.id ? { ...c, layoutType: 'photo_album' } : c
+                                  )
+                                );
+                              }}
+                              className={`p-3 rounded-xl border-2 text-left transition-all cursor-pointer ${
+                                catConfig.layoutType === 'photo_album'
+                                  ? 'border-blue-600 bg-blue-50/60 shadow-2xs'
+                                  : 'border-stone-200 bg-stone-50 hover:bg-stone-100'
+                              }`}
+                            >
+                              <div className="flex items-center gap-2 mb-1">
+                                <Images className="w-4 h-4 text-blue-700" />
+                                <span className="font-bold text-xs text-stone-900">2. Photo Album</span>
+                              </div>
+                              <p className="text-[11px] text-stone-500 leading-tight">
+                                Tipe album foto galeri kegiatan (carousel slide, max 10 foto & caption).
+                              </p>
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setTempCategoryConfigs(
+                                  tempCategoryConfigs.map((c) =>
+                                    c.id === catConfig.id ? { ...c, layoutType: 'single_page' } : c
+                                  )
+                                );
+                              }}
+                              className={`p-3 rounded-xl border-2 text-left transition-all cursor-pointer ${
+                                catConfig.layoutType === 'single_page'
+                                  ? 'border-purple-600 bg-purple-50/60 shadow-2xs'
+                                  : 'border-stone-200 bg-stone-50 hover:bg-stone-100'
+                              }`}
+                            >
+                              <div className="flex items-center gap-2 mb-1">
+                                <FileText className="w-4 h-4 text-purple-700" />
+                                <span className="font-bold text-xs text-stone-900">3. Single Page</span>
+                              </div>
+                              <p className="text-[11px] text-stone-500 leading-tight">
+                                Halaman tunggal langsung berisi Hero Image & Rich Text (tanpa opsi card).
+                              </p>
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Logo Upload Box */}
+                        <div className="space-y-2 md:col-span-2 bg-white p-3.5 rounded-xl border border-stone-200">
+                          <label className="text-xs font-bold text-stone-800 block">
+                            Logo Header Kategori:
+                          </label>
+                          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                            {catConfig.logoUrl ? (
+                              <img
+                                src={formatImageUrl(catConfig.logoUrl)}
+                                alt={catConfig.name}
+                                className="w-14 h-14 rounded-xl object-contain bg-stone-50 border border-stone-300 p-1 shadow-2xs shrink-0"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).style.display = 'none';
+                                }}
+                              />
+                            ) : (
+                              <div className="w-14 h-14 rounded-xl bg-stone-100 border border-dashed border-stone-300 flex items-center justify-center shrink-0">
+                                <ImageIcon className="w-5 h-5 text-stone-400" />
+                              </div>
+                            )}
+
+                            <div className="flex-1 w-full space-y-2">
+                              <input
+                                type="text"
+                                value={catConfig.logoUrl || ''}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setTempCategoryConfigs(
+                                    tempCategoryConfigs.map((c) =>
+                                      c.id === catConfig.id ? { ...c, logoUrl: val } : c
+                                    )
+                                  );
+                                }}
+                                placeholder="URL Gambar / Google Drive Logo..."
+                                className="w-full px-3 py-1.5 bg-stone-50 border border-stone-300 rounded-lg text-xs font-mono text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                              />
+                              <div className="flex items-center gap-2">
+                                <label className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1 bg-stone-100 hover:bg-stone-200 text-stone-800 rounded-lg text-xs font-medium border border-stone-300 transition-colors">
+                                  <Upload className="w-3.5 h-3.5" />
+                                  <span>Upload Logo</span>
+                                  <input
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    onChange={(e) => {
+                                      const file = e.target.files?.[0];
+                                      if (file) {
+                                        const reader = new FileReader();
+                                        reader.onload = (evt) => {
+                                          const res = evt.target?.result as string;
+                                          setTempCategoryConfigs(
+                                            tempCategoryConfigs.map((c) =>
+                                              c.id === catConfig.id ? { ...c, logoUrl: res } : c
+                                            )
+                                          );
+                                          showToast('Logo berhasil diunggah!');
+                                        };
+                                        reader.readAsDataURL(file);
+                                      }
+                                    }}
+                                  />
+                                </label>
+                                {catConfig.logoUrl && (
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setTempCategoryConfigs(
+                                        tempCategoryConfigs.map((c) =>
+                                          c.id === catConfig.id ? { ...c, logoUrl: '' } : c
+                                        )
+                                      );
+                                    }}
+                                    className="px-2.5 py-1 bg-stone-200 hover:bg-red-100 hover:text-red-700 text-stone-700 rounded-lg text-xs font-medium transition-colors"
+                                  >
+                                    Hapus Logo
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Nama Kategori / Rename Tab */}
+                        <div className="space-y-1">
+                          <label className="text-xs font-bold text-stone-700 block">
+                            Nama Entitas / Page:
+                          </label>
+                          <input
+                            type="text"
+                            value={catConfig.name}
+                            onChange={(e) => {
+                              const newName = e.target.value;
+                              setTempCategoryConfigs(
+                                tempCategoryConfigs.map((c) =>
+                                  c.id === catConfig.id ? { ...c, name: newName } : c
+                                )
+                              );
+                            }}
+                            className="w-full px-3 py-2 bg-white border border-stone-300 rounded-xl text-xs font-bold text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                          />
+                        </div>
+
+                        {/* Deskripsi Header */}
+                        <div className="space-y-1">
+                          <label className="text-xs font-bold text-stone-700 block">
+                            Deskripsi Penjelasan Header:
+                          </label>
+                          <input
+                            type="text"
+                            value={catConfig.description}
+                            onChange={(e) => {
+                              const newDesc = e.target.value;
+                              setTempCategoryConfigs(
+                                tempCategoryConfigs.map((c) =>
+                                  c.id === catConfig.id ? { ...c, description: newDesc } : c
+                                )
+                              );
+                            }}
+                            className="w-full px-3 py-2 bg-white border border-stone-300 rounded-xl text-xs text-stone-800 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                          />
+                        </div>
+
+                        {/* IF LAYOUT TYPE === 'single_page' -> Rich Text & Hero Image Config */}
+                        {catConfig.layoutType === 'single_page' && (
+                          <div className="space-y-3 md:col-span-2 bg-purple-50/50 p-4 rounded-xl border border-purple-200">
+                            <div className="flex items-center justify-between border-b border-purple-200 pb-2">
+                              <span className="text-xs font-bold text-purple-950 flex items-center gap-1.5">
+                                <Sparkles className="w-4 h-4 text-purple-700" />
+                                Pengaturan Konten Single Page ({catConfig.name})
+                              </span>
+                              <span className="text-[10px] bg-purple-200 text-purple-900 px-2 py-0.5 rounded font-bold">
+                                Hero Image + Rich Text
+                              </span>
+                            </div>
+
+                            {/* Hero Image Field */}
+                            <div className="space-y-1">
+                              <label className="text-xs font-bold text-stone-800 block">
+                                URL Gambar Hero Banner Single Page:
+                              </label>
+                              <input
+                                type="text"
+                                value={catConfig.singlePageHeroImage || ''}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setTempCategoryConfigs(
+                                    tempCategoryConfigs.map((c) =>
+                                      c.id === catConfig.id ? { ...c, singlePageHeroImage: val } : c
+                                    )
+                                  );
+                                }}
+                                placeholder="https://images.unsplash.com/... atau /images/..."
+                                className="w-full px-3 py-2 bg-white border border-stone-300 rounded-xl text-xs font-mono text-stone-900 focus:outline-none focus:ring-2 focus:ring-purple-600"
+                              />
+                            </div>
+
+                            {/* Quick Preset Template Buttons */}
+                            <div className="space-y-1.5">
+                              <label className="text-xs font-bold text-stone-800 block">
+                                Isikan Draf Konten Cepat (Preset Template):
+                              </label>
+                              <div className="flex flex-wrap items-center gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const preset = `<h3>Visi & Misi Pengurus RW 11 Bintara Jaya Permai</h3>
+<p>Menjadi kawasan permukiman yang aman, bersih, harmonis, religius, serta responsif berbasis teknologi digital dan gotong royong warga.</p>
+<h4>Program Unggulan:</h4>
+<ul>
+  <li>Sistem Informasi & Layanan Digital Warga</li>
+  <li>Pengelolaan Lingkungan & Bank Sampah Mandiri</li>
+  <li>Keamanan Terpadu 24 Jam & CCTV Lingkungan</li>
+  <li>Pembinaan UMKM Warga & Sentra Usaha</li>
+</ul>`;
+                                    setTempCategoryConfigs(
+                                      tempCategoryConfigs.map((c) =>
+                                        c.id === catConfig.id ? { ...c, singlePageContent: preset } : c
+                                      )
+                                    );
+                                  }}
+                                  className="px-2.5 py-1 bg-purple-100 hover:bg-purple-200 text-purple-900 text-[11px] font-medium rounded-lg border border-purple-300 transition-colors"
+                                >
+                                  + Preset Visi Misi
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const preset = `<h3>Panduan Layanan Administrasi & Fasilitas Bersama</h3>
+<p>Pengurus RW 11 menyediakan pelayanan administrasi kependudukan dan penyewaan fasilitas warga dengan ketentuan sebagai berikut:</p>
+<h4>Jam Pelayanan Sekretariat:</h4>
+<p>Senin - Sabtu: Pukul 09.00 - 17.00 WIB (Sekretariat RW 11)</p>
+<h4>Persyaratan Pengurusan Surat Pengantar:</h4>
+<ul>
+  <li>Membawa FC KTP & Kartu Keluarga (KK)</li>
+  <li>Bukti Lunas Iuran Pemeliharaan Lingkungan (IPL)</li>
+  <li>Mengisi formulir permohonan online melalui portal BJP HUB</li>
+</ul>`;
+                                    setTempCategoryConfigs(
+                                      tempCategoryConfigs.map((c) =>
+                                        c.id === catConfig.id ? { ...c, singlePageContent: preset } : c
+                                      )
+                                    );
+                                  }}
+                                  className="px-2.5 py-1 bg-purple-100 hover:bg-purple-200 text-purple-900 text-[11px] font-medium rounded-lg border border-purple-300 transition-colors"
+                                >
+                                  + Preset Panduan Layanan
+                                </button>
+                              </div>
+                            </div>
+
+                            {/* Rich Text Editor Field */}
+                            <div className="space-y-1">
+                              <label className="text-xs font-bold text-stone-800 block">
+                                Editor Isian Konten / Rich Text (HTML / Text Format):
+                              </label>
+                              <textarea
+                                rows={6}
+                                value={catConfig.singlePageContent || ''}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setTempCategoryConfigs(
+                                    tempCategoryConfigs.map((c) =>
+                                      c.id === catConfig.id ? { ...c, singlePageContent: val } : c
+                                    )
+                                  );
+                                }}
+                                placeholder="Tuliskan isi artikel lengkap, deskripsi profil, atau panduan informasi warga di sini..."
+                                className="w-full px-3 py-2 bg-white border border-stone-300 rounded-xl text-xs font-mono text-stone-900 focus:outline-none focus:ring-2 focus:ring-purple-600"
+                              />
+                            </div>
+                          </div>
+                        )}
+
+                        {/* LIVE PREVIEW CARD FOR CHOSEN LAYOUT */}
+                        <div className="md:col-span-2">
+                          <LayoutPreviewCard catConfig={catConfig} />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Save Button */}
+                <div className="bg-white p-5 rounded-2xl border border-stone-200 shadow-xs flex items-center justify-between">
+                  <div>
+                    <h4 className="font-bold text-stone-900 text-sm">Simpan Konfigurasi Halaman & Layout Entitas</h4>
+                    <p className="text-xs text-stone-500">
+                      Klik simpan untuk menerapkan seluruh daftar entitas, logo kategori, dan pilihan layout halaman.
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onSaveSiteSettings({
+                        ...siteSettings,
+                        categoryConfigs: tempCategoryConfigs,
+                      });
+                      showToast('Konfigurasi halaman dan layout entitas berhasil disimpan!');
+                    }}
+                    className="flex items-center gap-2 px-5 py-2.5 bg-emerald-800 hover:bg-emerald-900 text-white rounded-xl font-semibold text-xs sm:text-sm shadow-md transition-all shrink-0 cursor-pointer"
+                  >
+                    <Check className="w-4 h-4 text-emerald-300" />
+                    <span>Simpan Layout Entitas</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 2: ANNOUNCEMENTS & RUNNING TEXT MANAGER */}
           {activeTab === 'announcements' && (
-            <div className="space-y-4">
+            <div className="space-y-6 max-w-5xl mx-auto pb-6">
+              {/* HEADER SECTION: RUNNING TEXT CONFIGURATION */}
+              <div className="bg-gradient-to-r from-emerald-900 via-emerald-800 to-stone-900 text-white p-5 rounded-2xl shadow-md border border-emerald-700/50 space-y-4">
+                <div className="flex items-center justify-between border-b border-emerald-700/60 pb-3 flex-wrap gap-2">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-5 h-5 text-amber-300 animate-pulse" />
+                    <h3 className="font-extrabold text-sm sm:text-base">Pengaturan Running Text (Teks Berjalan Website)</h3>
+                  </div>
+                  <label className="flex items-center gap-2 cursor-pointer bg-emerald-800/80 px-3.5 py-1.5 rounded-xl border border-emerald-600/80 hover:bg-emerald-700 transition-colors">
+                    <input
+                      type="checkbox"
+                      checked={tempRunningText.enabled}
+                      onChange={(e) => setTempRunningText({ ...tempRunningText, enabled: e.target.checked })}
+                      className="w-4 h-4 text-emerald-500 rounded focus:ring-emerald-400 cursor-pointer"
+                    />
+                    <span className="text-xs font-bold text-emerald-100">
+                      {tempRunningText.enabled ? 'Status: Running Text AKTIF' : 'Status: Running Text NONAKTIF'}
+                    </span>
+                  </label>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-emerald-200 block">
+                      1. Isi Kalimat Pesan Running Text:
+                    </label>
+                    <input
+                      type="text"
+                      value={tempRunningText.text}
+                      onChange={(e) => setTempRunningText({ ...tempRunningText, text: e.target.value })}
+                      placeholder="📢 Tuliskan kalimat informasi singkat yang akan berjalan di header website..."
+                      className="w-full px-3.5 py-2 bg-emerald-950/80 border border-emerald-600 rounded-xl text-xs sm:text-sm text-white placeholder:text-emerald-400 focus:outline-none focus:ring-2 focus:ring-amber-400 font-sans"
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between flex-wrap gap-3 pt-1">
+                    <div className="text-[11px] text-emerald-200 overflow-hidden max-w-xl">
+                      <strong>Tampilan Preview:</strong>{' '}
+                      <span className="font-mono text-amber-300 bg-emerald-950 px-2 py-0.5 rounded border border-emerald-800 inline-block truncate max-w-md">
+                        {tempRunningText.enabled ? tempRunningText.text : '(Running text dinonaktifkan)'}
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onSaveSiteSettings({
+                          ...siteSettings,
+                          runningText: tempRunningText,
+                        });
+                        showToast('Pengaturan running text berhasil disimpan!');
+                      }}
+                      className="px-4 py-2 bg-amber-400 hover:bg-amber-300 text-stone-950 font-black rounded-xl text-xs transition-colors cursor-pointer shadow-xs flex items-center gap-1.5"
+                    >
+                      <Check className="w-4 h-4" />
+                      <span>Simpan Running Text</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
               {isCreatingAnn || editingAnn ? (
                 <form onSubmit={handleSaveAnnouncement} className="bg-white p-5 rounded-2xl border border-stone-200 max-w-2xl mx-auto space-y-4">
                   <h3 className="font-bold text-stone-900 text-base border-b border-stone-100 pb-2">
@@ -2463,31 +3403,49 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                 </div>
               </div>
 
-              {/* Section 3: Kelola Logo, Nama Tab & Deskripsi Header per Entitas / Kategori */}
+              {/* Section 3: Kelola Logo, Nama Tab, Layout & Single Page Content per Entitas / Kategori */}
               <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-xs space-y-5">
-                <div className="flex items-center justify-between border-b border-stone-100 pb-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-stone-100 pb-3">
                   <div className="flex items-center gap-2">
                     <Palette className="w-5 h-5 text-emerald-700" />
                     <h4 className="font-bold text-stone-900 text-sm sm:text-base">
-                      3. Edit Logo Header, Nama Entitas & Deskripsi per Kategori
+                      3. Kelola Entitas Baru & Opsi Layout Halaman
                     </h4>
                   </div>
-                  <span className="text-xs bg-emerald-50 text-emerald-800 font-semibold px-2.5 py-1 rounded-full border border-emerald-200">
-                    Header & Tab Filter Landing Page
-                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newId = `Entitas Baru ${tempCategoryConfigs.length + 1}`;
+                      setTempCategoryConfigs([
+                        ...tempCategoryConfigs,
+                        {
+                          id: newId,
+                          name: newId,
+                          description: 'Deskripsi halaman entitas baru...',
+                          logoUrl: '',
+                          layoutType: 'default',
+                        },
+                      ]);
+                      showToast('Entitas/Halaman baru telah ditambahkan. Silakan atur konfigurasi layout!');
+                    }}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Tambah Entitas / Page Baru</span>
+                  </button>
                 </div>
 
                 <p className="text-xs text-stone-600 leading-relaxed">
-                  Atur logo khusus, ubah nama entitas (label tab filter navbar), dan sesuaikan deskripsi header yang tampil di atas halaman landing page untuk tiap kategori entitas.
+                  Pilih opsi layout untuk setiap halaman entitas: <strong>Default Existing</strong> (format card biasa), <strong>Photo Album</strong> (format album foto carousel), atau <strong>Single Page</strong> (halaman tunggal dengan hero image & rich text editor).
                 </p>
 
                 {/* Recommendation Banner */}
                 <div className="bg-emerald-50/80 border border-emerald-200 rounded-xl p-3 flex items-start gap-2.5 text-xs text-emerald-950">
                   <Sparkles className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" />
                   <div>
-                    <strong className="font-bold text-emerald-900 block">Rekomendasi Logo Kategori / Entitas:</strong>
+                    <strong className="font-bold text-emerald-900 block">Rekomendasi Logo & Content Layout:</strong>
                     <span className="text-[11px] text-emerald-850 block mt-0.5">
-                      Gunakan gambar <strong>Rasio 1:1 (Persegi)</strong> dengan ukuran ideal <strong>512 x 512 px</strong> (PNG Transparan / JPG HD). Logo akan tampil besar, bersih, dan HD di Header Kategori dan Carousel.
+                      Gunakan logo persegi HD (512x512px). Jika memilih tipe <strong>Single Page</strong>, pengunjung akan langsung melihat artikel / hero image utuh tanpa opsi pembuatan card.
                     </span>
                   </div>
                 </div>
@@ -2501,17 +3459,118 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                       <div className="flex items-center justify-between border-b border-stone-200/80 pb-2.5">
                         <span className="text-xs font-bold text-stone-900 flex items-center gap-2">
                           <span className="w-2 h-2 rounded-full bg-emerald-600"></span>
-                          Kategori: <strong className="text-emerald-800">{catConfig.name}</strong>
+                          Halaman / Entitas: <strong className="text-emerald-800">{catConfig.name}</strong>
                           <span className="text-[10px] text-stone-400 font-mono font-normal">({catConfig.id})</span>
                         </span>
-                        {catConfig.id === 'Sentra Usaha BJP' && (
-                          <span className="text-[10px] bg-amber-100 text-amber-900 border border-amber-300 px-2 py-0.5 rounded-full font-bold">
-                            Sentra Usaha Warga
+
+                        <div className="flex items-center gap-2">
+                          <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase ${
+                            catConfig.layoutType === 'single_page'
+                              ? 'bg-purple-100 text-purple-800 border border-purple-200'
+                              : catConfig.layoutType === 'photo_album'
+                              ? 'bg-blue-100 text-blue-800 border border-blue-200'
+                              : 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                          }`}>
+                            Layout: {catConfig.layoutType === 'single_page' ? 'Single Page' : catConfig.layoutType === 'photo_album' ? 'Photo Album' : 'Default Card'}
                           </span>
-                        )}
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (confirm(`Apakah Anda yakin ingin menghapus entitas "${catConfig.name}"?`)) {
+                                setTempCategoryConfigs(tempCategoryConfigs.filter((c) => c.id !== catConfig.id));
+                                showToast(`Entitas "${catConfig.name}" dihapus dari navigasi.`);
+                              }
+                            }}
+                            className="p-1 text-stone-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            title="Hapus Entitas"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {/* Option Layout Selector */}
+                        <div className="space-y-2 md:col-span-2 bg-white p-3.5 rounded-xl border border-stone-200">
+                          <label className="text-xs font-bold text-stone-800 block">
+                            Pilih Format Layout Halaman Entitas Ini:
+                          </label>
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setTempCategoryConfigs(
+                                  tempCategoryConfigs.map((c) =>
+                                    c.id === catConfig.id ? { ...c, layoutType: 'default' } : c
+                                  )
+                                );
+                              }}
+                              className={`p-3 rounded-xl border-2 text-left transition-all ${
+                                (catConfig.layoutType || 'default') === 'default'
+                                  ? 'border-emerald-600 bg-emerald-50/60 shadow-2xs'
+                                  : 'border-stone-200 bg-stone-50 hover:bg-stone-100'
+                              }`}
+                            >
+                              <div className="flex items-center gap-2 mb-1">
+                                <Layout className="w-4 h-4 text-emerald-700" />
+                                <span className="font-bold text-xs text-stone-900">1. Default Existing</span>
+                              </div>
+                              <p className="text-[11px] text-stone-500 leading-tight">
+                                Menggunakan format daftar card standar (seperti kegiatan / UMKM existing).
+                              </p>
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setTempCategoryConfigs(
+                                  tempCategoryConfigs.map((c) =>
+                                    c.id === catConfig.id ? { ...c, layoutType: 'photo_album' } : c
+                                  )
+                                );
+                              }}
+                              className={`p-3 rounded-xl border-2 text-left transition-all ${
+                                catConfig.layoutType === 'photo_album'
+                                  ? 'border-blue-600 bg-blue-50/60 shadow-2xs'
+                                  : 'border-stone-200 bg-stone-50 hover:bg-stone-100'
+                              }`}
+                            >
+                              <div className="flex items-center gap-2 mb-1">
+                                <Images className="w-4 h-4 text-blue-700" />
+                                <span className="font-bold text-xs text-stone-900">2. Photo Album</span>
+                              </div>
+                              <p className="text-[11px] text-stone-500 leading-tight">
+                                Tipe album foto galeri kegiatan (carousel slide, max 10 foto & caption).
+                              </p>
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setTempCategoryConfigs(
+                                  tempCategoryConfigs.map((c) =>
+                                    c.id === catConfig.id ? { ...c, layoutType: 'single_page' } : c
+                                  )
+                                );
+                              }}
+                              className={`p-3 rounded-xl border-2 text-left transition-all ${
+                                catConfig.layoutType === 'single_page'
+                                  ? 'border-purple-600 bg-purple-50/60 shadow-2xs'
+                                  : 'border-stone-200 bg-stone-50 hover:bg-stone-100'
+                              }`}
+                            >
+                              <div className="flex items-center gap-2 mb-1">
+                                <FileText className="w-4 h-4 text-purple-700" />
+                                <span className="font-bold text-xs text-stone-900">3. Single Page</span>
+                              </div>
+                              <p className="text-[11px] text-stone-500 leading-tight">
+                                Halaman tunggal langsung berisi Hero Image & Rich Text (tanpa opsi card).
+                              </p>
+                            </button>
+                          </div>
+                        </div>
+
                         {/* Logo Upload Box */}
                         <div className="space-y-2 md:col-span-2 bg-white p-3.5 rounded-xl border border-stone-200">
                           <label className="text-xs font-bold text-stone-800 block">
@@ -2577,23 +3636,6 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                                   />
                                 </label>
 
-                                {catConfig.id === 'Sentra Usaha BJP' && (
-                                  <button
-                                    type="button"
-                                    onClick={() => {
-                                      setTempCategoryConfigs(
-                                        tempCategoryConfigs.map((c) =>
-                                          c.id === catConfig.id ? { ...c, logoUrl: '/images/sentra_usaha_logo.jpg' } : c
-                                        )
-                                      );
-                                    }}
-                                    className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 rounded-lg text-xs font-medium transition-colors"
-                                  >
-                                    <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-                                    <span>Logo Sentra Usaha Official</span>
-                                  </button>
-                                )}
-
                                 {catConfig.logoUrl && (
                                   <button
                                     type="button"
@@ -2606,7 +3648,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                                     }}
                                     className="px-2.5 py-1.5 bg-stone-200 hover:bg-red-100 hover:text-red-700 text-stone-700 rounded-lg text-xs font-medium transition-colors"
                                   >
-                                    Hapus
+                                    Hapus Logo
                                   </button>
                                 )}
                               </div>
@@ -2617,7 +3659,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                         {/* Nama Kategori / Rename Tab */}
                         <div className="space-y-1">
                           <label className="text-xs font-bold text-stone-700 block">
-                            Nama Kategori (Judul & Tab Navbar):
+                            Nama Entitas / Page:
                           </label>
                           <input
                             type="text"
@@ -2653,6 +3695,118 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                             className="w-full px-3 py-2 bg-white border border-stone-300 rounded-xl text-xs text-stone-800 focus:outline-none focus:ring-2 focus:ring-emerald-600"
                           />
                         </div>
+
+                        {/* IF LAYOUT TYPE === 'single_page' -> Rich Text & Hero Image Config */}
+                        {catConfig.layoutType === 'single_page' && (
+                          <div className="space-y-3 md:col-span-2 bg-purple-50/50 p-4 rounded-xl border border-purple-200">
+                            <div className="flex items-center justify-between border-b border-purple-200 pb-2">
+                              <span className="text-xs font-bold text-purple-950 flex items-center gap-1.5">
+                                <Sparkles className="w-4 h-4 text-purple-700" />
+                                Pengaturan Konten Single Page ({catConfig.name})
+                              </span>
+                              <span className="text-[10px] bg-purple-200 text-purple-900 px-2 py-0.5 rounded font-bold">
+                                Hero Image + Rich Text
+                              </span>
+                            </div>
+
+                            {/* Hero Image Field */}
+                            <div className="space-y-1">
+                              <label className="text-xs font-bold text-stone-800 block">
+                                URL Gambar Hero Banner Single Page:
+                              </label>
+                              <input
+                                type="text"
+                                value={catConfig.singlePageHeroImage || ''}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setTempCategoryConfigs(
+                                    tempCategoryConfigs.map((c) =>
+                                      c.id === catConfig.id ? { ...c, singlePageHeroImage: val } : c
+                                    )
+                                  );
+                                }}
+                                placeholder="https://images.unsplash.com/... atau /images/..."
+                                className="w-full px-3 py-2 bg-white border border-stone-300 rounded-xl text-xs font-mono text-stone-900 focus:outline-none focus:ring-2 focus:ring-purple-600"
+                              />
+                            </div>
+
+                            {/* Quick Preset Template Buttons */}
+                            <div className="space-y-1.5">
+                              <label className="text-xs font-bold text-stone-800 block">
+                                Isikan Draf Konten Cepat (Preset Template):
+                              </label>
+                              <div className="flex flex-wrap items-center gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const preset = `<h3>Visi & Misi Pengurus RW 11 Bintara Jaya Permai</h3>
+<p>Menjadi kawasan permukiman yang aman, bersih, harmonis, religius, serta responsif berbasis teknologi digital dan gotong royong warga.</p>
+<h4>Program Unggulan:</h4>
+<ul>
+  <li>Sistem Informasi & Layanan Digital Warga</li>
+  <li>Pengelolaan Lingkungan & Bank Sampah Mandiri</li>
+  <li>Keamanan Terpadu 24 Jam & CCTV Lingkungan</li>
+  <li>Pembinaan UMKM Warga & Sentra Usaha</li>
+</ul>`;
+                                    setTempCategoryConfigs(
+                                      tempCategoryConfigs.map((c) =>
+                                        c.id === catConfig.id ? { ...c, singlePageContent: preset } : c
+                                      )
+                                    );
+                                  }}
+                                  className="px-2.5 py-1 bg-purple-100 hover:bg-purple-200 text-purple-900 text-[11px] font-medium rounded-lg border border-purple-300 transition-colors"
+                                >
+                                  + Preset Visi Misi
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const preset = `<h3>Panduan Layanan Administrasi & Fasilitas Bersama</h3>
+<p>Pengurus RW 11 menyediakan pelayanan administrasi kependudukan dan penyewaan fasilitas warga dengan ketentuan sebagai berikut:</p>
+<h4>Jam Pelayanan Sekretariat:</h4>
+<p>Senin - Sabtu: Pukul 09.00 - 17.00 WIB (Sekretariat RW 11)</p>
+<h4>Persyaratan Pengurusan Surat Pengantar:</h4>
+<ul>
+  <li>Membawa FC KTP & Kartu Keluarga (KK)</li>
+  <li>Bukti Lunas Iuran Pemeliharaan Lingkungan (IPL)</li>
+  <li>Mengisi formulir permohonan online melalui portal BJP HUB</li>
+</ul>`;
+                                    setTempCategoryConfigs(
+                                      tempCategoryConfigs.map((c) =>
+                                        c.id === catConfig.id ? { ...c, singlePageContent: preset } : c
+                                      )
+                                    );
+                                  }}
+                                  className="px-2.5 py-1 bg-purple-100 hover:bg-purple-200 text-purple-900 text-[11px] font-medium rounded-lg border border-purple-300 transition-colors"
+                                >
+                                  + Preset Panduan Layanan
+                                </button>
+                              </div>
+                            </div>
+
+                            {/* Rich Text Editor Field */}
+                            <div className="space-y-1">
+                              <label className="text-xs font-bold text-stone-800 block">
+                                Editor Isian Konten / Rich Text (HTML / Text Format):
+                              </label>
+                              <textarea
+                                rows={6}
+                                value={catConfig.singlePageContent || ''}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setTempCategoryConfigs(
+                                    tempCategoryConfigs.map((c) =>
+                                      c.id === catConfig.id ? { ...c, singlePageContent: val } : c
+                                    )
+                                  );
+                                }}
+                                placeholder="Tuliskan isi artikel lengkap, deskripsi profil, atau panduan informasi warga di sini..."
+                                className="w-full px-3 py-2 bg-white border border-stone-300 rounded-xl text-xs font-mono text-stone-900 focus:outline-none focus:ring-2 focus:ring-purple-600"
+                              />
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -2662,9 +3816,9 @@ export const CMSModal: React.FC<CMSModalProps> = ({
               {/* Save All Settings Button */}
               <div className="bg-white p-5 rounded-2xl border border-stone-200 shadow-xs flex items-center justify-between">
                 <div>
-                  <h4 className="font-bold text-stone-900 text-sm">Simpan Perubahan Branding, Navbar & Header Entitas</h4>
+                  <h4 className="font-bold text-stone-900 text-sm">Simpan Perubahan Navigasi, Branding & Layout Entitas</h4>
                   <p className="text-xs text-stone-500">
-                    Klik tombol di samping untuk menerapkan seluruh logo, susunan tab navbar, dan header entitas secara langsung.
+                    Klik tombol di samping untuk menerapkan seluruh konfigurasi logo, susunan tab navbar, dan layout halaman entitas secara langsung.
                   </p>
                 </div>
 
@@ -2672,19 +3826,739 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                   type="button"
                   onClick={() => {
                     onSaveSiteSettings({
+                      ...siteSettings,
                       logoUrl: tempLogoUrl,
                       siteTitle: tempSiteTitle,
                       siteDescription: tempSiteDescription,
                       navbarTabs: tempNavbarTabs,
                       categoryConfigs: tempCategoryConfigs,
+                      documentTemplates: tempDocumentTemplates,
+                      pollingConfig: tempPollingConfig,
                     });
-                    showToast('Pengaturan logo, judul website, tab navbar, & header entitas berhasil disimpan!');
+                    showToast('Pengaturan navigasi, branding, dan layout entitas berhasil disimpan!');
                   }}
                   className="flex items-center gap-2 px-5 py-2.5 bg-emerald-800 hover:bg-emerald-900 text-white rounded-xl font-semibold text-xs sm:text-sm shadow-md transition-all shrink-0 cursor-pointer"
                 >
                   <Check className="w-4 h-4 text-emerald-300" />
                   <span>Simpan Pengaturan</span>
                 </button>
+              </div>
+            </div>
+          )}
+
+          {/* TAB: DOWNLOAD DOKUMEN / TEMPLATE SURAT */}
+          {activeTab === 'documents' && (
+            <div className="space-y-6 max-w-5xl mx-auto pb-6">
+              <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-xs space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-stone-100 pb-4">
+                  <div>
+                    <h3 className="font-extrabold text-stone-900 text-base sm:text-lg flex items-center gap-2">
+                      <FileText className="w-5 h-5 text-emerald-700" />
+                      Pengaturan Template Dokumen & Surat Menyurat
+                    </h3>
+                    <p className="text-xs text-stone-500 mt-0.5">
+                      Kelola daftar template surat resmi (RT/RW) yang dapat diunduh atau digenerate otomatis oleh warga.
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingDocTemplate(null);
+                      setIsCreatingDocTemplate(true);
+                      setDocTemplateMode('upload');
+                      setFormDocTemplate({
+                        title: '',
+                        code: `SURAT_${Date.now()}`,
+                        category: 'Pemerintahan / Kependudukan',
+                        description: 'Surat pengantar resmi pengurus RW 11 Bintara Jaya Permai.',
+                        templateBody: `SURAT PENGANTAR RT/RW
+Nomor: [NOMOR_SURAT]
+
+Yang bertanda tangan di bawah ini Pengurus RW 11 Bintara Jaya Permai menerangkan bahwa:
+Nama: [NAMA_WARGA]
+NIK: [NIK]
+Alamat: [ALAMAT]
+
+Adalah benar warga Bintara Jaya Permai yang memerlukan surat untuk keperluan: [KEBUTUHAN].`,
+                        enabled: true,
+                      });
+                    }}
+                    className="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-800 hover:bg-emerald-900 text-white rounded-xl text-xs font-semibold shadow-xs transition-colors cursor-pointer shrink-0"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Tambah Template Dokumen</span>
+                  </button>
+                </div>
+
+                {/* FORM CREATE / EDIT DOCUMENT TEMPLATE */}
+                {(isCreatingDocTemplate || editingDocTemplate) && (
+                  <div className="p-5 bg-emerald-50/60 rounded-2xl border border-emerald-200 space-y-4">
+                    <div className="flex items-center justify-between border-b border-emerald-200 pb-3">
+                      <h4 className="font-bold text-stone-900 text-sm flex items-center gap-2">
+                        <Edit3 className="w-4 h-4 text-emerald-700" />
+                        {editingDocTemplate ? `Edit Template: ${editingDocTemplate.title}` : 'Buat Template Dokumen Baru'}
+                      </h4>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditingDocTemplate(null);
+                          setIsCreatingDocTemplate(false);
+                        }}
+                        className="text-xs text-stone-500 hover:text-stone-800 font-semibold"
+                      >
+                        Batal
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-1">
+                        <label className="text-xs font-bold text-stone-800">Nama Dokumen:</label>
+                        <input
+                          type="text"
+                          required
+                          value={formDocTemplate.title || ''}
+                          onChange={(e) => setFormDocTemplate({ ...formDocTemplate, title: e.target.value })}
+                          placeholder="Contoh: Surat Pengantar RT/RW, Surat Keterangan Domisili"
+                          className="w-full px-3 py-2 bg-white border border-stone-300 rounded-xl text-xs font-semibold text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-xs font-bold text-stone-800">Kode Dokumen:</label>
+                        <input
+                          type="text"
+                          required
+                          value={formDocTemplate.code || ''}
+                          onChange={(e) => setFormDocTemplate({ ...formDocTemplate, code: e.target.value.toUpperCase().replace(/\s+/g, '_') })}
+                          placeholder="SURAT_PENGANTAR_RTRW"
+                          className="w-full px-3 py-2 bg-white border border-stone-300 rounded-xl text-xs font-mono text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-xs font-bold text-stone-800">Kategori Dokumen:</label>
+                        <input
+                          type="text"
+                          value={formDocTemplate.category || ''}
+                          onChange={(e) => setFormDocTemplate({ ...formDocTemplate, category: e.target.value })}
+                          placeholder="Kependudukan / Usaha / UMKM"
+                          className="w-full px-3 py-2 bg-white border border-stone-300 rounded-xl text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-xs font-bold text-stone-800">Status Aktif:</label>
+                        <label className="flex items-center gap-2 pt-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={formDocTemplate.enabled !== false}
+                            onChange={(e) => setFormDocTemplate({ ...formDocTemplate, enabled: e.target.checked })}
+                            className="w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500"
+                          />
+                          <span className="text-xs font-semibold text-stone-800">Tampilkan Dokumen Ini di Layanan Unduh</span>
+                        </label>
+                      </div>
+
+                      <div className="space-y-1 sm:col-span-2">
+                        <label className="text-xs font-bold text-stone-800">Deskripsi Singkat Dokumen:</label>
+                        <input
+                          type="text"
+                          value={formDocTemplate.description || ''}
+                          onChange={(e) => setFormDocTemplate({ ...formDocTemplate, description: e.target.value })}
+                          placeholder="Penjelasan fungsi dan persyaratan kelengkapan berkas..."
+                          className="w-full px-3 py-2 bg-white border border-stone-300 rounded-xl text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                        />
+                      </div>
+
+                      {/* Radio Button Selector: Upload File vs Buat Template */}
+                      <div className="space-y-2 sm:col-span-2 bg-stone-100/90 p-4 rounded-2xl border border-stone-200 shadow-2xs">
+                        <label className="text-xs font-bold text-stone-900 block">
+                          Pilihan Jenis Pengaturan Template Dokumen *
+                        </label>
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 pt-1">
+                          <label
+                            onClick={() => setDocTemplateMode('upload')}
+                            className={`flex-1 w-full flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${
+                              docTemplateMode === 'upload'
+                                ? 'bg-emerald-800 text-white border-emerald-900 shadow-xs'
+                                : 'bg-white text-stone-800 border-stone-300 hover:bg-stone-50'
+                            }`}
+                          >
+                            <input
+                              type="radio"
+                              name="docTemplateModeRadio"
+                              value="upload"
+                              checked={docTemplateMode === 'upload'}
+                              onChange={() => setDocTemplateMode('upload')}
+                              className="w-4 h-4 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
+                            />
+                            <div className="flex items-center gap-2">
+                              <UploadCloud className={`w-4 h-4 ${docTemplateMode === 'upload' ? 'text-amber-300' : 'text-emerald-700'}`} />
+                              <div>
+                                <div className="text-xs font-bold">Upload File Berkas</div>
+                                <div className={`text-[10px] ${docTemplateMode === 'upload' ? 'text-emerald-100' : 'text-stone-500'}`}>
+                                  Unggah file master (.docx, .pdf, .zip, atau link cloud)
+                                </div>
+                              </div>
+                            </div>
+                          </label>
+
+                          <label
+                            onClick={() => setDocTemplateMode('template')}
+                            className={`flex-1 w-full flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${
+                              docTemplateMode === 'template'
+                                ? 'bg-emerald-800 text-white border-emerald-900 shadow-xs'
+                                : 'bg-white text-stone-800 border-stone-300 hover:bg-stone-50'
+                            }`}
+                          >
+                            <input
+                              type="radio"
+                              name="docTemplateModeRadio"
+                              value="template"
+                              checked={docTemplateMode === 'template'}
+                              onChange={() => setDocTemplateMode('template')}
+                              className="w-4 h-4 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
+                            />
+                            <div className="flex items-center gap-2">
+                              <FileText className={`w-4 h-4 ${docTemplateMode === 'template' ? 'text-amber-300' : 'text-emerald-700'}`} />
+                              <div>
+                                <div className="text-xs font-bold">Buat Template (Rich Text Editor)</div>
+                                <div className={`text-[10px] ${docTemplateMode === 'template' ? 'text-emerald-100' : 'text-stone-500'}`}>
+                                  Susun draf format surat dengan tag variabel otomatis
+                                </div>
+                              </div>
+                            </div>
+                          </label>
+                        </div>
+                      </div>
+
+                      {/* CONDITIONAL CONTENT: UPLOAD FILE SECTION */}
+                      {docTemplateMode === 'upload' && (
+                        <div className="space-y-3 sm:col-span-2 bg-white p-4 rounded-2xl border-2 border-emerald-500/40 shadow-2xs">
+                          <div className="flex items-center justify-between border-b border-stone-100 pb-2">
+                            <label className="text-xs font-bold text-stone-900 flex items-center gap-2">
+                              <UploadCloud className="w-4 h-4 text-emerald-700" />
+                              <span>Upload File Template Asli (Word .docx / PDF / Gambar / ZIP) *</span>
+                            </label>
+                            <span className="text-[10px] bg-emerald-100 text-emerald-900 font-bold px-2 py-0.5 rounded-full">
+                              Maksimal 15MB
+                            </span>
+                          </div>
+
+                          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 pt-1">
+                            <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-800 hover:bg-emerald-900 text-white rounded-xl text-xs font-bold transition-colors shadow-2xs shrink-0">
+                              <UploadCloud className="w-4 h-4 text-amber-300" />
+                              <span>Pilih & Upload File Berkas</span>
+                              <input
+                                type="file"
+                                accept=".docx,.doc,.pdf,.png,.jpg,.jpeg,.zip"
+                                className="hidden"
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) {
+                                    if (file.size > 15 * 1024 * 1024) {
+                                      alert('Ukuran file maksimal 15MB!');
+                                      return;
+                                    }
+                                    const reader = new FileReader();
+                                    reader.onload = (evt) => {
+                                      const res = evt.target?.result as string;
+                                      setFormDocTemplate({
+                                        ...formDocTemplate,
+                                        fileUrl: res,
+                                        fileName: file.name,
+                                      });
+                                      showToast(`File "${file.name}" berhasil diunggah!`);
+                                    };
+                                    reader.readAsDataURL(file);
+                                  }
+                                }}
+                              />
+                            </label>
+
+                            <div className="flex-1 w-full space-y-1">
+                              <input
+                                type="text"
+                                value={formDocTemplate.fileUrl || ''}
+                                onChange={(e) => setFormDocTemplate({ ...formDocTemplate, fileUrl: e.target.value })}
+                                placeholder="Atau masukkan URL Tautan Direct Download File (Google Drive / Cloud)..."
+                                className="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded-xl text-xs font-mono text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                              />
+                            </div>
+                          </div>
+
+                          {formDocTemplate.fileUrl && (
+                            <div className="mt-2 p-3 bg-emerald-50 rounded-xl border border-emerald-200 flex items-center justify-between text-xs">
+                              <span className="font-semibold text-emerald-950 flex items-center gap-2 truncate">
+                                <CheckCircle2 className="w-4.5 h-4.5 text-emerald-600 shrink-0" />
+                                <span>
+                                  File Terpasang: <strong className="text-emerald-900 font-mono">{formDocTemplate.fileName || 'Template_Dokumen'}</strong>
+                                </span>
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => setFormDocTemplate({ ...formDocTemplate, fileUrl: '', fileName: '' })}
+                                className="text-[11px] text-red-600 hover:text-red-800 font-bold px-2.5 py-1 rounded-lg hover:bg-red-50 transition-colors"
+                              >
+                                Hapus File
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* CONDITIONAL CONTENT: BUAT TEMPLATE (RICH TEXT EDITOR) */}
+                      {docTemplateMode === 'template' && (
+                        <div className="space-y-3 sm:col-span-2 bg-white p-4 rounded-2xl border-2 border-emerald-500/40 shadow-2xs">
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-stone-100 pb-2">
+                            <label className="text-xs font-bold text-stone-900 flex items-center gap-2">
+                              <Edit3 className="w-4 h-4 text-emerald-700" />
+                              <span>Rich Text Editor — Format Template Isian Surat *</span>
+                            </label>
+                            <span className="text-[10px] text-stone-500 font-medium">
+                              Gunakan tag variabel di bawah untuk melengkapi data pemohon secara otomatis
+                            </span>
+                          </div>
+
+                          {/* Rich Text Editor Toolbar & Quick Variable Tag Insertion */}
+                          <div className="space-y-2 bg-stone-50 p-3 rounded-xl border border-stone-200">
+                            <div className="text-[11px] font-bold text-stone-700 flex items-center gap-1.5">
+                              <span>Sisipkan Tag Variabel Otomatis:</span>
+                            </div>
+                            <div className="flex flex-wrap items-center gap-1.5">
+                              {[
+                                { tag: '[NAMA_WARGA]', label: '+ Nama Warga' },
+                                { tag: '[NIK]', label: '+ NIK' },
+                                { tag: '[ALAMAT]', label: '+ Alamat' },
+                                { tag: '[NOMOR_SURAT]', label: '+ Nomor Surat' },
+                                { tag: '[KEBUTUHAN]', label: '+ Keperluan' },
+                                { tag: '[TANGGAL_SURAT]', label: '+ Tanggal Surat' },
+                                { tag: '[RT_RW]', label: '+ Wilayah RT/RW' },
+                              ].map((item) => (
+                                <button
+                                  key={item.tag}
+                                  type="button"
+                                  onClick={() => {
+                                    setFormDocTemplate({
+                                      ...formDocTemplate,
+                                      templateBody: (formDocTemplate.templateBody || '') + ` ${item.tag}`,
+                                    });
+                                  }}
+                                  className="px-2.5 py-1 bg-white hover:bg-emerald-50 text-emerald-900 rounded-lg text-[11px] font-bold border border-emerald-200 shadow-2xs transition-colors cursor-pointer"
+                                >
+                                  {item.label}
+                                </button>
+                              ))}
+                            </div>
+
+                            {/* Formatting Helpers */}
+                            <div className="flex flex-wrap items-center gap-1.5 pt-1 border-t border-stone-200/60 text-[11px]">
+                              <span className="text-stone-500 font-semibold mr-1">Format Teks:</span>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setFormDocTemplate({
+                                    ...formDocTemplate,
+                                    templateBody: (formDocTemplate.templateBody || '') + ' **Teks Tebal**',
+                                  });
+                                }}
+                                className="px-2 py-0.5 bg-white hover:bg-stone-100 rounded border border-stone-200 font-bold"
+                              >
+                                B (Bold)
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setFormDocTemplate({
+                                    ...formDocTemplate,
+                                    templateBody: (formDocTemplate.templateBody || '') + ' *Teks Miring*',
+                                  });
+                                }}
+                                className="px-2 py-0.5 bg-white hover:bg-stone-100 rounded border border-stone-200 italic font-bold"
+                              >
+                                I (Italic)
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setFormDocTemplate({
+                                    ...formDocTemplate,
+                                    templateBody: (formDocTemplate.templateBody || '') + '\n- Poin baris pertama\n- Poin baris kedua',
+                                  });
+                                }}
+                                className="px-2 py-0.5 bg-white hover:bg-stone-100 rounded border border-stone-200 font-bold"
+                              >
+                                Bullet List
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setFormDocTemplate({
+                                    ...formDocTemplate,
+                                    templateBody: (formDocTemplate.templateBody || '') + '\n----------------------------------------\n',
+                                  });
+                                }}
+                                className="px-2 py-0.5 bg-white hover:bg-stone-100 rounded border border-stone-200 font-bold"
+                              >
+                                Garis Pemisah
+                              </button>
+                            </div>
+                          </div>
+
+                          <textarea
+                            rows={8}
+                            value={formDocTemplate.templateBody || ''}
+                            onChange={(e) => setFormDocTemplate({ ...formDocTemplate, templateBody: e.target.value })}
+                            placeholder="Tuliskan isi draf format surat resmi di sini..."
+                            className="w-full px-3.5 py-3 bg-white border border-stone-300 rounded-xl text-xs font-mono text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 leading-relaxed shadow-2xs"
+                          />
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex justify-end gap-2 pt-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditingDocTemplate(null);
+                          setIsCreatingDocTemplate(false);
+                        }}
+                        className="px-4 py-2 bg-stone-200 text-stone-800 rounded-xl text-xs font-semibold hover:bg-stone-300 transition-colors"
+                      >
+                        Batal
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (!formDocTemplate.title) {
+                            alert('Mohon isi nama dokumen!');
+                            return;
+                          }
+                          const newDocItem: DocumentTemplate = {
+                            id: editingDocTemplate ? editingDocTemplate.id : `doc-${Date.now()}`,
+                            title: formDocTemplate.title || 'Dokumen Surat',
+                            code: formDocTemplate.code || `DOC_${Date.now()}`,
+                            category: formDocTemplate.category || 'Umum',
+                            description: formDocTemplate.description || '',
+                            templateBody: formDocTemplate.templateBody || '',
+                            fileUrl: formDocTemplate.fileUrl || '',
+                            fileName: formDocTemplate.fileName || '',
+                            enabled: formDocTemplate.enabled !== false,
+                          };
+
+                          let updatedDocs: DocumentTemplate[];
+                          if (editingDocTemplate) {
+                            updatedDocs = tempDocumentTemplates.map((d) => (d.id === editingDocTemplate.id ? newDocItem : d));
+                          } else {
+                            updatedDocs = [newDocItem, ...tempDocumentTemplates];
+                          }
+
+                          setTempDocumentTemplates(updatedDocs);
+                          onSaveSiteSettings({
+                            ...siteSettings,
+                            documentTemplates: updatedDocs,
+                          });
+                          setEditingDocTemplate(null);
+                          setIsCreatingDocTemplate(false);
+                          showToast(`Template dokumen "${newDocItem.title}" berhasil disimpan!`);
+                        }}
+                        className="px-5 py-2 bg-emerald-800 text-white rounded-xl text-xs font-semibold hover:bg-emerald-900 transition-colors"
+                      >
+                        Simpan Template Dokumen
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* LIST OF DOCUMENT TEMPLATES */}
+                <div className="space-y-3">
+                  {tempDocumentTemplates.length === 0 ? (
+                    <div className="p-8 text-center bg-stone-50 rounded-2xl border border-dashed border-stone-200 text-stone-500 text-xs">
+                      Belum ada template dokumen. Klik tombol <strong>"Tambah Template Dokumen"</strong> di atas.
+                    </div>
+                  ) : (
+                    tempDocumentTemplates.map((doc) => (
+                      <div
+                        key={doc.id}
+                        className="p-4 bg-stone-50 rounded-xl border border-stone-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                      >
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-stone-900 text-sm">{doc.title}</span>
+                            <span className="text-[10px] bg-stone-200 text-stone-800 px-2 py-0.5 rounded font-mono font-bold">
+                              {doc.code}
+                            </span>
+                            <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${doc.enabled ? 'bg-emerald-100 text-emerald-800' : 'bg-stone-200 text-stone-600'}`}>
+                              {doc.enabled ? 'Aktif' : 'Non-aktif'}
+                            </span>
+                          </div>
+                          <p className="text-xs text-stone-600">{doc.description}</p>
+                          <span className="text-[11px] text-emerald-800 font-medium">Kategori: {doc.category}</span>
+                        </div>
+
+                        <div className="flex items-center gap-2 shrink-0">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const updated = tempDocumentTemplates.map((d) => (d.id === doc.id ? { ...d, enabled: !d.enabled } : d));
+                              setTempDocumentTemplates(updated);
+                              onSaveSiteSettings({ ...siteSettings, documentTemplates: updated });
+                            }}
+                            className="px-3 py-1.5 bg-white border border-stone-300 rounded-lg text-xs font-semibold text-stone-800 hover:bg-stone-100"
+                          >
+                            {doc.enabled ? 'Nonaktifkan' : 'Aktifkan'}
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setEditingDocTemplate(doc);
+                              setIsCreatingDocTemplate(false);
+                              setDocTemplateMode(doc.fileUrl ? 'upload' : 'template');
+                              setFormDocTemplate(doc);
+                            }}
+                            className="p-1.5 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 rounded-lg border border-emerald-200"
+                            title="Edit Template"
+                          >
+                            <Edit3 className="w-4 h-4" />
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (confirm(`Hapus template dokumen "${doc.title}"?`)) {
+                                const updated = tempDocumentTemplates.filter((d) => d.id !== doc.id);
+                                setTempDocumentTemplates(updated);
+                                onSaveSiteSettings({ ...siteSettings, documentTemplates: updated });
+                                showToast(`Template "${doc.title}" dihapus.`);
+                              }
+                            }}
+                            className="p-1.5 bg-red-50 text-red-700 hover:bg-red-100 rounded-lg border border-red-200"
+                            title="Hapus Template"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB: POLLING & GOOGLE FORM CONFIG */}
+          {activeTab === 'polling' && (
+            <div className="space-y-6 max-w-5xl mx-auto pb-6">
+              <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-xs space-y-6">
+                <div className="flex items-center justify-between border-b border-stone-100 pb-4">
+                  <div>
+                    <h3 className="font-extrabold text-stone-900 text-base sm:text-lg flex items-center gap-2">
+                      <Vote className="w-5 h-5 text-emerald-700" />
+                      Pengaturan Halaman Polling & Google Form
+                    </h3>
+                    <p className="text-xs text-stone-500 mt-0.5">
+                      Kelola 2 section iframe Google Form, judul, deskripsi, serta tautan survei opini warga RW 11.
+                    </p>
+                  </div>
+
+                  <label className="flex items-center gap-2 cursor-pointer bg-emerald-50 p-2.5 rounded-xl border border-emerald-200">
+                    <input
+                      type="checkbox"
+                      checked={tempPollingConfig.enabled}
+                      onChange={(e) => setTempPollingConfig({ ...tempPollingConfig, enabled: e.target.checked })}
+                      className="w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500"
+                    />
+                    <span className="text-xs font-bold text-emerald-950">Aktifkan Halaman Polling</span>
+                  </label>
+                </div>
+
+                {/* Page Title & Description */}
+                <div className="grid grid-cols-1 gap-4 p-4 bg-stone-50 rounded-2xl border border-stone-200">
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-stone-800 block">Judul Halaman Polling Utama:</label>
+                    <input
+                      type="text"
+                      value={tempPollingConfig.pageTitle}
+                      onChange={(e) => setTempPollingConfig({ ...tempPollingConfig, pageTitle: e.target.value })}
+                      className="w-full px-3.5 py-2 bg-white border border-stone-300 rounded-xl text-xs font-bold text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-stone-800 block">Deskripsi Penjelasan Halaman Polling:</label>
+                    <input
+                      type="text"
+                      value={tempPollingConfig.pageDescription}
+                      onChange={(e) => setTempPollingConfig({ ...tempPollingConfig, pageDescription: e.target.value })}
+                      className="w-full px-3.5 py-2 bg-white border border-stone-300 rounded-xl text-xs text-stone-800 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                    />
+                  </div>
+                </div>
+
+                {/* SECTION 1 CONFIG */}
+                <div className="p-5 bg-stone-50 rounded-2xl border border-stone-200 space-y-4">
+                  <div className="flex items-center justify-between border-b border-stone-200 pb-2.5">
+                    <span className="font-bold text-stone-900 text-xs sm:text-sm flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-600"></span>
+                      Section 1: Google Form Iframe Pertama
+                    </span>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={tempPollingConfig.section1.enabled}
+                        onChange={(e) =>
+                          setTempPollingConfig({
+                            ...tempPollingConfig,
+                            section1: { ...tempPollingConfig.section1, enabled: e.target.checked },
+                          })
+                        }
+                        className="w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500"
+                      />
+                      <span className="text-xs font-semibold text-stone-700">Tampilkan Section 1</span>
+                    </label>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-3">
+                    <div className="space-y-1">
+                      <label className="text-xs font-bold text-stone-800">Judul Section 1:</label>
+                      <input
+                        type="text"
+                        value={tempPollingConfig.section1.title}
+                        onChange={(e) =>
+                          setTempPollingConfig({
+                            ...tempPollingConfig,
+                            section1: { ...tempPollingConfig.section1, title: e.target.value },
+                          })
+                        }
+                        className="w-full px-3 py-2 bg-white border border-stone-300 rounded-xl text-xs font-bold text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-xs font-bold text-stone-800">Deskripsi Section 1:</label>
+                      <input
+                        type="text"
+                        value={tempPollingConfig.section1.description}
+                        onChange={(e) =>
+                          setTempPollingConfig({
+                            ...tempPollingConfig,
+                            section1: { ...tempPollingConfig.section1, description: e.target.value },
+                          })
+                        }
+                        className="w-full px-3 py-2 bg-white border border-stone-300 rounded-xl text-xs text-stone-800 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-xs font-bold text-stone-800">URL Field Google Form Iframe (Section 1):</label>
+                      <input
+                        type="text"
+                        value={tempPollingConfig.section1.formUrl}
+                        onChange={(e) =>
+                          setTempPollingConfig({
+                            ...tempPollingConfig,
+                            section1: { ...tempPollingConfig.section1, formUrl: e.target.value },
+                          })
+                        }
+                        placeholder="https://docs.google.com/forms/d/e/.../viewform?embedded=true"
+                        className="w-full px-3 py-2 bg-white border border-stone-300 rounded-xl text-xs font-mono text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* SECTION 2 CONFIG */}
+                <div className="p-5 bg-stone-50 rounded-2xl border border-stone-200 space-y-4">
+                  <div className="flex items-center justify-between border-b border-stone-200 pb-2.5">
+                    <span className="font-bold text-stone-900 text-xs sm:text-sm flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-600"></span>
+                      Section 2: Google Form Iframe Kedua
+                    </span>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={tempPollingConfig.section2.enabled}
+                        onChange={(e) =>
+                          setTempPollingConfig({
+                            ...tempPollingConfig,
+                            section2: { ...tempPollingConfig.section2, enabled: e.target.checked },
+                          })
+                        }
+                        className="w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500"
+                      />
+                      <span className="text-xs font-semibold text-stone-700">Tampilkan Section 2</span>
+                    </label>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-3">
+                    <div className="space-y-1">
+                      <label className="text-xs font-bold text-stone-800">Judul Section 2:</label>
+                      <input
+                        type="text"
+                        value={tempPollingConfig.section2.title}
+                        onChange={(e) =>
+                          setTempPollingConfig({
+                            ...tempPollingConfig,
+                            section2: { ...tempPollingConfig.section2, title: e.target.value },
+                          })
+                        }
+                        className="w-full px-3 py-2 bg-white border border-stone-300 rounded-xl text-xs font-bold text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-xs font-bold text-stone-800">Deskripsi Section 2:</label>
+                      <input
+                        type="text"
+                        value={tempPollingConfig.section2.description}
+                        onChange={(e) =>
+                          setTempPollingConfig({
+                            ...tempPollingConfig,
+                            section2: { ...tempPollingConfig.section2, description: e.target.value },
+                          })
+                        }
+                        className="w-full px-3 py-2 bg-white border border-stone-300 rounded-xl text-xs text-stone-800 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-xs font-bold text-stone-800">URL Field Google Form Iframe (Section 2):</label>
+                      <input
+                        type="text"
+                        value={tempPollingConfig.section2.formUrl}
+                        onChange={(e) =>
+                          setTempPollingConfig({
+                            ...tempPollingConfig,
+                            section2: { ...tempPollingConfig.section2, formUrl: e.target.value },
+                          })
+                        }
+                        placeholder="https://docs.google.com/forms/d/e/.../viewform?embedded=true"
+                        className="w-full px-3 py-2 bg-white border border-stone-300 rounded-xl text-xs font-mono text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* SAVE BUTTON POLLING */}
+                <div className="flex justify-end pt-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onSaveSiteSettings({
+                        ...siteSettings,
+                        pollingConfig: tempPollingConfig,
+                      });
+                      showToast('Pengaturan halaman polling & Google Form berhasil disimpan!');
+                    }}
+                    className="flex items-center gap-2 px-6 py-2.5 bg-emerald-800 hover:bg-emerald-900 text-white rounded-xl font-semibold text-xs sm:text-sm shadow-md transition-all cursor-pointer"
+                  >
+                    <Check className="w-4 h-4 text-emerald-300" />
+                    <span>Simpan Pengaturan Polling</span>
+                  </button>
+                </div>
               </div>
             </div>
           )}

@@ -22,6 +22,15 @@ export interface EntitySocials {
   whatsapp?: SocialItem;
 }
 
+export type CardType = 'standard' | 'photo_album';
+
+export interface PhotoAlbumItem {
+  id: string;
+  url: string;
+  caption?: string;
+  enabled: boolean;
+}
+
 export interface Entity {
   id: string;
   name: string;
@@ -30,6 +39,8 @@ export interface Entity {
   image: string;
   ctaUrl: string;
   ctaWording: string;
+  cardType?: CardType; // 'standard' | 'photo_album'
+  albumPhotos?: PhotoAlbumItem[]; // Max 10 photos
   instagram?: string;
   mediaUrl?: string;
   contact?: string;
@@ -45,17 +56,82 @@ export interface Entity {
 }
 
 export interface NavbarTabConfig {
-  id: 'entities' | 'announcements' | string;
+  id: 'entities' | 'announcements' | 'document_service' | 'polling' | string;
   label: string;
   enabled: boolean;
   order: number;
 }
+
+export interface PollingSection {
+  id: string;
+  enabled: boolean;
+  title: string;
+  description?: string;
+  formUrl: string;
+}
+
+export interface PollingPageConfig {
+  enabled: boolean;
+  pageTitle: string;
+  pageDescription?: string;
+  section1: PollingSection;
+  section2: PollingSection;
+}
+
+export type PageLayoutType = 'default' | 'photo_album' | 'single_page';
 
 export interface CategoryHeaderConfig {
   id: string;
   name: string;
   description: string;
   logoUrl?: string;
+  layoutType?: PageLayoutType; // 'default' | 'photo_album' | 'single_page'
+  singlePageHeroImage?: string;
+  singlePageContent?: string;
+}
+
+export type SocialFeedPlatform = 'youtube' | 'instagram' | 'tiktok' | 'other';
+
+export interface SocialFeedItem {
+  id: string;
+  title: string;
+  description?: string;
+  url: string;
+  platform: SocialFeedPlatform;
+  enabled: boolean;
+  order: number;
+}
+
+export interface RunningTextConfig {
+  enabled: boolean;
+  text: string;
+  linkUrl?: string;
+  linkText?: string;
+}
+
+export interface DocumentTemplate {
+  id: string;
+  title: string;
+  code: string;
+  description: string;
+  category: string;
+  templateBody: string;
+  fileUrl?: string; // Data URL or URL to uploaded document template file (.docx, .pdf, etc)
+  fileName?: string; // Original name of uploaded template file
+  enabled: boolean;
+}
+
+export interface LetterRequest {
+  id: string;
+  templateId: string;
+  letterNumber: string;
+  fullName: string;
+  nik?: string;
+  address: string;
+  requestDate: string;
+  purpose: string;
+  phone?: string;
+  createdAt: string;
 }
 
 export interface SiteSettings {
@@ -64,6 +140,10 @@ export interface SiteSettings {
   siteDescription?: string;
   navbarTabs: NavbarTabConfig[];
   categoryConfigs?: CategoryHeaderConfig[];
+  socialFeeds?: SocialFeedItem[];
+  runningText?: RunningTextConfig;
+  documentTemplates?: DocumentTemplate[];
+  pollingConfig?: PollingPageConfig;
 }
 
 export interface Announcement {
@@ -90,4 +170,5 @@ export type CategoryType =
   | 'Kesejahteraan Keluarga'
   | 'Kesehatan'
   | 'Kepemudaan'
-  | 'Olahraga';
+  | 'Olahraga'
+  | string;

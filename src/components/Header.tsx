@@ -1,19 +1,21 @@
 import React, { useState } from 'react';
-import { Search, Shield, Menu, X, LayoutGrid, Megaphone, HelpCircle } from 'lucide-react';
+import { Search, Shield, Menu, X, LayoutGrid, Megaphone, HelpCircle, FileText, Vote } from 'lucide-react';
 import { BJP_LOGO_URL } from '../assets/logo';
-import { NavbarTabConfig } from '../types';
+import { NavbarTabConfig, RunningTextConfig } from '../types';
 import { formatImageUrl } from '../utils/imageUrl';
+import { RunningTextTicker } from './RunningTextTicker';
 
 interface HeaderProps {
   searchTerm: string;
   onSearchChange: (value: string) => void;
-  activeTab: 'entities' | 'announcements';
-  onTabChange: (tab: 'entities' | 'announcements') => void;
+  activeTab: 'entities' | 'announcements' | 'document_service' | string;
+  onTabChange: (tab: 'entities' | 'announcements' | 'document_service' | string) => void;
   onOpenCMS: () => void;
   isCMSActive: boolean;
   totalEntitiesCount: number;
   logoUrl?: string;
   navbarTabs?: NavbarTabConfig[];
+  runningTextConfig?: RunningTextConfig;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -26,6 +28,7 @@ export const Header: React.FC<HeaderProps> = ({
   totalEntitiesCount,
   logoUrl,
   navbarTabs,
+  runningTextConfig,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -38,11 +41,15 @@ export const Header: React.FC<HeaderProps> = ({
       : [
           { id: 'entities', label: 'Entitas Kegiatan', enabled: true, order: 0 },
           { id: 'announcements', label: 'Pengumuman & Agenda', enabled: true, order: 1 },
+          { id: 'document_service', label: 'Layanan Surat Online', enabled: true, order: 2 },
         ]
   ) as NavbarTabConfig[];
 
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-stone-200 shadow-xs">
+      {/* Running Text Ticker */}
+      <RunningTextTicker config={runningTextConfig} />
+
       {/* Top Banner Notice */}
       <div className="bg-emerald-800 text-emerald-50 text-xs py-1.5 px-4 text-center font-medium flex items-center justify-center gap-2">
         <span className="inline-block w-2 h-2 rounded-full bg-emerald-300 animate-pulse"></span>
@@ -75,14 +82,16 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="hidden md:flex items-center bg-stone-100 p-1 rounded-xl border border-stone-200/80">
             {activeNavbarTabs.map((tab) => {
               const isEntities = tab.id === 'entities';
-              const Icon = isEntities ? LayoutGrid : Megaphone;
+              const isDoc = tab.id === 'document_service';
+              const isPolling = tab.id === 'polling';
+              const Icon = isEntities ? LayoutGrid : isDoc ? FileText : isPolling ? Vote : Megaphone;
               const isSelected = activeTab === tab.id;
 
               return (
                 <button
                   key={tab.id}
-                  onClick={() => onTabChange(tab.id as 'entities' | 'announcements')}
-                  className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                  onClick={() => onTabChange(tab.id)}
+                  className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${
                     isSelected
                       ? 'bg-white text-emerald-900 shadow-xs border border-stone-200/60 font-semibold'
                       : 'text-stone-600 hover:text-stone-900'

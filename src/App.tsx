@@ -5,6 +5,11 @@ import { CategoryPageHeader } from './components/CategoryPageHeader';
 import { CategoryCarousel } from './components/CategoryCarousel';
 import { CategoryFilter } from './components/CategoryFilter';
 import { EntityCard } from './components/EntityCard';
+import { PhotoAlbumCard } from './components/PhotoAlbumCard';
+import { SinglePageView } from './components/SinglePageView';
+import { SocialFeedsSection } from './components/SocialFeedsSection';
+import { DocumentGeneratorPage } from './components/DocumentGeneratorPage';
+import { PollingPage } from './components/PollingPage';
 import { EntityDetailModal } from './components/EntityDetailModal';
 import { AnnouncementsList } from './components/AnnouncementsList';
 import { CMSModal } from './components/CMSModal';
@@ -30,7 +35,7 @@ export default function App() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings>(() => getSiteSettings());
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Semua');
-  const [activeTab, setActiveTab] = useState<'entities' | 'announcements'>('entities');
+  const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'document_service' | string>('entities');
 
   const [selectedEntityForModal, setSelectedEntityForModal] = useState<Entity | null>(null);
   const [shareModalItem, setShareModalItem] = useState<{
@@ -198,13 +203,6 @@ export default function App() {
   const categoryConfigs = siteSettings.categoryConfigs || DEFAULT_CATEGORY_CONFIGS;
   const categoryNames = ['Semua', ...categoryConfigs.map((c) => c.name)];
 
-  const activeSectionConfigs =
-    selectedCategory === 'Semua'
-      ? categoryConfigs
-      : categoryConfigs.filter(
-          (c) => c.name === selectedCategory || c.id === selectedCategory
-        );
-
   // Helper to filter entities per section config
   const getEntitiesForSectionConfig = (catConfig: CategoryHeaderConfig) => {
     return entities.filter((ent) => {
@@ -262,6 +260,7 @@ export default function App() {
         totalEntitiesCount={entities.length}
         logoUrl={siteSettings.logoUrl}
         navbarTabs={siteSettings.navbarTabs}
+        runningTextConfig={siteSettings.runningText}
       />
 
       {/* Main Container */}
@@ -291,69 +290,63 @@ export default function App() {
                     totalEntities={entities.length}
                   />
 
-                  {/* Search Bar Feedback if User typed search term */}
-                  {searchTerm && (
-                    <div className="flex items-center justify-between bg-white p-4 rounded-2xl border border-stone-200 shadow-2xs">
-                      <div className="text-xs sm:text-sm text-stone-700 font-medium">
-                        Hasil pencarian untuk kata kunci: "<strong>{searchTerm}</strong>" ({totalFilteredCount} entitas)
+                  {/* Homepage Feeds Embed Section (YouTube & Instagram Feeds) */}
+                  <SocialFeedsSection feeds={siteSettings.socialFeeds} />
+
+                  {/* If user typed a search term on Homepage, show matching Entity Cards */}
+                  {searchTerm ? (
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between bg-white p-4 rounded-2xl border border-stone-200 shadow-2xs">
+                        <div className="text-xs sm:text-sm text-stone-700 font-medium">
+                          Hasil pencarian untuk kata kunci: "<strong>{searchTerm}</strong>" ({totalFilteredCount} entitas)
+                        </div>
+                        <button
+                          onClick={() => setSearchTerm('')}
+                          className="text-xs bg-stone-100 hover:bg-stone-200 text-stone-800 font-bold px-3 py-1.5 rounded-xl cursor-pointer"
+                        >
+                          ✕ Clear Search
+                        </button>
                       </div>
-                      <button
-                        onClick={() => setSearchTerm('')}
-                        className="text-xs bg-stone-100 hover:bg-stone-200 text-stone-800 font-bold px-3 py-1.5 rounded-xl cursor-pointer"
-                      >
-                        ✕ Clear Search
-                      </button>
-                    </div>
-                  )}
 
-                  {/* Entity Category Carousels */}
-                  {totalFilteredCount === 0 ? (
-                    <div className="bg-white rounded-2xl p-12 text-center border border-stone-200 space-y-3 max-w-lg mx-auto shadow-xs">
-                      <SearchX className="w-12 h-12 text-stone-300 mx-auto" />
-                      <h3 className="text-base font-bold text-stone-800">
-                        Tidak Ditemukan Entitas Kegiatan
-                      </h3>
-                      <p className="text-xs text-stone-500">
-                        Coba kata kunci pencarian lain atau ganti filter kategori.
-                      </p>
-                      <button
-                        onClick={() => {
-                          setSearchTerm('');
-                          setSelectedCategory('Semua');
-                        }}
-                        className="inline-flex items-center gap-1.5 bg-emerald-800 text-white text-xs font-bold px-4 py-2 rounded-xl cursor-pointer"
-                      >
-                        <span>Reset Filter</span>
-                      </button>
+                      {totalFilteredCount === 0 ? (
+                        <div className="bg-white rounded-2xl p-12 text-center border border-stone-200 space-y-3 max-w-lg mx-auto shadow-xs">
+                          <SearchX className="w-12 h-12 text-stone-300 mx-auto" />
+                          <h3 className="text-base font-bold text-stone-800">
+                            Tidak Ditemukan Entitas Kegiatan
+                          </h3>
+                          <p className="text-xs text-stone-500">
+                            Coba kata kunci pencarian lain atau ganti filter kategori.
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                          {entities
+                            .filter((ent) => {
+                              const matchesSearch =
+                                ent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                ent.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                ent.category.toLowerCase().includes(searchTerm.toLowerCase());
+                              return matchesSearch;
+                            })
+                            .map((entity) => (
+                              <EntityCard
+                                key={entity.id}
+                                entity={entity}
+                                onSelect={setSelectedEntityForModal}
+                                onShare={(ent) =>
+                                  setShareModalItem({ item: ent, type: 'entity' })
+                                }
+                                onEdit={handleEditEntityInCMS}
+                                isCMSActive={true}
+                              />
+                            ))}
+                        </div>
+                      )}
                     </div>
-                  ) : (
-                    <div className="space-y-8">
-                      {categoryConfigs.map((catConfig) => {
-                        const sectionEntities = getEntitiesForSectionConfig(catConfig);
-
-                        // If user is searching and this section has no items, skip
-                        if (searchTerm && sectionEntities.length === 0) return null;
-
-                        return (
-                          <CategoryCarousel
-                            key={catConfig.id}
-                            catConfig={catConfig}
-                            entities={sectionEntities}
-                            onVisitCategory={(catName) => setSelectedCategory(catName)}
-                            onSelectEntity={setSelectedEntityForModal}
-                            onShareEntity={(ent) =>
-                              setShareModalItem({ item: ent, type: 'entity' })
-                            }
-                            onEditEntity={handleEditEntityInCMS}
-                            isCMSActive={true}
-                          />
-                        );
-                      })}
-                    </div>
-                  )}
+                  ) : null}
                 </div>
               ) : (
-                /* 2. PER ENTITY CATEGORY PAGE VIEW (When a specific category is selected) */
+                /* 2. PER ENTITY CATEGORY PAGE VIEW (Supports Default, Photo Album, & Single Page Layouts) */
                 <div className="space-y-6">
                   {(() => {
                     const currentConfig =
@@ -364,9 +357,11 @@ export default function App() {
                         name: selectedCategory,
                         description: `Daftar unit kegiatan dan entitas dalam ${selectedCategory}`,
                         logoUrl: '',
+                        layoutType: 'default',
                       };
 
                     const categoryEntities = getEntitiesForSectionConfig(currentConfig);
+                    const layoutType = currentConfig.layoutType || 'default';
 
                     return (
                       <>
@@ -392,8 +387,16 @@ export default function App() {
                           </div>
                         )}
 
-                        {/* Grid of Cards for this Specific Category */}
-                        {categoryEntities.length === 0 ? (
+                        {/* Layout Switch Rendering */}
+                        {layoutType === 'single_page' ? (
+                          /* LAYOUT TYPE 3: SINGLE PAGE VIEW */
+                          <SinglePageView
+                            title={currentConfig.name}
+                            description={currentConfig.description}
+                            heroImageUrl={currentConfig.singlePageHeroImage}
+                            contentHtml={currentConfig.singlePageContent}
+                          />
+                        ) : categoryEntities.length === 0 ? (
                           <div className="bg-white rounded-2xl p-12 text-center border border-stone-200 space-y-3 max-w-md mx-auto my-6">
                             <SearchX className="w-10 h-10 text-stone-300 mx-auto" />
                             <h3 className="text-sm font-bold text-stone-800">
@@ -410,7 +413,24 @@ export default function App() {
                               <span>Tambah Entitas di {currentConfig.name}</span>
                             </button>
                           </div>
+                        ) : layoutType === 'photo_album' ? (
+                          /* LAYOUT TYPE 2: PHOTO ALBUM GRID */
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {categoryEntities.map((entity) => (
+                              <PhotoAlbumCard
+                                key={entity.id}
+                                entity={entity}
+                                onSelect={setSelectedEntityForModal}
+                                onShare={(ent) =>
+                                  setShareModalItem({ item: ent, type: 'entity' })
+                                }
+                                onEdit={handleEditEntityInCMS}
+                                isCMSActive={true}
+                              />
+                            ))}
+                          </div>
                         ) : (
+                          /* LAYOUT TYPE 1: DEFAULT EXISTING GRID */
                           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                             {categoryEntities.map((entity) => (
                               <EntityCard
@@ -445,6 +465,16 @@ export default function App() {
               onShare={(ann) => setShareModalItem({ item: ann, type: 'announcement' })}
             />
           </div>
+        )}
+
+        {/* View Tab 3: Layanan Surat Menyurat Online Generator */}
+        {activeTab === 'document_service' && (
+          <DocumentGeneratorPage templates={siteSettings.documentTemplates} />
+        )}
+
+        {/* View Tab 4: Polling & Google Form Page */}
+        {activeTab === 'polling' && (
+          <PollingPage config={siteSettings.pollingConfig} />
         )}
       </main>
 
@@ -504,3 +534,4 @@ export default function App() {
     </div>
   );
 }
+

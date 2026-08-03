@@ -3,6 +3,7 @@ import { Entity } from '../types';
 import { formatImageUrl } from '../utils/imageUrl';
 import { Globe, ExternalLink, Calendar, Phone, ArrowRight, Share2, MapPin, Info } from 'lucide-react';
 import { SocialBadges } from './SocialIcons';
+import { PhotoAlbumCard } from './PhotoAlbumCard';
 
 interface EntityCardProps {
   entity: Entity;
@@ -19,6 +20,18 @@ export const EntityCard: React.FC<EntityCardProps> = ({
   onEdit,
   isCMSActive,
 }) => {
+  if (entity.cardType === 'photo_album' || (entity as any).cardType === 'photo') {
+    return (
+      <PhotoAlbumCard
+        entity={entity}
+        onSelect={onSelect}
+        onShare={onShare}
+        onEdit={onEdit}
+        isCMSAllowed={isCMSActive}
+      />
+    );
+  }
+
   // Extract text preview without raw html tags
   const cleanDescription = entity.description.replace(/<[^>]*>?/gm, '');
 
