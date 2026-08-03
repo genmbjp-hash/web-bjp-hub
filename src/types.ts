@@ -58,12 +58,18 @@ export interface CategoryHeaderConfig {
   logoUrl?: string;
 }
 
+export interface SecuritySchedule {
+  date: string; // YYYY-MM-DD format
+  guards: string; // Nama petugas
+}
+
 export interface SiteSettings {
   logoUrl: string;
   siteTitle?: string;
   siteDescription?: string;
   navbarTabs: NavbarTabConfig[];
   categoryConfigs?: CategoryHeaderConfig[];
+  securitySchedules?: SecuritySchedule[];
 }
 
 export interface Announcement {

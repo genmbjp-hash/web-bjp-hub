@@ -1,12 +1,19 @@
 import { Entity, Announcement } from '../types';
 import { formatImageUrl } from './imageUrl';
+import {
+  FALLBACK_IMAGE_URL,
+  FALLBACK_ENTITY_IMAGE_URL,
+  DEFAULT_SITE_TITLE,
+  DEFAULT_SITE_DESCRIPTION,
+  DEFAULT_OG_SITE_NAME,
+} from '../constants/defaults';
 
 export function stripHtml(html: string): string {
   return html.replace(/<[^>]*>?/gm, '').replace(/\s+/g, ' ').trim();
 }
 
 export function getAbsoluteImageUrl(url: string | undefined | null): string {
-  if (!url) return 'https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=1200&q=80';
+  if (!url) return FALLBACK_IMAGE_URL;
   const formatted = formatImageUrl(url);
   if (formatted.startsWith('http://') || formatted.startsWith('https://')) {
     return formatted;
@@ -44,7 +51,7 @@ export function updateMetaTags(data: {
   setMeta('property', 'og:title', data.title);
   setMeta('property', 'og:description', data.description);
   setMeta('property', 'og:type', 'website');
-  setMeta('property', 'og:site_name', 'BJP HUB RW 11');
+  setMeta('property', 'og:site_name', DEFAULT_OG_SITE_NAME);
   if (absoluteImg) {
     setMeta('property', 'og:image', absoluteImg);
     setMeta('property', 'og:image:secure_url', absoluteImg);
@@ -88,13 +95,10 @@ export function updateSiteFaviconAndOgImage(logoUrl?: string) {
 }
 
 export function resetMetaTags(siteLogoUrl?: string) {
-  const defaultTitle = 'Portal BJP HUB - Bintara Jaya Permai (RW 11)';
-  const defaultDesc =
-    'Website Portal Informasi Kegiatan & Entitas Warga Komplek Bintara Jaya Permai (RW 11) Bekasi';
-  document.title = defaultTitle;
+  document.title = DEFAULT_SITE_TITLE;
   updateMetaTags({
-    title: defaultTitle,
-    description: defaultDesc,
+    title: DEFAULT_SITE_TITLE,
+    description: DEFAULT_SITE_DESCRIPTION,
     image: siteLogoUrl,
     url: window.location.origin + window.location.pathname,
   });
@@ -113,12 +117,12 @@ export function setEntityMetaTags(entity: Entity) {
     entity.image ||
     (entity.productPhotos && entity.productPhotos.length > 0
       ? entity.productPhotos[0]
-      : 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80');
+      : FALLBACK_ENTITY_IMAGE_URL);
 
   const thumbnail = getAbsoluteImageUrl(rawImage);
 
   updateMetaTags({
-    title: `${entity.name} - BJP HUB Bintara Jaya Permai`,
+    title: `${entity.name} - BJP.hub Bintara Jaya Permai`,
     description: `${entity.category} | ${snippet}`,
     image: thumbnail,
     url: directUrl,
@@ -130,14 +134,12 @@ export function setAnnouncementMetaTags(ann: Announcement) {
   const snippet = cleanDesc.length > 150 ? cleanDesc.slice(0, 150) + '...' : cleanDesc;
   const directUrl = `${window.location.origin}${window.location.pathname}?announcement=${ann.id}`;
 
-  const rawImage =
-    ann.image ||
-    'https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=800&q=80';
+  const rawImage = ann.image || FALLBACK_IMAGE_URL;
 
   const thumbnail = getAbsoluteImageUrl(rawImage);
 
   updateMetaTags({
-    title: `${ann.title} - Pengumuman Warga BJP HUB`,
+    title: `${ann.title} - Pengumuman Warga BJP.hub`,
     description: `[Pengumuman ${ann.category}] ${snippet}`,
     image: thumbnail,
     url: directUrl,

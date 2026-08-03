@@ -1,9 +1,12 @@
 import express from 'express';
 import path from 'path';
 import fs from 'fs';
+import * as dotenv from 'dotenv';
 import { createServer as createViteServer } from 'vite';
 import { INITIAL_ENTITIES, INITIAL_ANNOUNCEMENTS } from './src/data/initialData';
 import { formatImageUrl } from './src/utils/imageUrl';
+
+dotenv.config();
 
 function stripHtml(html: string = ''): string {
   return html.replace(/<[^>]*>?/gm, '').replace(/\s+/g, ' ').trim();
@@ -99,7 +102,7 @@ function injectMetaTags(html: string, meta: { title: string; description: string
 
 async function startServer() {
   const app = express();
-  const PORT = 3000;
+  const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 8080;
 
   app.get('/api/health', (_req, res) => {
     res.json({ status: 'ok' });
@@ -156,7 +159,7 @@ async function startServer() {
   }
 
   app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server running on http://0.0.0.0:${PORT}`);
+    console.log(`Server running on http://127.0.0.1:${PORT}`);
   });
 }
 

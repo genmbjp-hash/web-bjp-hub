@@ -1,98 +1,98 @@
 import React, { useState, useEffect } from 'react';
-import { Header } from './components/Header';
-import { HomePageHeader } from './components/HomePageHeader';
-import { CategoryPageHeader } from './components/CategoryPageHeader';
-import { CategoryCarousel } from './components/CategoryCarousel';
-import { CategoryFilter } from './components/CategoryFilter';
-import { EntityCard } from './components/EntityCard';
-import { EntityDetailModal } from './components/EntityDetailModal';
-import { AnnouncementsList } from './components/AnnouncementsList';
-import { CMSModal } from './components/CMSModal';
-import { PasswordModal } from './components/PasswordModal';
-import { Footer } from './components/Footer';
-
+import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { Entity, Announcement, SiteSettings, CategoryHeaderConfig, User } from './types';
-import {
-  getEntities, saveEntities,
-  getAnnouncements, saveAnnouncements,
-  getSiteSettings, saveSiteSettings,
-  getUsers, saveUsers,
-  getLoggedInUser, saveLoggedInUser,
-  DEFAULT_CATEGORY_CONFIGS
-} from './utils/storage';
-import { setEntityMetaTags, setAnnouncementMetaTags, resetMetaTags } from './utils/meta';
-import { ShareModal } from './components/ShareModal';
 import { SearchX, Plus } from 'lucide-react';
 
+// Components (via barrel export)
+import {
+  Header,
+  CategoryPageHeader,
+  CategoryCarousel,
+  CategoryFilter,
+  EntityCard,
+  EntityDetailModal,
+  AnnouncementsList,
+  CMSModal,
+  PasswordModal,
+  Footer,
+  ShareModal,
+} from './components';
+
+// Custom Hooks
+import { useEntities, useAnnouncements, useAuth } from './hooks';
+
+// Utils
+import { getSiteSettings, saveSiteSettings, DEFAULT_CATEGORY_CONFIGS } from './utils/storage';
+import { setEntityMetaTags, resetMetaTags } from './utils/meta';
+import { setAnnouncementMetaTags } from './utils/meta';
+
+// Pages
+import { HomePage } from './pages/HomePage';
+import { RunningTeks } from './components/home/RunningTeks';
+
 export default function App() {
-  const [entities, setEntities] = useState<Entity[]>([]);
-  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+  // ----- Data State (via Custom Hooks) -----
+  const { entities, saveEntities: handleSaveEntities } = useEntities();
+  const { announcements, saveAnnouncements: handleSaveAnnouncements } = useAnnouncements();
+  const { users, currentUser, isAuthenticated, login, logout, saveUsers: handleSaveUsers } = useAuth();
+
+  // ----- UI State -----
   const [siteSettings, setSiteSettings] = useState<SiteSettings>(() => getSiteSettings());
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Semua');
-  const [activeTab, setActiveTab] = useState<'entities' | 'announcements'>('entities');
+  const navigate = useNavigate();
+  const location = useLocation();
 
+  // ----- Modal State -----
   const [selectedEntityForModal, setSelectedEntityForModal] = useState<Entity | null>(null);
   const [shareModalItem, setShareModalItem] = useState<{
     item: Entity | Announcement;
     type: 'entity' | 'announcement';
   } | null>(null);
-
-  // User Management & Login Auth State
-  const [users, setUsers] = useState<User[]>(() => getUsers());
-  const [currentUser, setCurrentUser] = useState<User | null>(() => getLoggedInUser());
   const [isCMSOpen, setIsCMSOpen] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
-  const [isAuthAuthenticated, setIsAuthAuthenticated] = useState<boolean>(() => Boolean(getLoggedInUser()));
   const [editingEntityForCMS, setEditingEntityForCMS] = useState<Entity | null>(null);
   const [pendingCategoryForCard, setPendingCategoryForCard] = useState<string | null>(null);
 
-  // Initialize data from local storage & check URL deep link
+  // ----- Deep Link: Parse URL on initial mount -----
   useEffect(() => {
-    const loadedEntities = getEntities();
-    const loadedAnnouncements = getAnnouncements();
-    setEntities(loadedEntities);
-    setAnnouncements(loadedAnnouncements);
-
-    // Deep link check: ?entity=<id>, ?category=<name>, or ?announcement=<id>
     const params = new URLSearchParams(window.location.search);
     const entityId = params.get('entity') || params.get('id');
     const annId = params.get('announcement');
     const categoryParam = params.get('category');
 
-    if (categoryParam) {
-      setSelectedCategory(categoryParam);
-    }
+    if (categoryParam) setSelectedCategory(categoryParam);
 
     if (entityId) {
-      let found = loadedEntities.find((e) => e.id === entityId);
+      let found = entities.find((e) => e.id === entityId);
       if (!found) {
-        found = loadedEntities.find(
+        found = entities.find(
           (e) =>
             e.id.toLowerCase() === entityId.toLowerCase() ||
             e.id.replace('ent-', '') === entityId.replace('ent-', '')
         );
       }
-      if (!found && loadedEntities.length > 0) {
-        found = loadedEntities.find((e) => e.id === 'ent-4') || loadedEntities[0];
+      if (!found && entities.length > 0) {
+        found = entities.find((e) => e.id === 'ent-4') || entities[0];
       }
       if (found) {
         setSelectedEntityForModal(found);
+        navigate('/komunitas', { replace: true });
       }
     } else if (annId) {
-      const foundAnn = loadedAnnouncements.find((a) => a.id === annId);
+      const foundAnn = announcements.find((a) => a.id === annId);
       if (foundAnn) {
-        setActiveTab('announcements');
+        navigate('/pengumuman', { replace: true });
         setAnnouncementMetaTags(foundAnn);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Sync URL query params and meta tags whenever selectedEntityForModal changes
+  // ----- Sync URL & meta tags when selected entity changes -----
   useEffect(() => {
     if (selectedEntityForModal) {
       setEntityMetaTags(selectedEntityForModal);
-
       const url = new URL(window.location.href);
       if (url.searchParams.get('entity') !== selectedEntityForModal.id) {
         url.searchParams.set('entity', selectedEntityForModal.id);
@@ -100,7 +100,6 @@ export default function App() {
       }
     } else {
       resetMetaTags(siteSettings.logoUrl);
-
       const url = new URL(window.location.href);
       if (url.searchParams.has('entity') || url.searchParams.has('id')) {
         url.searchParams.delete('entity');
@@ -110,7 +109,7 @@ export default function App() {
     }
   }, [selectedEntityForModal, siteSettings.logoUrl]);
 
-  // Handle browser Back & Forward button navigation
+  // ----- Handle browser Back & Forward navigation -----
   useEffect(() => {
     const handlePopState = () => {
       const params = new URLSearchParams(window.location.search);
@@ -124,44 +123,21 @@ export default function App() {
       }
       setSelectedEntityForModal(null);
     };
-
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
   }, [entities]);
 
-  const handleSaveEntities = (updated: Entity[]) => {
-    setEntities(updated);
-    saveEntities(updated);
-  };
-
-  const handleSaveAnnouncements = (updated: Announcement[]) => {
-    setAnnouncements(updated);
-    saveAnnouncements(updated);
-  };
-
+  // ----- Site Settings Handler -----
   const handleSaveSiteSettings = (updatedSettings: SiteSettings) => {
     setSiteSettings(updatedSettings);
     saveSiteSettings(updatedSettings);
     resetMetaTags(updatedSettings.logoUrl);
   };
 
-  const handleSaveUsers = (updatedUsers: User[]) => {
-    setUsers(updatedUsers);
-    saveUsers(updatedUsers);
-
-    if (currentUser) {
-      const updatedSelf = updatedUsers.find((u) => u.id === currentUser.id);
-      if (updatedSelf) {
-        setCurrentUser(updatedSelf);
-        saveLoggedInUser(updatedSelf);
-      }
-    }
-  };
-
-  // CMS access handler with authentication check
+  // ----- CMS Access Handlers -----
   const handleOpenCMSWithAuth = (presetCat?: string) => {
     setPendingCategoryForCard(presetCat || null);
-    if (isAuthAuthenticated && currentUser) {
+    if (isAuthenticated && currentUser) {
       setEditingEntityForCMS(null);
       setIsCMSOpen(true);
     } else {
@@ -172,7 +148,7 @@ export default function App() {
   const handleEditEntityInCMS = (ent: Entity) => {
     setEditingEntityForCMS(ent);
     setPendingCategoryForCard(null);
-    if (isAuthAuthenticated && currentUser) {
+    if (isAuthenticated && currentUser) {
       setIsCMSOpen(true);
     } else {
       setIsPasswordModalOpen(true);
@@ -180,21 +156,17 @@ export default function App() {
   };
 
   const handleLoginSuccess = (user: User) => {
-    setCurrentUser(user);
-    saveLoggedInUser(user);
-    setIsAuthAuthenticated(true);
+    login(user);
     setIsPasswordModalOpen(false);
     setIsCMSOpen(true);
   };
 
   const handleLogout = () => {
-    setCurrentUser(null);
-    saveLoggedInUser(null);
-    setIsAuthAuthenticated(false);
+    logout();
     setIsCMSOpen(false);
   };
 
-  // Filter sections & category configs
+  // ----- Category & Filter Logic -----
   const categoryConfigs = siteSettings.categoryConfigs || DEFAULT_CATEGORY_CONFIGS;
   const categoryNames = ['Semua', ...categoryConfigs.map((c) => c.name)];
 
@@ -205,9 +177,8 @@ export default function App() {
           (c) => c.name === selectedCategory || c.id === selectedCategory
         );
 
-  // Helper to filter entities per section config
-  const getEntitiesForSectionConfig = (catConfig: CategoryHeaderConfig) => {
-    return entities.filter((ent) => {
+  const getEntitiesForSectionConfig = (catConfig: CategoryHeaderConfig) =>
+    entities.filter((ent) => {
       const matchesSearch =
         ent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         ent.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -218,14 +189,10 @@ export default function App() {
       const cName = catConfig.name.toLowerCase();
 
       const matchesCategory =
-        eCat.includes(cId) ||
-        eCat.includes(cName) ||
-        cId.includes(eCat) ||
-        cName.includes(eCat);
+        eCat.includes(cId) || eCat.includes(cName) || cId.includes(eCat) || cName.includes(eCat);
 
       return matchesSearch && matchesCategory;
     });
-  };
 
   const totalFilteredCount = entities.filter((ent) => {
     const matchesSearch =
@@ -249,27 +216,41 @@ export default function App() {
     return matchesSearch && matchesCategory;
   }).length;
 
+  // ----- Render -----
   return (
     <div className="min-h-screen bg-stone-100 text-stone-900 font-sans flex flex-col selection:bg-emerald-200 selection:text-emerald-900">
       {/* Header */}
       <Header
-        searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
         onOpenCMS={() => handleOpenCMSWithAuth()}
         isCMSActive={isCMSOpen}
         totalEntitiesCount={entities.length}
         logoUrl={siteSettings.logoUrl}
         navbarTabs={siteSettings.navbarTabs}
+        onSearchSubmit={(term) => {
+          setSearchTerm(term);
+          setSelectedCategory('Semua');
+          navigate('/komunitas');
+        }}
       />
+
+      {/* Running Teks — global, di bawah navbar */}
+      <RunningTeks announcements={announcements} siteSettings={siteSettings} />
 
       {/* Main Container */}
       <main className="flex-1">
-        {/* View Tab 1: Entitas Kegiatan (Home Page vs Entitas Category View) */}
-        {activeTab === 'entities' && (
-          <div>
-            {/* Category Filter Pills (Tab Semua -> Home Page) */}
+        <Routes>
+          <Route path="/" element={
+            <HomePage
+              entities={entities}
+              announcements={announcements}
+              siteSettings={siteSettings}
+              onSelectEntity={setSelectedEntityForModal}
+              onSelectCategory={(cat) => { setSelectedCategory(cat); }}
+            />
+          } />
+
+          <Route path="/komunitas" element={
+            <div>
             <CategoryFilter
               categories={categoryNames}
               selectedCategory={selectedCategory}
@@ -278,184 +259,122 @@ export default function App() {
               categoryConfigs={categoryConfigs}
             />
 
-            {/* Main Content Area */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-              {/* 1. HOME PAGE VIEW (When selectedCategory is 'Semua') */}
-              {selectedCategory === 'Semua' || selectedCategory === 'Home Page' ? (
-                <div className="space-y-8">
-                  {/* Home Page Header */}
-                  <HomePageHeader
-                    siteTitle={siteSettings.siteTitle}
-                    siteDescription={siteSettings.siteDescription}
-                    logoUrl={siteSettings.logoUrl}
-                    totalEntities={entities.length}
-                  />
-
-                  {/* Search Bar Feedback if User typed search term */}
-                  {searchTerm && (
-                    <div className="flex items-center justify-between bg-white p-4 rounded-2xl border border-stone-200 shadow-2xs">
-                      <div className="text-xs sm:text-sm text-stone-700 font-medium">
-                        Hasil pencarian untuk kata kunci: "<strong>{searchTerm}</strong>" ({totalFilteredCount} entitas)
-                      </div>
-                      <button
-                        onClick={() => setSearchTerm('')}
-                        className="text-xs bg-stone-100 hover:bg-stone-200 text-stone-800 font-bold px-3 py-1.5 rounded-xl cursor-pointer"
-                      >
-                        ✕ Clear Search
-                      </button>
-                    </div>
-                  )}
-
-                  {/* Entity Category Carousels */}
-                  {totalFilteredCount === 0 ? (
-                    <div className="bg-white rounded-2xl p-12 text-center border border-stone-200 space-y-3 max-w-lg mx-auto shadow-xs">
-                      <SearchX className="w-12 h-12 text-stone-300 mx-auto" />
-                      <h3 className="text-base font-bold text-stone-800">
-                        Tidak Ditemukan Entitas Kegiatan
-                      </h3>
-                      <p className="text-xs text-stone-500">
-                        Coba kata kunci pencarian lain atau ganti filter kategori.
-                      </p>
-                      <button
-                        onClick={() => {
-                          setSearchTerm('');
-                          setSelectedCategory('Semua');
-                        }}
-                        className="inline-flex items-center gap-1.5 bg-emerald-800 text-white text-xs font-bold px-4 py-2 rounded-xl cursor-pointer"
-                      >
-                        <span>Reset Filter</span>
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="space-y-8">
-                      {categoryConfigs.map((catConfig) => {
-                        const sectionEntities = getEntitiesForSectionConfig(catConfig);
-
-                        // If user is searching and this section has no items, skip
-                        if (searchTerm && sectionEntities.length === 0) return null;
-
-                        return (
-                          <CategoryCarousel
-                            key={catConfig.id}
-                            catConfig={catConfig}
-                            entities={sectionEntities}
-                            onVisitCategory={(catName) => setSelectedCategory(catName)}
-                            onSelectEntity={setSelectedEntityForModal}
-                            onShareEntity={(ent) =>
-                              setShareModalItem({ item: ent, type: 'entity' })
-                            }
-                            onEditEntity={handleEditEntityInCMS}
-                            isCMSActive={true}
-                          />
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              ) : (
-                /* 2. PER ENTITY CATEGORY PAGE VIEW (When a specific category is selected) */
-                <div className="space-y-6">
-                  {(() => {
-                    const currentConfig =
-                      categoryConfigs.find(
-                        (c) => c.name === selectedCategory || c.id === selectedCategory
-                      ) || {
+              {(() => {
+                const currentConfig =
+                  selectedCategory === 'Semua'
+                    ? { id: 'Semua', name: 'Semua Komunitas', description: 'Seluruh unit kegiatan & komunitas warga BJP.hub', logoUrl: '' }
+                    : categoryConfigs.find((c) => c.name === selectedCategory || c.id === selectedCategory) || {
                         id: selectedCategory,
                         name: selectedCategory,
-                        description: `Daftar unit kegiatan dan entitas dalam ${selectedCategory}`,
+                        description: `Daftar unit kegiatan dan komunitas dalam ${selectedCategory}`,
                         logoUrl: '',
                       };
 
-                    const categoryEntities = getEntitiesForSectionConfig(currentConfig);
+                const displayedEntities =
+                  selectedCategory === 'Semua'
+                    ? entities.filter((e) =>
+                        !searchTerm ||
+                        e.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        e.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        e.category.toLowerCase().includes(searchTerm.toLowerCase())
+                      )
+                    : getEntitiesForSectionConfig(currentConfig);
 
-                    return (
-                      <>
-                        {/* Header Per Entitas Page with Seamless Share CTA */}
-                        <CategoryPageHeader
-                          catConfig={currentConfig}
-                          entities={entities}
-                          onBackToHome={() => setSelectedCategory('Semua')}
-                        />
-
-                        {/* Search Term Bar if Active */}
+                return (
+                  <div className="space-y-5">
+                    {/* Page header row */}
+                    <div className="flex items-center justify-between flex-wrap gap-3">
+                      <div>
+                        <h2 className="text-lg font-black text-stone-900">{currentConfig.name}</h2>
+                        {currentConfig.description && (
+                          <p className="text-xs text-stone-500 mt-0.5">{currentConfig.description}</p>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2">
                         {searchTerm && (
-                          <div className="flex items-center justify-between bg-white p-4 rounded-2xl border border-stone-200">
-                            <span className="text-xs text-stone-600">
-                              Kata kunci: "<strong>{searchTerm}</strong>" ({categoryEntities.length} ditemukan)
-                            </span>
+                          <span className="text-xs text-stone-500 bg-white border border-stone-200 px-3 py-1.5 rounded-xl">
+                            "<strong>{searchTerm}</strong>" — {displayedEntities.length} hasil
                             <button
                               onClick={() => setSearchTerm('')}
-                              className="text-xs text-stone-500 hover:text-stone-900 font-bold"
-                            >
-                              ✕ Hapus Filter
-                            </button>
-                          </div>
+                              className="ml-2 text-stone-400 hover:text-stone-700 font-bold"
+                            >✕</button>
+                          </span>
                         )}
+                      </div>
+                    </div>
 
-                        {/* Grid of Cards for this Specific Category */}
-                        {categoryEntities.length === 0 ? (
-                          <div className="bg-white rounded-2xl p-12 text-center border border-stone-200 space-y-3 max-w-md mx-auto my-6">
-                            <SearchX className="w-10 h-10 text-stone-300 mx-auto" />
-                            <h3 className="text-sm font-bold text-stone-800">
-                              Belum Ada Card Entitas
-                            </h3>
-                            <p className="text-xs text-stone-500">
-                              Belum ada unit kegiatan tercatat dalam kategori "{currentConfig.name}".
-                            </p>
+                    {/* Entity Grid or Empty State */}
+                    {displayedEntities.length === 0 ? (
+                      <div className="bg-white rounded-2xl p-12 text-center border border-stone-200 space-y-3 max-w-md mx-auto shadow-xs">
+                        <SearchX className="w-10 h-10 text-stone-300 mx-auto" />
+                        <h3 className="text-sm font-bold text-stone-800">
+                          {searchTerm ? 'Tidak Ditemukan Komunitas' : 'Belum Ada Komunitas'}
+                        </h3>
+                        <p className="text-xs text-stone-500">
+                          {searchTerm
+                            ? 'Coba kata kunci pencarian lain atau ganti filter kategori.'
+                            : `Belum ada unit kegiatan tercatat dalam kategori "${currentConfig.name}".`}
+                        </p>
+                        <div className="flex items-center gap-2 justify-center flex-wrap">
+                          {searchTerm && (
                             <button
-                              onClick={() => handleOpenCMSWithAuth(currentConfig.name)}
-                              className="inline-flex items-center gap-1.5 bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold px-4 py-2 rounded-xl transition-colors cursor-pointer"
+                              onClick={() => setSearchTerm('')}
+                              className="text-xs bg-stone-100 hover:bg-stone-200 text-stone-800 font-bold px-4 py-2 rounded-xl cursor-pointer"
                             >
-                              <Plus className="w-4 h-4 text-emerald-300" />
-                              <span>Tambah Entitas di {currentConfig.name}</span>
+                              Hapus Pencarian
                             </button>
-                          </div>
-                        ) : (
-                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {categoryEntities.map((entity) => (
-                              <EntityCard
-                                key={entity.id}
-                                entity={entity}
-                                onSelect={setSelectedEntityForModal}
-                                onShare={(ent) =>
-                                  setShareModalItem({ item: ent, type: 'entity' })
-                                }
-                                onEdit={handleEditEntityInCMS}
-                                isCMSActive={true}
-                              />
-                            ))}
-                          </div>
-                        )}
-                      </>
-                    );
-                  })()}
-                </div>
-              )}
+                          )}
+                          <button
+                            onClick={() => handleOpenCMSWithAuth(currentConfig.id !== 'Semua' ? currentConfig.name : undefined)}
+                            className="inline-flex items-center gap-1.5 bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold px-4 py-2 rounded-xl transition-colors cursor-pointer"
+                          >
+                            <Plus className="w-3.5 h-3.5 text-emerald-300" />
+                            <span>Tambah Komunitas</span>
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
+                        {displayedEntities.map((entity) => (
+                          <EntityCard
+                            key={entity.id}
+                            entity={entity}
+                            onSelect={setSelectedEntityForModal}
+                            onShare={(ent) => setShareModalItem({ item: ent, type: 'entity' })}
+                            onEdit={handleEditEntityInCMS}
+                            isCMSActive={isCMSOpen}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
             </div>
-          </div>
-        )}
+            </div>
+          } />
 
-        {/* View Tab 2: Pengumuman & Agenda Warga */}
-        {activeTab === 'announcements' && (
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <AnnouncementsList
-              announcements={announcements}
-              onOpenCMS={() => handleOpenCMSWithAuth()}
-              isCMSActive={true}
-              onShare={(ann) => setShareModalItem({ item: ann, type: 'announcement' })}
-            />
-          </div>
-        )}
+          <Route path="/pengumuman" element={
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+              <AnnouncementsList
+                announcements={announcements}
+                onOpenCMS={() => handleOpenCMSWithAuth()}
+                isCMSActive={true}
+                onShare={(ann) => setShareModalItem({ item: ann, type: 'announcement' })}
+              />
+            </div>
+          } />
+        </Routes>
       </main>
 
-      {/* Entity Detail Modal */}
+      {/* Modals */}
       <EntityDetailModal
         entity={selectedEntityForModal}
         onClose={() => setSelectedEntityForModal(null)}
         onShare={(ent) => setShareModalItem({ item: ent, type: 'entity' })}
       />
 
-      {/* Share Modal */}
       {shareModalItem && (
         <ShareModal
           item={shareModalItem.item}
@@ -464,7 +383,6 @@ export default function App() {
         />
       )}
 
-      {/* Password Modal / Login Modal */}
       <PasswordModal
         isOpen={isPasswordModalOpen}
         onClose={() => setIsPasswordModalOpen(false)}
@@ -473,7 +391,6 @@ export default function App() {
         logoUrl={siteSettings.logoUrl}
       />
 
-      {/* CMS Modal */}
       <CMSModal
         isOpen={isCMSOpen}
         onClose={() => {

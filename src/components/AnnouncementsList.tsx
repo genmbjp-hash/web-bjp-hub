@@ -41,7 +41,7 @@ export const AnnouncementsList: React.FC<AnnouncementsListProps> = ({
           <AlertCircle className="w-10 h-10 text-stone-300 mx-auto" />
           <h3 className="font-bold text-stone-700">Belum Ada Pengumuman Baru</h3>
           <p className="text-stone-500 text-xs max-w-sm mx-auto">
-            Pengurus RW atau pengurus entitas dapat menambahkan pengumuman baru melalui menu CMS Pengurus.
+            Pengurus RW atau pengurus komunitas dapat menambahkan pengumuman baru melalui menu CMS Pengurus.
           </p>
         </div>
       ) : (

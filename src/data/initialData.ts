@@ -4,7 +4,7 @@ import { BJP_LOGO_URL } from '../assets/logo';
 export const INITIAL_ENTITIES: Entity[] = [
   {
     id: 'ent-1',
-    name: 'BJP HUB (Pusat Ekosistem)',
+    name: 'BJP.hub (Pusat Ekosistem)',
     category: 'Pusat Hub',
     description: `Titik tumpu utama (center hub) yang berfungsi sebagai pusat informasi, kolaborasi, dan koordinasi seluruh aktivitas warga. Mengintegrasikan berbagai elemen agar berjalan selaras, inklusif, dan memberikan manfaat maksimal bagi seluruh warga Komplek Bintara Jaya Permai (RW 11).
 
@@ -16,7 +16,7 @@ export const INITIAL_ENTITIES: Entity[] = [
 </ul>`,
     image: BJP_LOGO_URL,
     ctaUrl: 'https://bit.ly/bjp-hub',
-    ctaWording: 'Kunjungi Portal BJP HUB',
+    ctaWording: 'Kunjungi Portal BJP.hub',
     instagram: 'https://www.instagram.com/bintarajayapermai.ofc/',
     mediaUrl: 'https://bit.ly/bjp-hub',
     contact: '0812-3456-7890 (Sekretariat RW 11)',
@@ -360,7 +360,7 @@ export const INITIAL_ENTITIES: Entity[] = [
 <p><strong>Layanan Digital:</strong></p>
 <ul>
   <li>Publikasi Pengumuman & Agenda Rutin Komplek</li>
-  <li>Digitalisasi Data Entitas & Kegiatan Warga</li>
+  <li>Digitalisasi Data Komunitas & Kegiatan Warga</li>
   <li>Layanan Broadcast Informasi WhatsApp Warga</li>
 </ul>`,
     image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&q=80',

@@ -9,12 +9,12 @@ import {
   saveAnnouncementsToSupabase,
   saveSiteSettingsToSupabase,
 } from '../lib/supabase';
-
-const STORAGE_KEY_ENTITIES = 'bjp_hub_entities_v1';
-const STORAGE_KEY_ANNOUNCEMENTS = 'bjp_hub_announcements_v1';
-const STORAGE_KEY_SITE_SETTINGS = 'bjp_hub_site_settings_v1';
-const STORAGE_KEY_USERS = 'bjp_hub_users_v1';
-const STORAGE_KEY_LOGGED_IN_USER = 'bjp_hub_logged_in_user_v1';
+import {
+  STORAGE_KEYS,
+  CATEGORY_LEGACY_MAP,
+  DEFAULT_SITE_TITLE,
+  DEFAULT_SITE_DESCRIPTION,
+} from '../constants/defaults';
 
 // Initial admin username & password loaded from environment variable or generated default
 const initialAdminUsername = import.meta.env.VITE_INITIAL_ADMIN_USERNAME || 'admin';
@@ -45,7 +45,7 @@ export const DEFAULT_CATEGORY_CONFIGS: CategoryHeaderConfig[] = [
   {
     id: 'Sentra Usaha BJP',
     name: 'Sentra Usaha BJP',
-    description: 'Unit entitas, UMKM, dan kegiatan usaha warga Bintara Jaya Permai (RW 11)',
+    description: 'Unit komunitas, UMKM, dan kegiatan usaha warga Bintara Jaya Permai (RW 11)',
     logoUrl: '/images/sentra_usaha_logo.jpg',
   },
   {
@@ -100,28 +100,41 @@ export const DEFAULT_CATEGORY_CONFIGS: CategoryHeaderConfig[] = [
 
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   logoUrl: BJP_LOGO_URL,
-  siteTitle: 'BJP HUB Bintara Jaya Permai',
+  siteTitle: 'BJP.hub Bintara Jaya Permai',
   siteDescription: 'Portal Resmi Ekosistem & Kegiatan Warga Komplek Bintara Jaya Permai (RW 11)',
   navbarTabs: [
-    { id: 'entities', label: 'Entitas Kegiatan', enabled: true, order: 0 },
+    { id: 'entities', label: 'Komunitas Kegiatan', enabled: true, order: 0 },
     { id: 'announcements', label: 'Pengumuman & Agenda', enabled: true, order: 1 },
   ],
   categoryConfigs: DEFAULT_CATEGORY_CONFIGS,
 };
 
+// ---------------------------------------------------------------------------
+// Helper: normalize legacy category names using centralized map
+// ---------------------------------------------------------------------------
+function normalizeCategoryName(category: string): string {
+  return CATEGORY_LEGACY_MAP[category] ?? category;
+}
+
+// ---------------------------------------------------------------------------
+// Site Settings
+// ---------------------------------------------------------------------------
 export function getSiteSettings(): SiteSettings {
   try {
-    const data = localStorage.getItem(STORAGE_KEY_SITE_SETTINGS);
+    const data = localStorage.getItem(STORAGE_KEYS.SITE_SETTINGS);
     if (data) {
       const parsed = JSON.parse(data);
-      const savedCategoryConfigs: CategoryHeaderConfig[] = Array.isArray(parsed.categoryConfigs) ? parsed.categoryConfigs : [];
+      const savedCategoryConfigs: CategoryHeaderConfig[] = Array.isArray(parsed.categoryConfigs)
+        ? parsed.categoryConfigs
+        : [];
       const mergedCategoryConfigs = DEFAULT_CATEGORY_CONFIGS.map((def) => {
         const found = savedCategoryConfigs.find((c) => c.id === def.id || c.name === def.id);
         if (found) {
           return {
             ...def,
             ...found,
-            logoUrl: (def.id === 'Sentra Usaha BJP' && !found.logoUrl) ? def.logoUrl : (found.logoUrl || ''),
+            logoUrl:
+              def.id === 'Sentra Usaha BJP' && !found.logoUrl ? def.logoUrl : found.logoUrl || '',
           };
         }
         return def;
@@ -146,25 +159,30 @@ export function getSiteSettings(): SiteSettings {
 
 export function saveSiteSettings(settings: SiteSettings): void {
   try {
-    localStorage.setItem(STORAGE_KEY_SITE_SETTINGS, JSON.stringify(settings));
+    localStorage.setItem(STORAGE_KEYS.SITE_SETTINGS, JSON.stringify(settings));
     updateSiteFaviconAndOgImage(settings.logoUrl);
     if (isSupabaseConfigured()) {
-      saveSiteSettingsToSupabase(settings).catch((err) => console.error('Supabase sync error:', err));
+      saveSiteSettingsToSupabase(settings).catch((err) =>
+        console.error('Supabase sync error:', err)
+      );
     }
   } catch (err) {
     console.error('Failed to save site settings', err);
   }
 }
 
+// ---------------------------------------------------------------------------
+// Entities
+// ---------------------------------------------------------------------------
 export function getEntities(): Entity[] {
   try {
-    const data = localStorage.getItem(STORAGE_KEY_ENTITIES);
+    const data = localStorage.getItem(STORAGE_KEYS.ENTITIES);
     let list: Entity[] = INITIAL_ENTITIES;
     if (data) {
       const parsed = JSON.parse(data);
       if (Array.isArray(parsed) && parsed.length > 0) {
         list = parsed;
-        // Ensure any new initial entities (like ent-umkm-1) are merged if missing
+        // Merge any new seed entities that may have been added after last save
         INITIAL_ENTITIES.forEach((initE) => {
           if (!list.some((item) => item.id === initE.id)) {
             list.push(initE);
@@ -173,16 +191,12 @@ export function getEntities(): Entity[] {
       }
     }
     return list.map((e) => {
-      const mappedCat =
-        e.category === 'Ekonomi / UMKM' || e.category === 'Ekonomi/UMKM'
-          ? 'Sentra Usaha BJP'
-          : e.category;
-
+      const normalizedCategory = normalizeCategoryName(e.category);
       const initMatch = INITIAL_ENTITIES.find((i) => i.id === e.id);
       if (initMatch) {
         return {
           ...e,
-          category: mappedCat,
+          category: normalizedCategory,
           image: e.id === 'ent-4' ? initMatch.image : e.image,
           productPhotos:
             e.id === 'ent-4' || !e.productPhotos || e.productPhotos.length === 0
@@ -191,11 +205,7 @@ export function getEntities(): Entity[] {
           socials: e.socials || initMatch.socials,
         };
       }
-
-      return {
-        ...e,
-        category: mappedCat,
-      };
+      return { ...e, category: normalizedCategory };
     });
   } catch (err) {
     console.error('Failed to load entities from storage', err);
@@ -205,18 +215,23 @@ export function getEntities(): Entity[] {
 
 export function saveEntities(entities: Entity[]): void {
   try {
-    localStorage.setItem(STORAGE_KEY_ENTITIES, JSON.stringify(entities));
+    localStorage.setItem(STORAGE_KEYS.ENTITIES, JSON.stringify(entities));
     if (isSupabaseConfigured()) {
-      saveEntitiesToSupabase(entities).catch((err) => console.error('Supabase sync error:', err));
+      saveEntitiesToSupabase(entities).catch((err) =>
+        console.error('Supabase sync error:', err)
+      );
     }
   } catch (err) {
     console.error('Failed to save entities to storage', err);
   }
 }
 
+// ---------------------------------------------------------------------------
+// Announcements
+// ---------------------------------------------------------------------------
 export function getAnnouncements(): Announcement[] {
   try {
-    const data = localStorage.getItem(STORAGE_KEY_ANNOUNCEMENTS);
+    const data = localStorage.getItem(STORAGE_KEYS.ANNOUNCEMENTS);
     let list: Announcement[] = INITIAL_ANNOUNCEMENTS;
     if (data) {
       const parsed = JSON.parse(data);
@@ -224,11 +239,10 @@ export function getAnnouncements(): Announcement[] {
         list = parsed;
       }
     }
-    return list.map((a) =>
-      a.category === 'Ekonomi / UMKM' || a.category === 'Ekonomi/UMKM'
-        ? { ...a, category: 'Sentra Usaha BJP' }
-        : a
-    );
+    return list.map((a) => ({
+      ...a,
+      category: normalizeCategoryName(a.category),
+    }));
   } catch (err) {
     console.error('Failed to load announcements from storage', err);
     return INITIAL_ANNOUNCEMENTS;
@@ -237,15 +251,20 @@ export function getAnnouncements(): Announcement[] {
 
 export function saveAnnouncements(announcements: Announcement[]): void {
   try {
-    localStorage.setItem(STORAGE_KEY_ANNOUNCEMENTS, JSON.stringify(announcements));
+    localStorage.setItem(STORAGE_KEYS.ANNOUNCEMENTS, JSON.stringify(announcements));
     if (isSupabaseConfigured()) {
-      saveAnnouncementsToSupabase(announcements).catch((err) => console.error('Supabase sync error:', err));
+      saveAnnouncementsToSupabase(announcements).catch((err) =>
+        console.error('Supabase sync error:', err)
+      );
     }
   } catch (err) {
     console.error('Failed to save announcements to storage', err);
   }
 }
 
+// ---------------------------------------------------------------------------
+// Helpers: Reset & Import/Export
+// ---------------------------------------------------------------------------
 export function resetToDefaults(): { entities: Entity[]; announcements: Announcement[] } {
   saveEntities(INITIAL_ENTITIES);
   saveAnnouncements(INITIAL_ANNOUNCEMENTS);
@@ -254,7 +273,7 @@ export function resetToDefaults(): { entities: Entity[]; announcements: Announce
 
 export function exportDataAsJSON(entities: Entity[], announcements: Announcement[]) {
   const exportPayload = {
-    appName: 'BJP HUB - Bintara Jaya Permai',
+    appName: 'BJP.hub - Bintara Jaya Permai',
     exportedAt: new Date().toISOString(),
     entities,
     announcements,
@@ -298,20 +317,23 @@ export function importDataFromJSON(
       success: true,
       entities: newEntities.length > 0 ? newEntities : undefined,
       announcements: newAnnouncements.length > 0 ? newAnnouncements : undefined,
-      message: `Berhasil mengimpor ${newEntities.length} entitas dan ${newAnnouncements.length} pengumuman.`,
+      message: `Berhasil mengimpor ${newEntities.length} komunitas dan ${newAnnouncements.length} pengumuman.`,
     };
-  } catch (err) {
+  } catch {
     return { success: false, message: 'Gagal membaca file JSON. Pastikan format file benar.' };
   }
 }
 
+// ---------------------------------------------------------------------------
+// Users
+// ---------------------------------------------------------------------------
 export function getUsers(): User[] {
   try {
-    const data = localStorage.getItem(STORAGE_KEY_USERS);
+    const data = localStorage.getItem(STORAGE_KEYS.USERS);
     if (data) {
       const parsed = JSON.parse(data);
       if (Array.isArray(parsed) && parsed.length > 0) {
-        // Ensure default super admin account exists in list
+        // Ensure the default super admin always exists in the list
         const superAdminExists = parsed.some((u: User) => u.username === 'admin');
         if (!superAdminExists) {
           parsed.unshift(DEFAULT_USERS[0]);
@@ -322,14 +344,14 @@ export function getUsers(): User[] {
   } catch (err) {
     console.error('Failed to load users from storage', err);
   }
-  // If empty or initial, save and return default users
+  // First load — initialize with defaults
   saveUsers(DEFAULT_USERS);
   return DEFAULT_USERS;
 }
 
 export function saveUsers(users: User[]): void {
   try {
-    localStorage.setItem(STORAGE_KEY_USERS, JSON.stringify(users));
+    localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
     if (isSupabaseConfigured()) {
       saveUsersToSupabase(users).catch((err) => console.error('Supabase sync error:', err));
     }
@@ -340,7 +362,7 @@ export function saveUsers(users: User[]): void {
 
 export function getLoggedInUser(): User | null {
   try {
-    const data = localStorage.getItem(STORAGE_KEY_LOGGED_IN_USER);
+    const data = localStorage.getItem(STORAGE_KEYS.LOGGED_IN_USER);
     if (data) {
       return JSON.parse(data);
     }
@@ -353,9 +375,9 @@ export function getLoggedInUser(): User | null {
 export function saveLoggedInUser(user: User | null): void {
   try {
     if (user) {
-      localStorage.setItem(STORAGE_KEY_LOGGED_IN_USER, JSON.stringify(user));
+      localStorage.setItem(STORAGE_KEYS.LOGGED_IN_USER, JSON.stringify(user));
     } else {
-      localStorage.removeItem(STORAGE_KEY_LOGGED_IN_USER);
+      localStorage.removeItem(STORAGE_KEYS.LOGGED_IN_USER);
     }
   } catch (err) {
     console.error('Failed to save logged in user', err);

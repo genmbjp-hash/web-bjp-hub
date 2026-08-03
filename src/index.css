@@ -1,1 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
+
+@layer base {
+  html {
+    /* Scale up all rem-based sizes globally by increasing root font-size from 16px to 18px on mobile and 20px on desktop */
+    font-size: 18px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  
+  @media (min-width: 768px) {
+    html {
+      font-size: 20px;
+    }
+  }
+}

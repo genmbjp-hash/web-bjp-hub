@@ -74,7 +74,7 @@ export const PasswordModal: React.FC<PasswordModalProps> = ({
               Login CMS Pengurus
             </h3>
             <p className="text-xs text-stone-500">
-              Masuk dengan akun pengurus sesuai wewenang entitas
+              Masuk dengan akun pengurus sesuai wewenang komunitas
             </p>
           </div>
         </div>

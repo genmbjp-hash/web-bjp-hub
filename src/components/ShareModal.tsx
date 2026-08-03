@@ -53,7 +53,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({ item, type, onClose }) =
   };
 
   const handleWhatsAppShare = () => {
-    const waText = `📌 *${title}*\nKategori: ${category}\n\n${snippet}\n\nLihat selengkapnya di BJP HUB:\n${shareUrl}`;
+    const waText = `📌 *${title}*\nKategori: ${category}\n\n${snippet}\n\nLihat selengkapnya di BJP.hub:\n${shareUrl}`;
     const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(waText)}`;
     window.open(waUrl, '_blank');
   };
@@ -62,7 +62,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({ item, type, onClose }) =
     if (navigator.share) {
       try {
         await navigator.share({
-          title: `${title} - BJP HUB RW 11`,
+          title: `${title} - BJP.hub RW 11`,
           text: snippet,
           url: shareUrl,
         });

@@ -1,6 +1,5 @@
 import React from 'react';
-import { Heart, Instagram } from 'lucide-react';
-import { BJP_LOGO_URL } from '../assets/logo';
+import { Heart } from 'lucide-react';
 
 interface FooterProps {
   onOpenCMS?: () => void;
@@ -8,8 +7,7 @@ interface FooterProps {
   logoUrl?: string;
 }
 
-export const Footer: React.FC<FooterProps> = ({ logoUrl }) => {
-  const displayLogo = logoUrl || BJP_LOGO_URL;
+export const Footer: React.FC<FooterProps> = () => {
 
   return (
     <footer className="bg-stone-900 text-stone-300 border-t border-stone-800 text-xs sm:text-sm">
@@ -18,42 +16,24 @@ export const Footer: React.FC<FooterProps> = ({ logoUrl }) => {
           {/* Main Info */}
           <div className="space-y-3">
             <div className="flex items-center gap-3">
-              <img
-                src={displayLogo}
-                alt="BJP HUB Logo"
-                className="w-10 h-10 rounded-md object-cover border border-amber-300/40 shadow-xs"
-              />
               <div>
-                <h3 className="font-bold text-white text-base">BJP HUB - Bintara Jaya Permai</h3>
-                <p className="text-xs text-stone-400">Pengurus RW 11 Kelurahan Bintara Jaya</p>
+                <h3 className="font-bold text-white text-lg">BJP.hub - Bintara Jaya Permai</h3>
+                <p className="text-sm text-stone-300">Pengurus RW 11 Kelurahan Bintara Jaya</p>
               </div>
             </div>
 
-            <p className="text-stone-400 text-xs leading-relaxed max-w-xl">
+            <p className="text-stone-300 text-sm leading-relaxed max-w-xl">
               Pusat ekosistem dan informasi terpadu yang menyatukan seluruh unit keagamaan, pemerintahan RT/RW, UMKM, lingkungan, kesehatan, kepemudaan, dan olahraga warga komplek Bintara Jaya Permai.
             </p>
-          </div>
-
-          {/* Social Links */}
-          <div className="flex items-center gap-3">
-            <a
-              href="https://www.instagram.com/bintarajayapermai.ofc/"
-              target="_blank"
-              rel="noreferrer"
-              className="p-2.5 bg-stone-800 hover:bg-stone-700 text-stone-200 rounded-xl transition-colors inline-flex items-center gap-2 text-xs font-medium border border-stone-700/60"
-            >
-              <Instagram className="w-4 h-4 text-pink-400" />
-              <span>Instagram Resmi RW 11</span>
-            </a>
           </div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-8 pt-6 border-t border-stone-800/80 flex flex-col sm:flex-row items-center justify-between text-xs text-stone-500 gap-3">
-          <p>© {new Date().getFullYear()} BJP HUB - Komplek Bintara Jaya Permai (RW 11). All rights reserved.</p>
-          <div className="flex items-center gap-1 text-stone-400">
+        <div className="mt-8 pt-6 border-t border-stone-700 flex flex-col sm:flex-row items-center justify-between text-sm text-stone-300 gap-3">
+          <p>© {new Date().getFullYear()} BJP.hub - Komplek Bintara Jaya Permai (RW 11). All rights reserved.</p>
+          <div className="flex items-center gap-1 text-stone-300">
             <span>Dibuat dengan</span>
-            <Heart className="w-3.5 h-3.5 text-red-500 fill-red-500" />
+            <Heart className="w-3.5 h-3.5 text-red-400 fill-red-400" />
             <span>untuk Seluruh Warga BJP</span>
           </div>
         </div>

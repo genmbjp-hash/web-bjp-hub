@@ -63,7 +63,7 @@ export const CategoryPageHeader: React.FC<CategoryPageHeaderProps> = ({
         </button>
 
         <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200/80">
-          Halaman Entitas Resmi
+          Halaman Komunitas Resmi
         </span>
       </div>
 
@@ -117,7 +117,7 @@ export const CategoryPageHeader: React.FC<CategoryPageHeaderProps> = ({
             {copied ? (
               <>
                 <Check className="w-4 h-4 text-emerald-300 stroke-[3]" />
-                <span>Tautan Entitas Disalin!</span>
+                <span>Tautan Komunitas Disalin!</span>
               </>
             ) : (
               <>

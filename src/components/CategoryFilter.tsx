@@ -1,6 +1,5 @@
 import React from 'react';
 import { Entity, CategoryHeaderConfig } from '../types';
-import { Home } from 'lucide-react';
 import { formatImageUrl } from '../utils/imageUrl';
 
 interface CategoryFilterProps {
@@ -39,7 +38,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
 
           {categories.map((cat) => {
             const isSemua = cat === 'Semua';
-            const displayLabel = isSemua ? 'Home Page' : cat;
+            const displayLabel = isSemua ? 'Semua Kategori' : cat;
             const isSelected = selectedCategory === cat || (isSemua && selectedCategory === 'Semua');
             const count = getCategoryCount(cat);
             const config = categoryConfigs?.find((c) => c.name === cat || c.id === cat);
@@ -65,7 +64,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
                 }`}
               >
                 {isSemua ? (
-                  <Home className="w-3.5 h-3.5 text-emerald-300 shrink-0" />
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5 text-emerald-300 shrink-0"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
                 ) : logo ? (
                   <img
                     src={logo}

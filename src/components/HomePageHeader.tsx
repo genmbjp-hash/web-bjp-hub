@@ -11,7 +11,7 @@ interface HomePageHeaderProps {
 }
 
 export const HomePageHeader: React.FC<HomePageHeaderProps> = ({
-  siteTitle = 'BJP HUB Bintara Jaya Permai',
+  siteTitle = 'BJP.hub Bintara Jaya Permai',
   siteDescription = 'Portal Resmi Ekosistem & Kegiatan Warga Komplek Bintara Jaya Permai (RW 11)',
   logoUrl,
   totalEntities,
@@ -55,7 +55,7 @@ export const HomePageHeader: React.FC<HomePageHeaderProps> = ({
             <span>Home Page &amp; Ekosistem RW 11</span>
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
             <span className="text-[11px] font-bold bg-emerald-400/20 px-1.5 py-0.2 rounded-md">
-              {totalEntities} Entitas
+              {totalEntities} Komunitas
             </span>
           </div>
 
@@ -112,7 +112,7 @@ export const HomePageHeader: React.FC<HomePageHeaderProps> = ({
           />
           <div className="text-left md:text-center space-y-0.5">
             <h4 className="font-extrabold text-white text-sm sm:text-base tracking-tight">
-              BJP HUB Official
+              BJP.hub Official
             </h4>
             <p className="text-[11px] text-stone-300 font-medium">
               Komplek Bintara Jaya Permai (RW 11)

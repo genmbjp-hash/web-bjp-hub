@@ -19,7 +19,7 @@ export const supabase: SupabaseClient | null = isSupabaseConfigured()
   : null;
 
 // SQL Script template to set up Supabase tables
-export const SUPABASE_SQL_SETUP_SCRIPT = `-- SQL SETUP UNTUK DATABASE SUPABASE BJP HUB
+export const SUPABASE_SQL_SETUP_SCRIPT = `-- SQL SETUP UNTUK DATABASE SUPABASE BJP.hub
 -- Jalankan skrip ini di Supabase SQL Editor (Dashboard -> SQL Editor -> New Query)
 
 -- 1. Tabel Pengguna (bjp_users)
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS public.bjp_users (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 2. Tabel Entitas & Card Kegiatan (bjp_entities)
+-- 2. Tabel Komunitas & Card Kegiatan (bjp_entities)
 CREATE TABLE IF NOT EXISTS public.bjp_entities (
   id TEXT PRIMARY KEY,
   name TEXT NOT NULL,

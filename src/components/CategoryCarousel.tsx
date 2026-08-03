@@ -123,12 +123,12 @@ export const CategoryCarousel: React.FC<CategoryCarouselProps> = ({
               </span>
             </div>
             <p className="text-xs text-stone-500 mt-0.5 max-w-2xl line-clamp-1">
-              {catConfig.description || `Unit entitas & kegiatan warga dalam kategori ${catConfig.name}`}
+              {catConfig.description || `Unit komunitas & kegiatan warga dalam kategori ${catConfig.name}`}
             </p>
           </div>
         </div>
 
-        {/* Small Simple CTA "Kunjungi [Nama Entitas/Kategori]" */}
+        {/* Small Simple CTA "Kunjungi [Nama Komunitas/Kategori]" */}
         <div className="flex items-center gap-2 self-start sm:self-center shrink-0">
           <button
             onClick={() => onVisitCategory(catConfig.name)}

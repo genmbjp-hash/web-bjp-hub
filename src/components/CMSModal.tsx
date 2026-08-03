@@ -12,6 +12,7 @@ import { exportDataAsJSON, importDataFromJSON, resetToDefaults, DEFAULT_CATEGORY
 import { formatImageUrl } from '../utils/imageUrl';
 import { BJP_LOGO_URL } from '../assets/logo';
 import { InstagramIcon, FacebookIcon, TikTokIcon, WhatsAppIcon, SocialBadges } from './SocialIcons';
+import { SecurityScheduleCMS } from './SecurityScheduleCMS';
 import {
   isSupabaseConfigured,
   testSupabaseConnection,
@@ -45,7 +46,7 @@ interface CMSModalProps {
 
 // Preset Images for board members without photo links
 const IMAGE_PRESETS = [
-  { label: 'Logo BJP HUB Resmi', url: BJP_LOGO_URL },
+  { label: 'Logo BJP.hub Resmi', url: BJP_LOGO_URL },
   { label: 'Pemerintahan / RT RW', url: 'https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=600&q=80' },
   { label: 'Masjid / DKM', url: 'https://images.unsplash.com/photo-1590076175571-4b5459efb08c?auto=format&fit=crop&w=600&q=80' },
   { label: 'UMKM / Kuliner', url: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=600&q=80' },
@@ -98,7 +99,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
   editingEntityInit,
   initialCategoryForNewEntity,
 }) => {
-  const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'settings' | 'users' | 'supabase' | 'backup'>('entities');
+const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'settings' | 'security' | 'users' | 'supabase' | 'backup'>('entities');
   
   // Supabase State & Handlers
   const [supabaseTesting, setSupabaseTesting] = useState<boolean>(false);
@@ -127,7 +128,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
       const resSet = await saveSiteSettingsToSupabase(siteSettings);
 
       if (resUsers && resEnt && resAnn && resSet) {
-        alert('Berhasil mengunggah seluruh data (Pengguna, Entitas, Pengumuman, Settings) ke Supabase!');
+        alert('Berhasil mengunggah seluruh data (Pengguna, Komunitas, Pengumuman, Settings) ke Supabase!');
       } else {
         alert('Sebagian data berhasil diunggah. Pastikan seluruh tabel (bjp_users, bjp_entities, bjp_announcements, bjp_site_settings) sudah dibuat di Supabase.');
       }
@@ -244,11 +245,11 @@ export const CMSModal: React.FC<CMSModalProps> = ({
 
   // Local state for Site Settings (Branding & Navbar Tabs)
   const [tempLogoUrl, setTempLogoUrl] = useState<string>(siteSettings?.logoUrl || BJP_LOGO_URL);
-  const [tempSiteTitle, setTempSiteTitle] = useState<string>(siteSettings?.siteTitle || 'BJP HUB Bintara Jaya Permai');
+  const [tempSiteTitle, setTempSiteTitle] = useState<string>(siteSettings?.siteTitle || 'BJP.hub Bintara Jaya Permai');
   const [tempSiteDescription, setTempSiteDescription] = useState<string>(siteSettings?.siteDescription || 'Portal Resmi Ekosistem & Kegiatan Warga Komplek Bintara Jaya Permai (RW 11)');
   const [tempNavbarTabs, setTempNavbarTabs] = useState<NavbarTabConfig[]>(
     siteSettings?.navbarTabs || [
-      { id: 'entities', label: 'Entitas Kegiatan', enabled: true, order: 0 },
+      { id: 'entities', label: 'Komunitas Kegiatan', enabled: true, order: 0 },
       { id: 'announcements', label: 'Pengumuman & Agenda', enabled: true, order: 1 },
     ]
   );
@@ -259,11 +260,11 @@ export const CMSModal: React.FC<CMSModalProps> = ({
   useEffect(() => {
     if (siteSettings) {
       setTempLogoUrl(siteSettings.logoUrl || BJP_LOGO_URL);
-      setTempSiteTitle(siteSettings.siteTitle || 'BJP HUB Bintara Jaya Permai');
+      setTempSiteTitle(siteSettings.siteTitle || 'BJP.hub Bintara Jaya Permai');
       setTempSiteDescription(siteSettings.siteDescription || 'Portal Resmi Ekosistem & Kegiatan Warga Komplek Bintara Jaya Permai (RW 11)');
       setTempNavbarTabs(
         siteSettings.navbarTabs || [
-          { id: 'entities', label: 'Entitas Kegiatan', enabled: true, order: 0 },
+          { id: 'entities', label: 'Komunitas Kegiatan', enabled: true, order: 0 },
           { id: 'announcements', label: 'Pengumuman & Agenda', enabled: true, order: 1 },
         ]
       );
@@ -357,7 +358,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
     setFormEntity({
       name: '',
       category: cat,
-      description: 'Deskripsi singkat mengenai entitas atau kegiatan warga komplek...',
+      description: 'Deskripsi singkat mengenai komunitas atau kegiatan warga komplek...',
       image: IMAGE_PRESETS[0].url,
       ctaUrl: '#',
       ctaWording: 'Kunjungi Tautan',
@@ -445,7 +446,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
   const handleSaveEntity = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formEntity.name?.trim()) {
-      alert('Nama entitas wajib diisi!');
+      alert('Nama komunitas wajib diisi!');
       return;
     }
 
@@ -489,12 +490,12 @@ export const CMSModal: React.FC<CMSModalProps> = ({
           : item
       );
       onSaveEntities(updated);
-      showToast(`Entitas "${formEntity.name}" berhasil diperbarui!`);
+      showToast(`Komunitas "${formEntity.name}" berhasil diperbarui!`);
     } else {
       // Create new
       const newEnt: Entity = {
         id: `ent-${Date.now()}`,
-        name: formEntity.name || 'Entitas Baru',
+        name: formEntity.name || 'Komunitas Baru',
         category: formEntity.category || 'Pusat Hub',
         description: formEntity.description || '',
         image: formEntity.image || IMAGE_PRESETS[0].url,
@@ -513,7 +514,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
         updatedAt: now,
       };
       onSaveEntities([newEnt, ...entities]);
-      showToast(`Entitas "${newEnt.name}" berhasil ditambahkan!`);
+      showToast(`Komunitas "${newEnt.name}" berhasil ditambahkan!`);
 
       // If current user is entity_admin, automatically append permission for this new entity
       if (!isSuperAdmin && currentUser) {
@@ -531,10 +532,10 @@ export const CMSModal: React.FC<CMSModalProps> = ({
   };
 
   const handleDeleteEntity = (id: string, name: string) => {
-    if (confirm(`Apakah Anda yakin ingin menghapus entitas "${name}"?`)) {
+    if (confirm(`Apakah Anda yakin ingin menghapus komunitas "${name}"?`)) {
       const filtered = entities.filter((item) => item.id !== id);
       onSaveEntities(filtered);
-      showToast(`Entitas "${name}" berhasil dihapus.`);
+      showToast(`Komunitas "${name}" berhasil dihapus.`);
     }
   };
 
@@ -653,11 +654,11 @@ export const CMSModal: React.FC<CMSModalProps> = ({
   };
 
   const handleResetData = () => {
-    if (confirm('RESET DATA: Apakah Anda ingin mengembalikan seluruh data ke 13 Entitas Awal dari PDF? Seluruh perubahan lokal akan ditimpa.')) {
+    if (confirm('RESET DATA: Apakah Anda ingin mengembalikan seluruh data ke 13 Komunitas Awal dari PDF? Seluruh perubahan lokal akan ditimpa.')) {
       const res = resetToDefaults();
       onSaveEntities(res.entities);
       onSaveAnnouncements(res.announcements);
-      showToast('Data berhasil di-reset ke 13 Entitas Awal PDF!');
+      showToast('Data berhasil di-reset ke 13 Komunitas Awal PDF!');
     }
   };
 
@@ -805,7 +806,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
           <div className="flex items-center gap-3">
             <img
               src={BJP_LOGO_URL}
-              alt="BJP HUB"
+              alt="BJP.hub"
               className="w-10 h-10 rounded-md object-cover border border-amber-400/50 shadow-xs shrink-0"
             />
             <div>
@@ -822,7 +823,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                   <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] sm:text-[11px] ${
                     isSuperAdmin ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-blue-950 text-blue-300 border border-blue-800'
                   }`}>
-                    {isSuperAdmin ? 'Super Admin (Akses Penuh)' : `Admin Entitas (${allowedEntitiesInCMS.length} Entitas)`}
+                    {isSuperAdmin ? 'Super Admin (Akses Penuh)' : `Admin Komunitas (${allowedEntitiesInCMS.length} Komunitas)`}
                   </span>
                 </div>
               )}
@@ -878,7 +879,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
           >
             <LayoutGrid className="w-4 h-4 text-emerald-700" />
             <span>
-              Kelola Entitas Kegiatan ({isSuperAdmin ? entities.length : `${allowedEntitiesInCMS.length}/${entities.length}`})
+              Kelola Komunitas Kegiatan ({isSuperAdmin ? entities.length : `${allowedEntitiesInCMS.length}/${entities.length}`})
             </span>
           </button>
 
@@ -910,6 +911,20 @@ export const CMSModal: React.FC<CMSModalProps> = ({
           >
             <Globe className="w-4 h-4 text-emerald-700" />
             <span>Logo Web & Tab Navbar</span>
+          </button>
+
+          <button
+            onClick={() => {
+              setActiveTab('security');
+            }}
+            className={`flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-semibold border-b-2 transition-all whitespace-nowrap ${
+              activeTab === 'security'
+                ? 'border-emerald-700 text-emerald-900 bg-emerald-50/50 rounded-t-lg'
+                : 'border-transparent text-stone-600 hover:text-stone-900'
+            }`}
+          >
+            <Shield className="w-4 h-4 text-emerald-700" />
+            <span>Jadwal Keamanan</span>
           </button>
 
           <button
@@ -980,7 +995,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                     className="inline-flex items-center gap-1.5 text-xs font-semibold text-stone-600 hover:text-stone-900 bg-white px-3 py-1.5 rounded-lg border border-stone-200"
                   >
                     <ArrowLeft className="w-4 h-4" />
-                    <span>Kembali ke Daftar Entitas</span>
+                    <span>Kembali ke Daftar Komunitas</span>
                   </button>
 
                   <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -988,14 +1003,14 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                     <form onSubmit={handleSaveEntity} className="lg:col-span-7 bg-white p-5 rounded-2xl border border-stone-200 shadow-xs space-y-4">
                       <div className="flex items-center justify-between border-b border-stone-100 pb-3">
                         <h3 className="font-bold text-stone-900 text-base">
-                          {editingEntity ? `Edit: ${editingEntity.name}` : 'Tambah Entitas / Unit Baru'}
+                          {editingEntity ? `Edit: ${editingEntity.name}` : 'Tambah Komunitas / Unit Baru'}
                         </h3>
                         <span className="text-xs text-stone-400">Semua field mudah disesuaikan</span>
                       </div>
 
                       {/* Title */}
                       <div className="space-y-1">
-                        <label className="text-xs font-bold text-stone-700">1. Nama Entitas / Unit Kegiatan *</label>
+                        <label className="text-xs font-bold text-stone-700">1. Nama Komunitas / Unit Kegiatan *</label>
                         <input
                           type="text"
                           required
@@ -1136,7 +1151,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                           rows={5}
                           value={formEntity.description || ''}
                           onChange={(e) => setFormEntity({ ...formEntity, description: e.target.value })}
-                          placeholder="Jelaskan mengenai entitas kegiatan ini, fungsi utama, dan jadwal warga..."
+                          placeholder="Jelaskan mengenai komunitas kegiatan ini, fungsi utama, dan jadwal warga..."
                           className="w-full p-3 bg-stone-50 border border-stone-200 rounded-xl text-xs sm:text-sm text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:bg-white font-mono"
                         />
                       </div>
@@ -1520,7 +1535,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                             </div>
                           ) : (
                             <p className="text-xs text-stone-400 italic">
-                              Fitur foto produk saat ini nonaktif. Aktifkan toggle di atas jika Anda ingin menginput galeri foto produk untuk entitas ini.
+                              Fitur foto produk saat ini nonaktif. Aktifkan toggle di atas jika Anda ingin menginput galeri foto produk untuk komunitas ini.
                             </p>
                           )}
                         </div>
@@ -1542,7 +1557,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                           type="submit"
                           className="bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-xs sm:text-sm px-6 py-2.5 rounded-xl shadow-md transition-colors"
                         >
-                          Simpan Entitas Ini
+                          Simpan Komunitas Ini
                         </button>
                       </div>
                     </form>
@@ -1571,13 +1586,13 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                             </span>
                           </div>
                           <div className="absolute bottom-2 left-2 right-2 text-white font-bold text-sm drop-shadow-md">
-                            {formEntity.name || 'Nama Entitas Kegiatan'}
+                            {formEntity.name || 'Nama Komunitas Kegiatan'}
                           </div>
                         </div>
 
                         <div className="p-3 space-y-2">
                           <p className="text-stone-600 text-xs line-clamp-3">
-                            {(formEntity.description || '').replace(/<[^>]*>?/gm, '') || 'Deskripsi entitas...'}
+                            {(formEntity.description || '').replace(/<[^>]*>?/gm, '') || 'Deskripsi komunitas...'}
                           </p>
 
                           {/* Live Product Photos Gallery Preview */}
@@ -1625,7 +1640,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                       </div>
 
                       <div className="bg-amber-50 p-3 rounded-xl border border-amber-200/80 text-[11px] text-amber-900 leading-relaxed">
-                        💡 <strong>Tips Pengurus:</strong> Setelah selesai menambah atau mengubah entitas, jangan lupa klik <strong>"Simpan Entitas Ini"</strong>. Anda dapat mengunduh backup JSON di tab Backup agar data tetap aman saat dipublish ke Vercel!
+                        💡 <strong>Tips Pengurus:</strong> Setelah selesai menambah atau mengubah komunitas, jangan lupa klik <strong>"Simpan Komunitas Ini"</strong>. Anda dapat mengunduh backup JSON di tab Backup agar data tetap aman saat dipublish ke Vercel!
                       </div>
                     </div>
                   </div>
@@ -1642,7 +1657,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                           Mode Akses Terbatas (@{currentUser.username})
                         </strong>
                         <p className="mt-0.5 leading-relaxed text-blue-800">
-                          Akun Anda terdaftar sebagai <strong>Admin Entitas</strong>. Anda memiliki wewenang khusus untuk mengedit <strong>{allowedEntitiesInCMS.length} entitas</strong> berikut. Jika Anda menambah card baru, hak akses akan otomatis diberikan kepada Anda.
+                          Akun Anda terdaftar sebagai <strong>Admin Komunitas</strong>. Anda memiliki wewenang khusus untuk mengedit <strong>{allowedEntitiesInCMS.length} komunitas</strong> berikut. Jika Anda menambah card baru, hak akses akan otomatis diberikan kepada Anda.
                         </p>
                       </div>
                     </div>
@@ -1651,7 +1666,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-stone-200 shadow-2xs">
                     <div>
                       <h3 className="font-bold text-stone-900 text-base">
-                        Kelola Entitas & Card Per Section ({isSuperAdmin ? `${entities.length} Card Total` : `${allowedEntitiesInCMS.length} Dari ${entities.length} Card Dikelola`})
+                        Kelola Komunitas & Card Per Section ({isSuperAdmin ? `${entities.length} Card Total` : `${allowedEntitiesInCMS.length} Dari ${entities.length} Card Dikelola`})
                       </h3>
                       <p className="text-xs text-stone-500">Anda dapat menambah card baru di setiap section atau mengedit card yang memiliki hak akses.</p>
                     </div>
@@ -1721,14 +1736,14 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                                       <button
                                         onClick={() => handleDuplicateEntity(item)}
                                         className="p-1 hover:bg-stone-200 text-stone-500 rounded-md"
-                                        title="Salin Entitas Ini"
+                                        title="Salin Komunitas Ini"
                                       >
                                         <Copy className="w-3.5 h-3.5" />
                                       </button>
                                       <button
                                         onClick={() => handleDeleteEntity(item.id, item.name)}
                                         className="p-1 hover:bg-red-50 text-red-600 rounded-md"
-                                        title="Hapus Entitas"
+                                        title="Hapus Komunitas"
                                       >
                                         <Trash2 className="w-3.5 h-3.5" />
                                       </button>
@@ -2084,7 +2099,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                     className="flex items-center gap-1.5 text-red-600 hover:text-red-700 text-xs font-semibold hover:bg-red-50 px-3 py-1.5 rounded-lg border border-red-200 transition-colors"
                   >
                     <RefreshCw className="w-3.5 h-3.5" />
-                    <span>Reset Data ke 13 Entitas Awal PDF</span>
+                    <span>Reset Data ke 13 Komunitas Awal PDF</span>
                   </button>
                 </div>
               </div>
@@ -2142,7 +2157,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                       Pengaturan Logo Website & Navbar
                     </h3>
                     <p className="text-xs text-stone-500">
-                      Kelola identitas visual logo web, Favicon, OG Image, serta posisi dan nama tab navigasi navbar.
+                      Kelola idkomunitas visual logo web, Favicon, OG Image, serta posisi dan nama tab navigasi navbar.
                     </p>
                   </div>
                 </div>
@@ -2240,7 +2255,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                         type="text"
                         value={tempSiteTitle}
                         onChange={(e) => setTempSiteTitle(e.target.value)}
-                        placeholder="BJP HUB Bintara Jaya Permai"
+                        placeholder="BJP.hub Bintara Jaya Permai"
                         className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-xs font-bold text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
                       />
                     </div>
@@ -2264,13 +2279,13 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                       type="button"
                       onClick={() => {
                         setTempLogoUrl(BJP_LOGO_URL);
-                        setTempSiteTitle('BJP HUB Bintara Jaya Permai');
+                        setTempSiteTitle('BJP.hub Bintara Jaya Permai');
                         setTempSiteDescription('Portal Resmi Ekosistem & Kegiatan Warga Komplek Bintara Jaya Permai (RW 11)');
                       }}
                       className="inline-flex items-center gap-1.5 text-xs text-stone-600 hover:text-stone-900 bg-stone-100 hover:bg-stone-200 px-3 py-1.5 rounded-lg border border-stone-200 font-medium transition-colors cursor-pointer"
                     >
                       <RefreshCw className="w-3.5 h-3.5 text-stone-500" />
-                      <span>Kembalikan ke Identitas Default</span>
+                      <span>Kembalikan ke Idkomunitas Default</span>
                     </button>
                   </div>
 
@@ -2386,7 +2401,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                           </span>
 
                           <span className="text-xs font-bold text-stone-500 uppercase tracking-wider">
-                            {tab.id === 'entities' ? 'Tab Entitas' : 'Tab Pengumuman'}
+                            {tab.id === 'entities' ? 'Tab Komunitas' : 'Tab Pengumuman'}
                           </span>
                         </div>
 
@@ -2463,13 +2478,13 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                 </div>
               </div>
 
-              {/* Section 3: Kelola Logo, Nama Tab & Deskripsi Header per Entitas / Kategori */}
+              {/* Section 3: Kelola Logo, Nama Tab & Deskripsi Header per Komunitas / Kategori */}
               <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-xs space-y-5">
                 <div className="flex items-center justify-between border-b border-stone-100 pb-3">
                   <div className="flex items-center gap-2">
                     <Palette className="w-5 h-5 text-emerald-700" />
                     <h4 className="font-bold text-stone-900 text-sm sm:text-base">
-                      3. Edit Logo Header, Nama Entitas & Deskripsi per Kategori
+                      3. Edit Logo Header, Nama Komunitas & Deskripsi per Kategori
                     </h4>
                   </div>
                   <span className="text-xs bg-emerald-50 text-emerald-800 font-semibold px-2.5 py-1 rounded-full border border-emerald-200">
@@ -2478,14 +2493,14 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                 </div>
 
                 <p className="text-xs text-stone-600 leading-relaxed">
-                  Atur logo khusus, ubah nama entitas (label tab filter navbar), dan sesuaikan deskripsi header yang tampil di atas halaman landing page untuk tiap kategori entitas.
+                  Atur logo khusus, ubah nama komunitas (label tab filter navbar), dan sesuaikan deskripsi header yang tampil di atas halaman landing page untuk tiap kategori komunitas.
                 </p>
 
                 {/* Recommendation Banner */}
                 <div className="bg-emerald-50/80 border border-emerald-200 rounded-xl p-3 flex items-start gap-2.5 text-xs text-emerald-950">
                   <Sparkles className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" />
                   <div>
-                    <strong className="font-bold text-emerald-900 block">Rekomendasi Logo Kategori / Entitas:</strong>
+                    <strong className="font-bold text-emerald-900 block">Rekomendasi Logo Kategori / Komunitas:</strong>
                     <span className="text-[11px] text-emerald-850 block mt-0.5">
                       Gunakan gambar <strong>Rasio 1:1 (Persegi)</strong> dengan ukuran ideal <strong>512 x 512 px</strong> (PNG Transparan / JPG HD). Logo akan tampil besar, bersih, dan HD di Header Kategori dan Carousel.
                     </span>
@@ -2662,9 +2677,9 @@ export const CMSModal: React.FC<CMSModalProps> = ({
               {/* Save All Settings Button */}
               <div className="bg-white p-5 rounded-2xl border border-stone-200 shadow-xs flex items-center justify-between">
                 <div>
-                  <h4 className="font-bold text-stone-900 text-sm">Simpan Perubahan Branding, Navbar & Header Entitas</h4>
+                  <h4 className="font-bold text-stone-900 text-sm">Simpan Perubahan Branding, Navbar & Header Komunitas</h4>
                   <p className="text-xs text-stone-500">
-                    Klik tombol di samping untuk menerapkan seluruh logo, susunan tab navbar, dan header entitas secara langsung.
+                    Klik tombol di samping untuk menerapkan seluruh logo, susunan tab navbar, dan header komunitas secara langsung.
                   </p>
                 </div>
 
@@ -2678,7 +2693,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                       navbarTabs: tempNavbarTabs,
                       categoryConfigs: tempCategoryConfigs,
                     });
-                    showToast('Pengaturan logo, judul website, tab navbar, & header entitas berhasil disimpan!');
+                    showToast('Pengaturan logo, judul website, tab navbar, & header komunitas berhasil disimpan!');
                   }}
                   className="flex items-center gap-2 px-5 py-2.5 bg-emerald-800 hover:bg-emerald-900 text-white rounded-xl font-semibold text-xs sm:text-sm shadow-md transition-all shrink-0 cursor-pointer"
                 >
@@ -2686,6 +2701,16 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                   <span>Simpan Pengaturan</span>
                 </button>
               </div>
+            </div>
+          )}
+
+          {/* TAB: JADWAL SECURITY */}
+          {activeTab === 'security' && (
+            <div className="max-w-5xl mx-auto pb-6">
+              <SecurityScheduleCMS 
+                siteSettings={siteSettings} 
+                onSaveSiteSettings={onSaveSiteSettings} 
+              />
             </div>
           )}
 
@@ -2705,7 +2730,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                           {editingUser ? `Edit Akun Pengurus: @${editingUser.username}` : 'Buat Akun Pengurus Baru'}
                         </h3>
                         <p className="text-xs text-stone-500">
-                          Tentukan username, password, peran pengurus, dan entitas spesifik yang boleh dikelola.
+                          Tentukan username, password, peran pengurus, dan komunitas spesifik yang boleh dikelola.
                         </p>
                       </div>
                     </div>
@@ -2803,10 +2828,10 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                         >
                           <div className="flex items-center gap-2 mb-1.5">
                             <Shield className={`w-5 h-5 ${formUser.role === 'entity_admin' ? 'text-blue-700' : 'text-stone-400'}`} />
-                            <strong className="text-sm font-bold text-stone-900">Admin Entitas (Akses Terbatas)</strong>
+                            <strong className="text-sm font-bold text-stone-900">Admin Komunitas (Akses Terbatas)</strong>
                           </div>
                           <p className="text-xs text-stone-600 leading-relaxed">
-                            Hanya dapat melihat dan mengedit entitas yang Anda pilihkan di bawah ini. Sangat disarankan untuk pengurus unit kegiatan / UMKM tertentu.
+                            Hanya dapat melihat dan mengedit komunitas yang Anda pilihkan di bawah ini. Sangat disarankan untuk pengurus unit kegiatan / UMKM tertentu.
                           </p>
                         </div>
 
@@ -2824,7 +2849,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                             <strong className="text-sm font-bold text-stone-900">Super Admin (Akses Penuh)</strong>
                           </div>
                           <p className="text-xs text-stone-600 leading-relaxed">
-                            Dapat mengedit seluruh entitas, mengelola pengumuman, mengubah logo & judul website, serta membuat/menghapus akun pengurus lain.
+                            Dapat mengedit seluruh komunitas, mengelola pengumuman, mengubah logo & judul website, serta membuat/menghapus akun pengurus lain.
                           </p>
                         </div>
                       </div>
@@ -2836,12 +2861,12 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                           <div>
                             <label className="text-xs font-bold text-stone-900 flex items-center gap-1.5">
-                              <span>Pilih Entitas yang Boleh Dikelola Akun Ini:</span>
+                              <span>Pilih Komunitas yang Boleh Dikelola Akun Ini:</span>
                               <span className="text-xs bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded-full">
                                 {formUser.allowedEntityIds.length} Dipilih
                               </span>
                             </label>
-                            <p className="text-[11px] text-stone-500">Centang entitas yang diizinkan untuk diakses & diedit oleh pengguna ini.</p>
+                            <p className="text-[11px] text-stone-500">Centang komunitas yang diizinkan untuk diakses & diedit oleh pengguna ini.</p>
                           </div>
 
                           <div className="flex items-center gap-2">
@@ -2869,7 +2894,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                             type="text"
                             value={entitySearchFilter}
                             onChange={(e) => setEntitySearchFilter(e.target.value)}
-                            placeholder="Cari nama entitas..."
+                            placeholder="Cari nama komunitas..."
                             className="w-full pl-8 pr-3 py-1.5 bg-stone-50 border border-stone-200 rounded-lg text-xs text-stone-800 focus:outline-none focus:ring-2 focus:ring-emerald-600"
                           />
                         </div>
@@ -2953,7 +2978,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                         <span>Manajemen Akun Pengurus & Hak Akses ({users.length})</span>
                       </h3>
                       <p className="text-xs text-stone-500 mt-0.5">
-                        Kelola akun login pengurus, password, dan tentukan entitas mana saja yang boleh dikelola oleh tiap akun.
+                        Kelola akun login pengurus, password, dan tentukan komunitas mana saja yang boleh dikelola oleh tiap akun.
                       </p>
                     </div>
 
@@ -3027,7 +3052,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                                   ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
                                   : 'bg-blue-50 text-blue-800 border-blue-200'
                               }`}>
-                                {isSuper ? 'Super Admin' : 'Admin Entitas'}
+                                {isSuper ? 'Super Admin' : 'Admin Komunitas'}
                               </span>
                             </div>
 
@@ -3049,22 +3074,22 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                               </div>
                             </div>
 
-                            {/* Hak Akses Entitas List */}
+                            {/* Hak Akses Komunitas List */}
                             <div className="space-y-1.5">
                               <span className="text-[11px] font-bold text-stone-600 block">Hak Akses Pengelolaan:</span>
                               {isSuper || u.allowedEntityIds?.includes('*') ? (
                                 <div className="bg-emerald-50 text-emerald-900 border border-emerald-200 text-xs font-semibold px-3 py-1.5 rounded-xl flex items-center gap-1.5">
                                   <Check className="w-3.5 h-3.5 text-emerald-700" />
-                                  <span>Bebas Kelola Semua Entitas ({entities.length} Entitas)</span>
+                                  <span>Bebas Kelola Semua Komunitas ({entities.length} Komunitas)</span>
                                 </div>
                               ) : allowedEntities.length === 0 ? (
                                 <div className="bg-amber-50 text-amber-900 border border-amber-200 text-xs px-3 py-1.5 rounded-xl">
-                                  Belum diberikan akses entitas manapun.
+                                  Belum diberikan akses komunitas manapun.
                                 </div>
                               ) : (
                                 <div className="space-y-1">
                                   <span className="text-[10px] text-blue-800 bg-blue-50 px-2 py-0.5 rounded font-bold border border-blue-200">
-                                    Diberikan Akses Ke {allowedEntities.length} Entitas Spesifik:
+                                    Diberikan Akses Ke {allowedEntities.length} Komunitas Spesifik:
                                   </span>
                                   <div className="flex flex-wrap gap-1 pt-1 max-h-24 overflow-y-auto">
                                     {allowedEntities.map((ent) => (
@@ -3125,7 +3150,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                         <span>Integrasi Supabase Cloud Database</span>
                       </h3>
                       <p className="text-xs text-stone-500">
-                        Simpan credentials akun pengurus, entitas kegiatan, pengumuman, dan konfigurasi portal secara real-time di cloud database Supabase.
+                        Simpan credentials akun pengurus, komunitas kegiatan, pengumuman, dan konfigurasi portal secara real-time di cloud database Supabase.
                       </p>
                     </div>
                   </div>
@@ -3345,7 +3370,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                       Backup & Restore Data JSON Website
                     </h3>
                     <p className="text-xs text-stone-500">
-                      Cadangkan seluruh data Entitas Kegiatan, Pengumuman, dan Pengaturan ke file JSON atau pulihkan data dari file cadangan sebelumnya.
+                      Cadangkan seluruh data Komunitas Kegiatan, Pengumuman, dan Pengaturan ke file JSON atau pulihkan data dari file cadangan sebelumnya.
                     </p>
                   </div>
                 </div>
@@ -3370,12 +3395,12 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                     </h4>
 
                     <p className="text-xs text-stone-600 leading-relaxed">
-                      Ekspor seluruh <strong>{entities.length} Entitas Kegiatan</strong> dan <strong>{announcements.length} Pengumuman</strong> beserta seluruh foto, jam buka, kontak, dan alamat ke satu file <code>.json</code>.
+                      Ekspor seluruh <strong>{entities.length} Komunitas Kegiatan</strong> dan <strong>{announcements.length} Pengumuman</strong> beserta seluruh foto, jam buka, kontak, dan alamat ke satu file <code>.json</code>.
                     </p>
 
                     <div className="p-3 bg-stone-50 rounded-xl border border-stone-200 text-xs text-stone-700 space-y-1">
                       <div className="flex justify-between font-medium">
-                        <span>Total Entitas:</span>
+                        <span>Total Komunitas:</span>
                         <span className="font-bold text-stone-900">{entities.length} Item</span>
                       </div>
                       <div className="flex justify-between font-medium">
@@ -3412,11 +3437,11 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                     </h4>
 
                     <p className="text-xs text-stone-600 leading-relaxed">
-                      Pilih file <code>.json</code> hasil ekspor sebelumnya dari perangkat Anda untuk memulihkan seluruh data entitas dan pengumuman secara otomatis.
+                      Pilih file <code>.json</code> hasil ekspor sebelumnya dari perangkat Anda untuk memulihkan seluruh data komunitas dan pengumuman secara otomatis.
                     </p>
 
                     <div className="p-3 bg-blue-50/50 rounded-xl border border-blue-100 text-xs text-blue-900 leading-relaxed">
-                      💡 File JSON yang diimpor akan langsung memperbarui daftar entitas dan pengumuman tanpa menghilangkan konfigurasi penting.
+                      💡 File JSON yang diimpor akan langsung memperbarui daftar komunitas dan pengumuman tanpa menghilangkan konfigurasi penting.
                     </div>
                   </div>
 
@@ -3439,7 +3464,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                   <div className="flex items-center gap-2">
                     <ShieldAlert className="w-5 h-5 text-amber-600" />
                     <h4 className="font-bold text-stone-900 text-sm sm:text-base">
-                      3. Reset Data Ke Setelan Standar Awal (13 Entitas Resmi PDF)
+                      3. Reset Data Ke Setelan Standar Awal (13 Komunitas Resmi PDF)
                     </h4>
                   </div>
                   <span className="text-xs bg-amber-50 text-amber-800 font-semibold px-2.5 py-1 rounded-full border border-amber-200">
@@ -3448,7 +3473,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                 </div>
 
                 <p className="text-xs text-stone-600 leading-relaxed">
-                  Gunakan opsi ini jika Anda ingin mengembalikan seluruh data ke <strong>13 Entitas Resmi Awal</strong> dari dokumen PDF Bintara Jaya Permai (RW 11). Perubahan lokal yang belum di-backup akan ditimpa.
+                  Gunakan opsi ini jika Anda ingin mengembalikan seluruh data ke <strong>13 Komunitas Resmi Awal</strong> dari dokumen PDF Bintara Jaya Permai (RW 11). Perubahan lokal yang belum di-backup akan ditimpa.
                 </p>
 
                 <div className="flex items-center justify-between pt-1">
@@ -3462,7 +3487,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                     className="flex items-center gap-2 px-4 py-2.5 bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 rounded-xl font-bold text-xs transition-all cursor-pointer"
                   >
                     <RefreshCw className="w-4 h-4 text-amber-700" />
-                    <span>Reset Data Ke 13 Entitas Awal</span>
+                    <span>Reset Data Ke 13 Komunitas Awal</span>
                   </button>
                 </div>
               </div>
@@ -3513,7 +3538,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                       Rekomendasi Jadwal Backup
                     </h5>
                     <p className="text-stone-600 leading-relaxed">
-                      Lakukan ekspor data JSON secara berkala setelah Anda menambah atau mengedit entitas UMKM, jadwal operasional, atau pengumuman warga baru.
+                      Lakukan ekspor data JSON secara berkala setelah Anda menambah atau mengedit komunitas UMKM, jadwal operasional, atau pengumuman warga baru.
                     </p>
                   </div>
                 </div>

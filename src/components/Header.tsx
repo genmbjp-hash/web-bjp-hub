@@ -1,192 +1,178 @@
 import React, { useState } from 'react';
-import { Search, Shield, Menu, X, LayoutGrid, Megaphone, HelpCircle } from 'lucide-react';
+import { Shield, Menu, X, LayoutGrid, Megaphone, Home, Settings, Search } from 'lucide-react';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import { BJP_LOGO_URL } from '../assets/logo';
 import { NavbarTabConfig } from '../types';
 import { formatImageUrl } from '../utils/imageUrl';
 
 interface HeaderProps {
-  searchTerm: string;
-  onSearchChange: (value: string) => void;
-  activeTab: 'entities' | 'announcements';
-  onTabChange: (tab: 'entities' | 'announcements') => void;
   onOpenCMS: () => void;
   isCMSActive: boolean;
   totalEntitiesCount: number;
   logoUrl?: string;
   navbarTabs?: NavbarTabConfig[];
+  onSearchSubmit?: (term: string) => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
-  searchTerm,
-  onSearchChange,
-  activeTab,
-  onTabChange,
   onOpenCMS,
   isCMSActive,
   totalEntitiesCount,
   logoUrl,
   navbarTabs,
+  onSearchSubmit,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [localSearch, setLocalSearch] = useState('');
+  const location = useLocation();
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (localSearch.trim() && onSearchSubmit) {
+      onSearchSubmit(localSearch);
+      setLocalSearch('');
+      setMobileMenuOpen(false);
+    }
+  };
 
   const displayLogo = logoUrl ? formatImageUrl(logoUrl) : BJP_LOGO_URL;
 
-  // Active enabled tabs sorted by order
   const activeNavbarTabs = (
     navbarTabs && navbarTabs.length > 0
       ? [...navbarTabs].filter((t) => t.enabled).sort((a, b) => a.order - b.order)
       : [
-          { id: 'entities', label: 'Entitas Kegiatan', enabled: true, order: 0 },
+          { id: 'entities', label: 'Komunitas Kegiatan', enabled: true, order: 0 },
           { id: 'announcements', label: 'Pengumuman & Agenda', enabled: true, order: 1 },
         ]
   ) as NavbarTabConfig[];
 
-  return (
-    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-stone-200 shadow-xs">
-      {/* Top Banner Notice */}
-      <div className="bg-emerald-800 text-emerald-50 text-xs py-1.5 px-4 text-center font-medium flex items-center justify-center gap-2">
-        <span className="inline-block w-2 h-2 rounded-full bg-emerald-300 animate-pulse"></span>
-        <span>Portal Resmi Ekosistem & Kegiatan Warga Komplek Bintara Jaya Permai (RW 11)</span>
-      </div>
+  const NAV_ITEMS = [
+    { id: 'home', path: '/', label: 'Beranda', icon: Home },
+    ...activeNavbarTabs.map((tab) => ({
+      id: tab.id,
+      path: tab.id === 'entities' ? '/komunitas' : '/pengumuman',
+      label: tab.label,
+      icon: tab.id === 'entities' ? LayoutGrid : Megaphone,
+    })),
+  ];
 
+  return (
+    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-stone-200 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 gap-4">
-          {/* Logo & Identity */}
-          <div className="flex items-center gap-3 cursor-pointer" onClick={() => onTabChange('entities')}>
+        <div className="flex items-center justify-between h-16 gap-4 relative">
+
+          {/* Logo */}
+          <Link
+            to="/"
+            className="flex items-center gap-2.5 shrink-0 group z-10"
+          >
             <img
               src={displayLogo}
-              alt="BJP HUB Logo"
-              className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl object-contain bg-white p-1 border border-amber-300/90 shadow-xs shrink-0 hover:scale-105 transition-transform"
+              alt="BJP.hub Logo"
+              className="h-8 w-auto object-contain drop-shadow-sm group-hover:scale-105 transition-transform"
             />
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="font-extrabold text-stone-900 text-base sm:text-lg leading-tight tracking-tight">
-                  BJP<span className="text-emerald-700">.hub</span>
-                </h1>
-                <span className="bg-emerald-100 text-emerald-800 text-[10px] font-semibold px-2 py-0.5 rounded-full border border-emerald-200">
-                  RW 11
-                </span>
-              </div>
-              <p className="text-xs text-stone-500 hidden sm:block">Bintara Jaya Permai</p>
+            <div className="leading-none hidden sm:block">
+              <span className="font-black text-stone-900 text-lg tracking-tight">
+                BJP<span className="text-emerald-700">.hub</span>
+              </span>
             </div>
-          </div>
+          </Link>
 
-          {/* Navigation Tabs (Desktop) */}
-          <div className="hidden md:flex items-center bg-stone-100 p-1 rounded-xl border border-stone-200/80">
-            {activeNavbarTabs.map((tab) => {
-              const isEntities = tab.id === 'entities';
-              const Icon = isEntities ? LayoutGrid : Megaphone;
-              const isSelected = activeTab === tab.id;
-
+          {/* Desktop Nav */}
+          <nav className="hidden md:flex items-center justify-center gap-5 absolute left-1/2 -translate-x-1/2 h-full z-0">
+            {NAV_ITEMS.map(({ id, path, label, icon: Icon }) => {
+              const isActive = path === '/' ? location.pathname === '/' : location.pathname.startsWith(path);
               return (
-                <button
-                  key={tab.id}
-                  onClick={() => onTabChange(tab.id as 'entities' | 'announcements')}
-                  className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${
-                    isSelected
-                      ? 'bg-white text-emerald-900 shadow-xs border border-stone-200/60 font-semibold'
-                      : 'text-stone-600 hover:text-stone-900'
+                <Link
+                  key={id}
+                  to={path}
+                  className={`relative flex items-center gap-1.5 h-full text-xs font-bold transition-colors ${
+                    isActive
+                      ? 'text-emerald-700'
+                      : 'text-stone-700 hover:text-stone-900'
                   }`}
                 >
-                  <Icon className="w-4 h-4 text-emerald-600" />
-                  <span>{tab.label}</span>
-                  {isEntities && (
-                    <span className="bg-stone-200/70 text-stone-700 text-xs px-1.5 py-0.2 rounded-full">
-                      {totalEntitiesCount}
-                    </span>
+                  <Icon className="w-4 h-4" />
+                  <span>{label}</span>
+                  {/* Active Indicator Line */}
+                  {isActive && (
+                    <span className="absolute bottom-0 left-0 w-full h-1 bg-emerald-600 rounded-t-lg" />
                   )}
-                </button>
+                </Link>
               );
             })}
-          </div>
+          </nav>
 
-          {/* Quick Search Bar */}
-          <div className="flex-1 max-w-xs relative hidden lg:block">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
-            <input
-              type="text"
-              placeholder="Cari entitas..."
-              value={searchTerm}
-              onChange={(e) => onSearchChange(e.target.value)}
-              className="w-full pl-9 pr-4 py-1.5 bg-stone-100/80 border border-stone-200 rounded-lg text-xs sm:text-sm text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all"
-            />
-            {searchTerm && (
-              <button
-                onClick={() => onSearchChange('')}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600 text-xs bg-stone-200/50 rounded-full w-4 h-4 flex items-center justify-center"
-              >
-                ✕
-              </button>
-            )}
-          </div>
+          {/* Right: Search, CMS + Mobile Toggle */}
+          <div className="flex items-center gap-2 sm:gap-4 z-10">
+            
+            {/* Desktop Search */}
+            <form onSubmit={handleSearch} className="hidden lg:block relative group">
+              <input
+                type="text"
+                value={localSearch}
+                onChange={(e) => setLocalSearch(e.target.value)}
+                placeholder="Cari..."
+                className="w-40 xl:w-56 pl-9 pr-4 py-1.5 bg-stone-50 border border-stone-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all focus:bg-white"
+              />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-stone-400 group-focus-within:text-emerald-600 transition-colors" />
+            </form>
 
-          {/* Right Action: Small CMS Button & Mobile Menu */}
-          <div className="flex items-center gap-2">
             <button
               onClick={onOpenCMS}
-              className={`flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg text-xs font-semibold transition-all shadow-2xs ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-xs ${
                 isCMSActive
-                  ? 'bg-amber-500 hover:bg-amber-600 text-stone-950 border border-amber-600'
-                  : 'bg-emerald-800/90 hover:bg-emerald-900 text-white border border-emerald-700/60'
+                  ? 'bg-stone-800 text-amber-400 hover:bg-stone-900 ring-1 ring-amber-400/50'
+                  : 'bg-white text-stone-700 hover:bg-stone-50 border border-stone-200'
               }`}
-              title="Akses CMS Pengurus"
+              title="Kelola Data Website (Pengurus)"
             >
-              <Shield className="w-3.5 h-3.5 text-amber-300" />
+              <Settings className={`w-3.5 h-3.5 ${isCMSActive ? 'animate-spin-slow' : ''}`} />
               <span>CMS</span>
             </button>
 
-            {/* Mobile Hamburger Button */}
+            {/* Mobile Hamburger */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="md:hidden p-2 text-stone-600 hover:text-stone-900 hover:bg-stone-100 rounded-lg"
               aria-label="Toggle menu"
             >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile Drawer Menu */}
+      {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-stone-200 bg-white p-4 space-y-3">
-          {/* Mobile Search */}
-          <div className="relative">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
+        <div className="md:hidden border-t border-stone-100 bg-white py-3 px-4">
+          <form onSubmit={handleSearch} className="relative mb-4">
             <input
               type="text"
-              placeholder="Cari entitas..."
-              value={searchTerm}
-              onChange={(e) => onSearchChange(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 bg-stone-100 border border-stone-200 rounded-lg text-sm text-stone-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              value={localSearch}
+              onChange={(e) => setLocalSearch(e.target.value)}
+              placeholder="Cari komunitas/kegiatan..."
+              className="w-full pl-10 pr-4 py-2.5 bg-stone-100 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
-          </div>
-
-          {/* Mobile Tab Links */}
-          <div className="grid grid-cols-2 gap-2 pt-2">
-            {activeNavbarTabs.map((tab) => {
-              const isEntities = tab.id === 'entities';
-              const Icon = isEntities ? LayoutGrid : Megaphone;
-              const isSelected = activeTab === tab.id;
-
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
+          </form>
+          <div className="flex flex-col gap-1">
+            {NAV_ITEMS.map(({ id, path, label, icon: Icon }) => {
+              const isActive = path === '/' ? location.pathname === '/' : location.pathname.startsWith(path);
               return (
-                <button
-                  key={tab.id}
-                  onClick={() => {
-                    onTabChange(tab.id as 'entities' | 'announcements');
-                    setMobileMenuOpen(false);
-                  }}
-                  className={`flex items-center justify-center gap-2 p-2.5 rounded-lg text-xs font-semibold ${
-                    isSelected
-                      ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-                      : 'bg-stone-100 text-stone-700'
+                <Link
+                  key={id}
+                  to={path}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold text-left transition-all ${
+                    isActive
+                      ? 'bg-emerald-700 text-white'
+                      : 'text-stone-700 hover:bg-stone-100'
                   }`}
                 >
                   <Icon className="w-4 h-4" />
-                  <span>
-                    {tab.label} {isEntities ? `(${totalEntitiesCount})` : ''}
-                  </span>
-                </button>
+                  <span>{label}</span>
+                </Link>
               );
             })}
           </div>

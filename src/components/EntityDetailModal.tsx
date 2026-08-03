@@ -49,7 +49,7 @@ export const EntityDetailModal: React.FC<EntityDetailModalProps> = ({
     const shareUrl = `${window.location.origin}${window.location.pathname}?entity=${entity.id}`;
     const cleanDesc = stripHtml(entity.description);
     const snippet = cleanDesc.length > 120 ? cleanDesc.slice(0, 120) + '...' : cleanDesc;
-    const shareTitle = `${entity.name} - BJP HUB Bintara Jaya Permai`;
+    const shareTitle = `${entity.name} - BJP.hub Bintara Jaya Permai`;
     const shareText = `📌 *${entity.name}*\nKategori: ${entity.category}\n\n${snippet}\n\nLihat informasi selengkapnya:`;
 
     if (navigator.share) {
@@ -375,7 +375,7 @@ export const EntityDetailModal: React.FC<EntityDetailModalProps> = ({
               }`}
             >
               {copied ? <Check className="w-4 h-4 text-emerald-300 stroke-[3]" /> : <Share2 className="w-4 h-4 text-emerald-700" />}
-              <span>{copied ? 'Tautan Entitas Disalin!' : 'Bagikan Halaman Ini'}</span>
+              <span>{copied ? 'Tautan Komunitas Disalin!' : 'Bagikan Halaman Ini'}</span>
             </button>
 
             {entity.ctaUrl && entity.ctaUrl !== '#' && (

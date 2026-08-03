@@ -8,8 +8,10 @@ interface HeroProps {
   logoUrl?: string;
 }
 
+import { formatImageUrl } from '../utils/imageUrl';
+
 export const Hero: React.FC<HeroProps> = ({ totalEntities, logoUrl }) => {
-  const displayLogo = logoUrl || BJP_LOGO_URL;
+  const displayLogo = logoUrl ? formatImageUrl(logoUrl) : BJP_LOGO_URL;
 
   return (
     <div className="relative overflow-hidden bg-gradient-to-b from-stone-900 via-stone-800 to-stone-900 text-white border-b border-stone-800">
