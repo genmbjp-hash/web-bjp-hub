@@ -15,13 +15,15 @@ import {
   RefreshCw,
   Copy,
   Check,
+  Home,
 } from 'lucide-react';
 
 interface DocumentGeneratorPageProps {
   templates?: DocumentTemplate[];
+  onGoHome?: () => void;
 }
 
-export const DocumentGeneratorPage: React.FC<DocumentGeneratorPageProps> = ({ templates = [] }) => {
+export const DocumentGeneratorPage: React.FC<DocumentGeneratorPageProps> = ({ templates = [], onGoHome }) => {
   // Available templates (fallback if empty)
   const activeTemplates = templates.filter((t) => t.enabled);
 
@@ -157,6 +159,17 @@ Terverifikasi Sistem BJP HUB RW 11
             Buat dan unduh dokumen permohonan surat keterangan warga (Surat Pengantar RT/RW, Domisili, Keterangan Usaha) secara instan lengkap dengan Nomor Surat Otomatis dan KOP Resmi.
           </p>
         </div>
+
+        {onGoHome && (
+          <button
+            onClick={onGoHome}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-700/80 hover:bg-emerald-600 text-white border border-emerald-500/50 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-xs shrink-0"
+            title="Kembali ke Beranda Utama Home Page"
+          >
+            <Home className="w-4 h-4 text-emerald-200" />
+            <span>Kembali ke Home Page</span>
+          </button>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">

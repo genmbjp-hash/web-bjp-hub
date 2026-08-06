@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { RtRwPageConfig, RtRwContentCard } from '../types';
 import {
   MapPin, Users, Phone, Calendar, Sparkles, Building, ChevronLeft, MessageCircle,
-  ShieldCheck, FileText, Download, Image as ImageIcon, FileCode, Info, Maximize2, X, ExternalLink
+  ShieldCheck, FileText, Download, Image as ImageIcon, FileCode, Info, Maximize2, X, ExternalLink, Home
 } from 'lucide-react';
 import { formatImageUrl } from '../utils/imageUrl';
 
@@ -56,10 +56,11 @@ export const RtRwView: React.FC<RtRwViewProps> = ({ config, onBack, onOpenCMS })
             {onBack && (
               <button
                 onClick={onBack}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white text-xs font-bold rounded-xl backdrop-blur-md border border-white/20 transition-all cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-emerald-800/80 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl backdrop-blur-md border border-emerald-500/40 transition-all cursor-pointer shadow-xs"
+                title="Kembali ke Beranda Utama Home Page"
               >
-                <ChevronLeft className="w-4 h-4" />
-                <span>Kembali</span>
+                <Home className="w-4 h-4 text-emerald-300" />
+                <span>Kembali ke Home Page</span>
               </button>
             )}
             <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-emerald-500/20 text-emerald-300 rounded-full text-xs font-bold border border-emerald-500/30 backdrop-blur-md">

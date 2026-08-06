@@ -1,13 +1,14 @@
 import React from 'react';
 import { Announcement } from '../types';
 import { formatImageUrl } from '../utils/imageUrl';
-import { Megaphone, Calendar, User, ExternalLink, Shield, PlusCircle, AlertCircle, Maximize2, X, Share2 } from 'lucide-react';
+import { Megaphone, Calendar, User, ExternalLink, Shield, PlusCircle, AlertCircle, Maximize2, X, Share2, Home } from 'lucide-react';
 
 interface AnnouncementsListProps {
   announcements: Announcement[];
   onOpenCMS: () => void;
   isCMSActive: boolean;
   onShare?: (ann: Announcement) => void;
+  onGoHome?: () => void;
 }
 
 export const AnnouncementsList: React.FC<AnnouncementsListProps> = ({
@@ -15,6 +16,7 @@ export const AnnouncementsList: React.FC<AnnouncementsListProps> = ({
   onOpenCMS,
   isCMSActive,
   onShare,
+  onGoHome,
 }) => {
   const [selectedLightboxImage, setSelectedLightboxImage] = React.useState<{ url: string; title: string } | null>(null);
 
@@ -33,6 +35,17 @@ export const AnnouncementsList: React.FC<AnnouncementsListProps> = ({
             Informasi penting, jadwal kegiatan, dan acara terkini di Komplek Bintara Jaya Permai (RW 11).
           </p>
         </div>
+
+        {onGoHome && (
+          <button
+            onClick={onGoHome}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-300/80 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-2xs shrink-0"
+            title="Kembali ke Beranda Utama Home Page"
+          >
+            <Home className="w-4 h-4 text-emerald-700" />
+            <span>Kembali ke Home Page</span>
+          </button>
+        )}
       </div>
 
       {/* Announcements List Grid */}

@@ -273,18 +273,21 @@ export default function App() {
 
       {/* Main Container */}
       <main className="flex-1">
+        {/* Global Sticky Category & Home Navigation Bar (Sticky across ALL pages) */}
+        <CategoryFilter
+          categories={categoryNames}
+          selectedCategory={activeTab === 'entities' ? selectedCategory : ''}
+          onSelectCategory={(cat) => {
+            setActiveTab('entities');
+            setSelectedCategory(cat);
+          }}
+          entities={entities}
+          categoryConfigs={categoryConfigs}
+        />
+
         {/* View Tab 1: Entitas Kegiatan (Home Page vs Entitas Category View) */}
         {activeTab === 'entities' && (
           <div>
-            {/* Category Filter Pills (Tab Semua -> Home Page) */}
-            <CategoryFilter
-              categories={categoryNames}
-              selectedCategory={selectedCategory}
-              onSelectCategory={setSelectedCategory}
-              entities={entities}
-              categoryConfigs={categoryConfigs}
-            />
-
             {/* Main Content Area */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
               {/* 1. HOME PAGE VIEW (When selectedCategory is 'Semua') */}
@@ -492,18 +495,34 @@ export default function App() {
               onOpenCMS={() => handleOpenCMSWithAuth()}
               isCMSActive={true}
               onShare={(ann) => setShareModalItem({ item: ann, type: 'announcement' })}
+              onGoHome={() => {
+                setActiveTab('entities');
+                setSelectedCategory('Semua');
+              }}
             />
           </div>
         )}
 
         {/* View Tab 3: Layanan Surat Menyurat Online Generator */}
         {activeTab === 'document_service' && (
-          <DocumentGeneratorPage templates={siteSettings.documentTemplates} />
+          <DocumentGeneratorPage
+            templates={siteSettings.documentTemplates}
+            onGoHome={() => {
+              setActiveTab('entities');
+              setSelectedCategory('Semua');
+            }}
+          />
         )}
 
         {/* View Tab 4: Polling & Google Form Page */}
         {activeTab === 'polling' && (
-          <PollingPage config={siteSettings.pollingConfig} />
+          <PollingPage
+            config={siteSettings.pollingConfig}
+            onGoHome={() => {
+              setActiveTab('entities');
+              setSelectedCategory('Semua');
+            }}
+          />
         )}
 
         {/* Standalone RT/RW Page */}

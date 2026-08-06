@@ -1,12 +1,13 @@
 import React from 'react';
 import { PollingPageConfig } from '../types';
-import { Vote, ExternalLink, ShieldCheck, CheckCircle, HelpCircle } from 'lucide-react';
+import { Vote, ExternalLink, ShieldCheck, CheckCircle, HelpCircle, Home } from 'lucide-react';
 
 interface PollingPageProps {
   config?: PollingPageConfig;
+  onGoHome?: () => void;
 }
 
-export const PollingPage: React.FC<PollingPageProps> = ({ config }) => {
+export const PollingPage: React.FC<PollingPageProps> = ({ config, onGoHome }) => {
   if (!config || !config.enabled) {
     return (
       <div className="max-w-4xl mx-auto my-12 p-8 bg-white rounded-3xl border border-stone-200 text-center space-y-4">
@@ -52,10 +53,16 @@ export const PollingPage: React.FC<PollingPageProps> = ({ config }) => {
           </p>
         </div>
 
-        <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-emerald-950/60 border border-emerald-700/50 rounded-2xl text-xs font-semibold text-emerald-200">
-          <ShieldCheck className="w-5 h-5 text-amber-300 shrink-0" />
-          <span>Verifikasi Pengurus RW 11</span>
-        </div>
+        {onGoHome && (
+          <button
+            onClick={onGoHome}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-700/80 hover:bg-emerald-600 text-white border border-emerald-500/50 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-xs shrink-0"
+            title="Kembali ke Beranda Utama Home Page"
+          >
+            <Home className="w-4 h-4 text-emerald-200" />
+            <span>Kembali ke Home Page</span>
+          </button>
+        )}
       </div>
 
       {/* Grid for 2 Google Form Sections */}
