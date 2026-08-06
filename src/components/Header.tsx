@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Shield, Menu, X, LayoutGrid, Megaphone, HelpCircle, FileText, Vote } from 'lucide-react';
+import { Search, Shield, Menu, X, LayoutGrid, Megaphone, HelpCircle, FileText, Vote, Building } from 'lucide-react';
 import { BJP_LOGO_URL, BJP_LOGO_FALLBACK_SVG } from '../assets/logo';
 import { NavbarTabConfig, RunningTextConfig } from '../types';
 import { formatImageUrl } from '../utils/imageUrl';
@@ -88,9 +88,10 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="hidden md:flex items-center bg-stone-100 p-1 rounded-xl border border-stone-200/80">
             {activeNavbarTabs.map((tab) => {
               const isEntities = tab.id === 'entities';
+              const isRtRw = tab.id === 'rtrw';
               const isDoc = tab.id === 'document_service';
               const isPolling = tab.id === 'polling';
-              const Icon = isEntities ? LayoutGrid : isDoc ? FileText : isPolling ? Vote : Megaphone;
+              const Icon = isEntities ? LayoutGrid : isRtRw ? Building : isDoc ? FileText : isPolling ? Vote : Megaphone;
               const isSelected = activeTab === tab.id;
 
               return (
@@ -181,14 +182,17 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="grid grid-cols-2 gap-2 pt-2">
             {activeNavbarTabs.map((tab) => {
               const isEntities = tab.id === 'entities';
-              const Icon = isEntities ? LayoutGrid : Megaphone;
+              const isRtRw = tab.id === 'rtrw';
+              const isDoc = tab.id === 'document_service';
+              const isPolling = tab.id === 'polling';
+              const Icon = isEntities ? LayoutGrid : isRtRw ? Building : isDoc ? FileText : isPolling ? Vote : Megaphone;
               const isSelected = activeTab === tab.id;
 
               return (
                 <button
                   key={tab.id}
                   onClick={() => {
-                    onTabChange(tab.id as 'entities' | 'announcements');
+                    onTabChange(tab.id);
                     setMobileMenuOpen(false);
                   }}
                   className={`flex items-center justify-center gap-2 p-2.5 rounded-lg text-xs font-semibold ${

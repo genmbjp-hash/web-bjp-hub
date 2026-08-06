@@ -204,8 +204,11 @@ export default function App() {
     setIsCMSOpen(false);
   };
 
-  // Filter sections & category configs
-  const categoryConfigs = siteSettings.categoryConfigs || DEFAULT_CATEGORY_CONFIGS;
+  // Filter sections & category configs (Exclude Informasi RT/RW as it is now a top-level tab)
+  const rawCategoryConfigs = siteSettings.categoryConfigs || DEFAULT_CATEGORY_CONFIGS;
+  const categoryConfigs = rawCategoryConfigs.filter(
+    (c) => c.id !== 'Informasi RT/RW' && c.name !== 'Informasi RT/RW'
+  );
   const categoryNames = ['Semua', ...categoryConfigs.map((c) => c.name)];
 
   // Helper to filter entities per section config
@@ -414,13 +417,7 @@ export default function App() {
                         )}
 
                         {/* Layout Switch Rendering */}
-                        {currentConfig.name === 'Informasi RT/RW' || selectedCategory === 'Informasi RT/RW' ? (
-                          <RtRwView
-                            config={siteSettings.rtRwConfig || DEFAULT_RTRW_CONFIG}
-                            onBack={() => setSelectedCategory('Semua')}
-                            onOpenCMS={() => handleOpenCMSWithAuth()}
-                          />
-                        ) : layoutType === 'single_page' ? (
+                        {layoutType === 'single_page' ? (
                           /* LAYOUT TYPE 3: SINGLE PAGE VIEW */
                           <SinglePageView
                             title={currentConfig.name}
@@ -507,6 +504,20 @@ export default function App() {
         {/* View Tab 4: Polling & Google Form Page */}
         {activeTab === 'polling' && (
           <PollingPage config={siteSettings.pollingConfig} />
+        )}
+
+        {/* Standalone RT/RW Page */}
+        {activeTab === 'rtrw' && (
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <RtRwView
+              config={siteSettings.rtRwConfig || DEFAULT_RTRW_CONFIG}
+              onBack={() => {
+                setActiveTab('entities');
+                setSelectedCategory('Semua');
+              }}
+              onOpenCMS={() => handleOpenCMSWithAuth()}
+            />
+          </div>
         )}
       </main>
 

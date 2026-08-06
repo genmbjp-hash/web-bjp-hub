@@ -50,169 +50,6 @@ export const DEFAULT_CATEGORY_CONFIGS: CategoryHeaderConfig[] = [
     layoutType: 'photo_album',
   },
   {
-    id: 'Informasi RT/RW',
-    name: 'Informasi RT/RW',
-    description: 'Struktur Organisasi, Visi Misi Pengurus RW 11, serta Breakdown Rincian Informasi RT 01 s/d RT 07 Bintara Jaya Permai',
-    logoUrl: 'https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=800&q=80',
-    layoutType: 'single_page',
-    singlePageHeroImage: 'https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=1200&q=80',
-    singlePageContent: `<div class="space-y-8 text-stone-800">
-  <div class="bg-gradient-to-br from-emerald-900 to-stone-900 text-white p-6 sm:p-8 rounded-3xl shadow-lg border border-emerald-700/40 space-y-4">
-    <div class="inline-flex items-center gap-2 px-3 py-1 bg-amber-400/20 text-amber-300 rounded-full text-xs font-bold border border-amber-400/30">
-      <span>🏛️ Visi & Misi Resmi RW 11</span>
-    </div>
-    <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white leading-tight">
-      Visi & Misi Pengurus RW 11 Bintara Jaya Permai
-    </h2>
-    <p class="text-sm sm:text-base text-stone-200 leading-relaxed font-medium">
-      "Mewujudkan Lingkungan RW 11 Komplek Bintara Jaya Permai yang Aman, Asri, Religius, Harmonis, dan Inovatif Berbasis Pelayanan Digital & Gotong Royong Warga."
-    </p>
-
-    <div class="pt-4 border-t border-emerald-800/80 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm text-stone-200">
-      <div class="bg-black/30 p-4 rounded-2xl border border-emerald-500/20 space-y-2">
-        <h3 class="font-bold text-emerald-300 text-sm flex items-center gap-2">
-          <span>🎯 Misi Utama Kepengurusan</span>
-        </h3>
-        <ul class="space-y-2 list-disc list-inside text-stone-300">
-          <li>Meningkatkan pelayanan administrasi kependudukan cepat, transparan, dan terintegrasi digital.</li>
-          <li>Menjaga ketertiban & keamanan lingkungan melalui Siskamling terpadu dan CCTV 24 jam.</li>
-          <li>Mengembangkan Sentra Usaha UMKM BJP untuk kemandirian ekonomi warga rumahan.</li>
-          <li>Menggalakkan kerja bakti berkala dan pengelolaan sampah mandiri berbasis lingkungan asri.</li>
-        </ul>
-      </div>
-
-      <div class="bg-black/30 p-4 rounded-2xl border border-emerald-500/20 space-y-2">
-        <h3 class="font-bold text-amber-300 text-sm flex items-center gap-2">
-          <span>🌟 Nilai-Nilai Utama Warga</span>
-        </h3>
-        <ul class="space-y-2 list-disc list-inside text-stone-300">
-          <li><strong>Gotong Royong:</strong> Kebersamaan dalam membangun fasilitas dan kebersihan komplek.</li>
-          <li><strong>Transparansi:</strong> Pengelolaan keuangan dan informasi pengumuman secara terbuka.</li>
-          <li><strong>Inklusif:</strong> Merangkul seluruh komponen usia dari anak-anak, remaja, hingga lansia.</li>
-          <li><strong>Inovatif:</strong> Digitalisasi layanan surat online mandiri dan portal informasi terpadu.</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-
-  <div class="space-y-4">
-    <div class="flex items-center justify-between border-b border-stone-200 pb-3">
-      <div>
-        <h3 class="text-xl font-black text-stone-900 tracking-tight flex items-center gap-2">
-          <span>Rincian Informasi Wilayah per RT (RT 01 s/d RT 07)</span>
-        </h3>
-        <p class="text-xs text-stone-500">
-          Daftar ketua RT, cakupan wilayah blok, jumlah KK, dan program unggulan masing-masing RT di RW 11.
-        </p>
-      </div>
-      <span class="text-xs font-bold px-3 py-1 bg-emerald-100 text-emerald-900 rounded-lg">
-        Total 7 Wilayah RT
-      </span>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-      <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-xs hover:shadow-md transition-all space-y-3">
-        <div class="flex items-center justify-between">
-          <span class="px-3 py-1 bg-emerald-800 text-white text-xs font-bold rounded-lg">RT 01 / RW 11</span>
-          <span class="text-xs font-semibold text-stone-500">48 KK</span>
-        </div>
-        <h4 class="font-bold text-stone-900 text-base">Ketua RT: Bpk. H. Bambang Sugiarto</h4>
-        <div class="text-xs space-y-1.5 text-stone-600 bg-stone-50 p-3 rounded-xl border border-stone-100">
-          <p><strong>Cakupan Wilayah:</strong> Blok A1 — A15</p>
-          <p><strong>Jadwal Kerja Bakti:</strong> Minggu Ke-1 Setiap Bulan</p>
-          <p><strong>Program Unggulan:</strong> Penghijauan Taman RT & Bank Sampah Mandiri</p>
-          <p><strong>Kontak RT:</strong> 0812-1111-2201</p>
-        </div>
-      </div>
-
-      <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-xs hover:shadow-md transition-all space-y-3">
-        <div class="flex items-center justify-between">
-          <span class="px-3 py-1 bg-emerald-800 text-white text-xs font-bold rounded-lg">RT 02 / RW 11</span>
-          <span class="text-xs font-semibold text-stone-500">52 KK</span>
-        </div>
-        <h4 class="font-bold text-stone-900 text-base">Ketua RT: Bpk. Drs. Suherman</h4>
-        <div class="text-xs space-y-1.5 text-stone-600 bg-stone-50 p-3 rounded-xl border border-stone-100">
-          <p><strong>Cakupan Wilayah:</strong> Blok B1 — B20</p>
-          <p><strong>Jadwal Kerja Bakti:</strong> Minggu Ke-2 Setiap Bulan</p>
-          <p><strong>Program Unggulan:</strong> Pos Ronda Digital & CCTV Terpadu</p>
-          <p><strong>Kontak RT:</strong> 0812-1111-2202</p>
-        </div>
-      </div>
-
-      <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-xs hover:shadow-md transition-all space-y-3">
-        <div class="flex items-center justify-between">
-          <span class="px-3 py-1 bg-emerald-800 text-white text-xs font-bold rounded-lg">RT 03 / RW 11</span>
-          <span class="text-xs font-semibold text-stone-500">45 KK</span>
-        </div>
-        <h4 class="font-bold text-stone-900 text-base">Ketua RT: Bpk. Ahmad Fauzi, S.E.</h4>
-        <div class="text-xs space-y-1.5 text-stone-600 bg-stone-50 p-3 rounded-xl border border-stone-100">
-          <p><strong>Cakupan Wilayah:</strong> Blok C1 — C18</p>
-          <p><strong>Jadwal Kerja Bakti:</strong> Minggu Ke-3 Setiap Bulan</p>
-          <p><strong>Program Unggulan:</strong> Pembinaan Olahraga Remaja & Bulutangkis</p>
-          <p><strong>Kontak RT:</strong> 0812-1111-2203</p>
-        </div>
-      </div>
-
-      <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-xs hover:shadow-md transition-all space-y-3">
-        <div class="flex items-center justify-between">
-          <span class="px-3 py-1 bg-emerald-800 text-white text-xs font-bold rounded-lg">RT 04 / RW 11</span>
-          <span class="text-xs font-semibold text-stone-500">50 KK</span>
-        </div>
-        <h4 class="font-bold text-stone-900 text-base">Ketua RT: Bpk. Ir. Rahmat Hidayat</h4>
-        <div class="text-xs space-y-1.5 text-stone-600 bg-stone-50 p-3 rounded-xl border border-stone-100">
-          <p><strong>Cakupan Wilayah:</strong> Blok D1 — D22</p>
-          <p><strong>Jadwal Kerja Bakti:</strong> Minggu Ke-1 Setiap Bulan</p>
-          <p><strong>Program Unggulan:</strong> Taman Tanaman Obat (TOGA) & Komposting</p>
-          <p><strong>Kontak RT:</strong> 0812-1111-2204</p>
-        </div>
-      </div>
-
-      <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-xs hover:shadow-md transition-all space-y-3">
-        <div class="flex items-center justify-between">
-          <span class="px-3 py-1 bg-emerald-800 text-white text-xs font-bold rounded-lg">RT 05 / RW 11</span>
-          <span class="text-xs font-semibold text-stone-500">42 KK</span>
-        </div>
-        <h4 class="font-bold text-stone-900 text-base">Ketua RT: Bpk. Hendra Gunawan</h4>
-        <div class="text-xs space-y-1.5 text-stone-600 bg-stone-50 p-3 rounded-xl border border-stone-100">
-          <p><strong>Cakupan Wilayah:</strong> Blok E1 — E16</p>
-          <p><strong>Jadwal Kerja Bakti:</strong> Minggu Ke-2 Setiap Bulan</p>
-          <p><strong>Program Unggulan:</strong> Sentra Usaha UMKM Kuliner Warga</p>
-          <p><strong>Kontak RT:</strong> 0812-1111-2205</p>
-        </div>
-      </div>
-
-      <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-xs hover:shadow-md transition-all space-y-3">
-        <div class="flex items-center justify-between">
-          <span class="px-3 py-1 bg-emerald-800 text-white text-xs font-bold rounded-lg">RT 06 / RW 11</span>
-          <span class="text-xs font-semibold text-stone-500">46 KK</span>
-        </div>
-        <h4 class="font-bold text-stone-900 text-base">Ketua RT: Bpk. Dr. Agus Triyono</h4>
-        <div class="text-xs space-y-1.5 text-stone-600 bg-stone-50 p-3 rounded-xl border border-stone-100">
-          <p><strong>Cakupan Wilayah:</strong> Blok F1 — F20</p>
-          <p><strong>Jadwal Kerja Bakti:</strong> Minggu Ke-3 Setiap Bulan</p>
-          <p><strong>Program Unggulan:</strong> Pengajian Rutin Keliling & TPA Anak</p>
-          <p><strong>Kontak RT:</strong> 0812-1111-2206</p>
-        </div>
-      </div>
-
-      <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-xs hover:shadow-md transition-all space-y-3 md:col-span-2 lg:col-span-1">
-        <div class="flex items-center justify-between">
-          <span class="px-3 py-1 bg-emerald-800 text-white text-xs font-bold rounded-lg">RT 07 / RW 11</span>
-          <span class="text-xs font-semibold text-stone-500">40 KK</span>
-        </div>
-        <h4 class="font-bold text-stone-900 text-base">Ketua RT: Bpk. M. Yasin, S.T.</h4>
-        <div class="text-xs space-y-1.5 text-stone-600 bg-stone-50 p-3 rounded-xl border border-stone-100">
-          <p><strong>Cakupan Wilayah:</strong> Blok G1 — G18</p>
-          <p><strong>Jadwal Kerja Bakti:</strong> Minggu Ke-4 Setiap Bulan</p>
-          <p><strong>Program Unggulan:</strong> Posyandu Lansia & Pembinaan Karang Taruna</p>
-          <p><strong>Kontak RT:</strong> 0812-1111-2207</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>`,
-  },
-  {
     id: 'Sentra Usaha BJP',
     name: 'Sentra Usaha BJP',
     description: 'Unit entitas, UMKM, dan kegiatan usaha warga Bintara Jaya Permai (RW 11)',
@@ -376,6 +213,46 @@ export const DEFAULT_RTRW_CONFIG: RtRwPageConfig = {
       enabled: true,
     },
   ],
+  extraSectionTitle: 'Dokumen, Informasional, & Galeri Resmi RT/RW',
+  extraSectionDescription: 'Akses publik file dokumen PDF, peta infografis gambar, dan pengumuman panduan resmi warga RW 11.',
+  extraCards: [
+    {
+      id: 'card-pdf-1',
+      type: 'pdf',
+      title: 'Dokumen Peraturan & Tata Tertib Kebersihan Warga RW 11',
+      description: 'Buku pedoman resmi tata tertib lingkungan, jadwal pengangkutan sampah, dan aturan iuran bulanan warga Bintara Jaya Permai.',
+      categoryBadge: 'Dokumen Peraturan',
+      fileName: 'Tata_Tertib_Kebersihan_Warga_RW11.pdf',
+      fileSize: '1.4 MB',
+      fileUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+      ctaText: 'Unduh Dokumen PDF',
+      enabled: true,
+      order: 0,
+    },
+    {
+      id: 'card-img-1',
+      type: 'image',
+      title: 'Peta Denah Wilayah Blok RT 01-07 & Jalur Evakuasi',
+      description: 'Infografis denah tata letak pos ronda, instalasi APAR pemadam kebakaran, dan titik kumpul darurat warga.',
+      categoryBadge: 'Denah Infografis',
+      imageUrl: 'https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&w=1000&q=80',
+      imageCaption: 'Peta Layout Wilayah & Pos Keamanan Bintara Jaya Permai RW 11',
+      enabled: true,
+      order: 1,
+    },
+    {
+      id: 'card-txt-1',
+      type: 'text',
+      title: 'Panduan Prosedur Pelayanan Surat Pengantar RT/RW Mandiri',
+      description: 'Petunjuk alur pengurusan administrasi kependudukan seperti KTP, KK, dan Surat Keterangan Usaha.',
+      categoryBadge: 'Panduan Warga',
+      textContent: 'Warga yang memerlukan Surat Pengantar RT/RW dapat mengajukan permohonan secara mandiri melalui menu Layanan Surat Online di portal ini. Pengurus RT/RW siap melayani verifikasi fisik pada jam pelayanan warga setiap hari kerja.',
+      author: 'Sekretariat Pengurus RW 11',
+      date: 'Agustus 2026',
+      enabled: true,
+      order: 2,
+    },
+  ],
 };
 
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
@@ -384,9 +261,10 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   siteDescription: 'Portal Resmi Ekosistem & Kegiatan Warga Komplek Bintara Jaya Permai (RW 11)',
   navbarTabs: [
     { id: 'entities', label: 'Entitas Kegiatan', enabled: true, order: 0 },
-    { id: 'announcements', label: 'Pengumuman & Agenda', enabled: true, order: 1 },
-    { id: 'document_service', label: 'Layanan Surat Online', enabled: true, order: 2 },
-    { id: 'polling', label: 'Polling & Aspirasi Warga', enabled: true, order: 3 },
+    { id: 'rtrw', label: 'Informasi RT/RW', enabled: true, order: 1 },
+    { id: 'announcements', label: 'Pengumuman & Agenda', enabled: true, order: 2 },
+    { id: 'document_service', label: 'Layanan Surat Online', enabled: true, order: 3 },
+    { id: 'polling', label: 'Polling & Aspirasi Warga', enabled: true, order: 4 },
   ],
   categoryConfigs: DEFAULT_CATEGORY_CONFIGS,
   runningText: {
@@ -681,11 +559,14 @@ export function getSiteSettings(): SiteSettings {
         ? parsed.navbarTabs
         : DEFAULT_SITE_SETTINGS.navbarTabs;
 
+      if (!loadedNavbarTabs.some((t: any) => t.id === 'rtrw')) {
+        loadedNavbarTabs.push({ id: 'rtrw', label: 'Informasi RT/RW', enabled: true, order: 1 });
+      }
       if (!loadedNavbarTabs.some((t: any) => t.id === 'document_service')) {
-        loadedNavbarTabs.push({ id: 'document_service', label: 'Layanan Surat Online', enabled: true, order: 2 });
+        loadedNavbarTabs.push({ id: 'document_service', label: 'Layanan Surat Online', enabled: true, order: 3 });
       }
       if (!loadedNavbarTabs.some((t: any) => t.id === 'polling')) {
-        loadedNavbarTabs.push({ id: 'polling', label: 'Polling & Aspirasi', enabled: true, order: 3 });
+        loadedNavbarTabs.push({ id: 'polling', label: 'Polling & Aspirasi', enabled: true, order: 4 });
       }
 
       return {
@@ -705,7 +586,15 @@ export function getSiteSettings(): SiteSettings {
             : DEFAULT_SITE_SETTINGS.mediaPartners,
         documentTemplates: Array.isArray(parsed.documentTemplates) ? parsed.documentTemplates : DEFAULT_SITE_SETTINGS.documentTemplates,
         pollingConfig: parsed.pollingConfig || DEFAULT_SITE_SETTINGS.pollingConfig,
-        rtRwConfig: parsed.rtRwConfig || DEFAULT_RTRW_CONFIG,
+        rtRwConfig: parsed.rtRwConfig
+          ? {
+              ...DEFAULT_RTRW_CONFIG,
+              ...parsed.rtRwConfig,
+              extraCards: Array.isArray(parsed.rtRwConfig.extraCards)
+                ? parsed.rtRwConfig.extraCards
+                : DEFAULT_RTRW_CONFIG.extraCards,
+            }
+          : DEFAULT_RTRW_CONFIG,
       };
     }
   } catch (err) {

@@ -165,6 +165,27 @@ export interface RtRwValueItem {
   description: string;
 }
 
+export type RtRwCardType = 'pdf' | 'image' | 'text';
+
+export interface RtRwContentCard {
+  id: string;
+  type: RtRwCardType;
+  title: string;
+  description?: string;
+  categoryBadge?: string;
+  fileUrl?: string;
+  fileName?: string;
+  fileSize?: string;
+  ctaText?: string;
+  imageUrl?: string;
+  imageCaption?: string;
+  textContent?: string;
+  author?: string;
+  date?: string;
+  enabled: boolean;
+  order: number;
+}
+
 export interface RtRwPageConfig {
   enabled: boolean;
   pageTitle: string;
@@ -178,6 +199,9 @@ export interface RtRwPageConfig {
   rtListTitle: string;
   rtListDescription: string;
   rts: RtDetailItem[];
+  extraSectionTitle?: string;
+  extraSectionDescription?: string;
+  extraCards?: RtRwContentCard[];
 }
 
 export interface SiteSettings {

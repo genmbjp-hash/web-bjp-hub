@@ -15,6 +15,8 @@ import {
   RtRwPageConfig,
   RtDetailItem,
   RtRwValueItem,
+  RtRwCardType,
+  RtRwContentCard,
   SocialFeedItem,
   MediaPartnerItem,
 } from '../types';
@@ -5712,6 +5714,462 @@ Adalah benar warga Bintara Jaya Permai yang memerlukan surat untuk keperluan: [K
                           </div>
                         </CollapsibleCard>
                       ))}
+                    </div>
+                  </div>
+                </CollapsibleCard>
+
+                {/* CARD 4: Kelola Seksi & Card Konten Tambahan (PDF, Gambar, Teks) */}
+                <CollapsibleCard
+                  title="Seksi Konten Tambahan (PDF, Gambar, Teks)"
+                  subtitle="Kelola seksi di bawah informasi RT untuk mengunggah PDF, gambar infografis, atau teks pengumuman."
+                  icon={<FileText className="w-5 h-5 text-emerald-800" />}
+                  defaultOpen={true}
+                >
+                  <div className="space-y-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-1 sm:col-span-2">
+                        <label className="text-xs font-bold text-stone-800 block">Judul Seksi Konten Tambahan:</label>
+                        <input
+                          type="text"
+                          value={tempRtRwConfig.extraSectionTitle || ''}
+                          onChange={(e) => setTempRtRwConfig({ ...tempRtRwConfig, extraSectionTitle: e.target.value })}
+                          placeholder="e.g. Dokumen, Informasional, & Galeri Resmi RT/RW"
+                          className="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded-xl text-xs text-stone-900 font-bold"
+                        />
+                      </div>
+                      <div className="space-y-1 sm:col-span-2">
+                        <label className="text-xs font-bold text-stone-800 block">Deskripsi Subtitle Seksi:</label>
+                        <input
+                          type="text"
+                          value={tempRtRwConfig.extraSectionDescription || ''}
+                          onChange={(e) => setTempRtRwConfig({ ...tempRtRwConfig, extraSectionDescription: e.target.value })}
+                          placeholder="e.g. Akses publik file dokumen PDF, peta infografis gambar, dan pengumuman panduan resmi warga."
+                          className="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded-xl text-xs text-stone-900"
+                        />
+                      </div>
+                    </div>
+
+                    {/* LIST OF CARDS */}
+                    <div className="space-y-4 pt-2 border-t border-stone-100">
+                      <div className="flex items-center justify-between flex-wrap gap-2">
+                        <label className="text-xs font-bold text-stone-800 flex items-center gap-1.5">
+                          <Layers className="w-4 h-4 text-emerald-700" />
+                          <span>Daftar Card Konten Tambahan ({(tempRtRwConfig.extraCards || []).length})</span>
+                        </label>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const current = tempRtRwConfig.extraCards || [];
+                              const newCard: RtRwContentCard = {
+                                id: 'card-' + Date.now(),
+                                type: 'pdf',
+                                title: 'Dokumen / Konten PDF Baru',
+                                description: 'Deskripsi singkat mengenai file PDF ini.',
+                                categoryBadge: 'Dokumen PDF',
+                                fileName: 'dokumen.pdf',
+                                fileSize: '1.0 MB',
+                                ctaText: 'Unduh Dokumen PDF',
+                                enabled: true,
+                                order: current.length,
+                              };
+                              setTempRtRwConfig({ ...tempRtRwConfig, extraCards: [...current, newCard] });
+                            }}
+                            className="flex items-center gap-1 px-3 py-1.5 bg-red-700 hover:bg-red-800 text-white text-xs font-bold rounded-xl transition-all shadow-2xs cursor-pointer"
+                          >
+                            <Plus className="w-3.5 h-3.5 text-red-200" />
+                            <span>+ Card PDF</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const current = tempRtRwConfig.extraCards || [];
+                              const newCard: RtRwContentCard = {
+                                id: 'card-' + Date.now(),
+                                type: 'image',
+                                title: 'Infografis / Gambar Baru',
+                                description: 'Deskripsi gambar atau peta denah lokasi.',
+                                categoryBadge: 'Galeri Gambar',
+                                imageUrl: 'https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&w=1000&q=80',
+                                imageCaption: 'Keterangan Gambar',
+                                enabled: true,
+                                order: current.length,
+                              };
+                              setTempRtRwConfig({ ...tempRtRwConfig, extraCards: [...current, newCard] });
+                            }}
+                            className="flex items-center gap-1 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-xl transition-all shadow-2xs cursor-pointer"
+                          >
+                            <Plus className="w-3.5 h-3.5 text-amber-200" />
+                            <span>+ Card Gambar</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const current = tempRtRwConfig.extraCards || [];
+                              const newCard: RtRwContentCard = {
+                                id: 'card-' + Date.now(),
+                                type: 'text',
+                                title: 'Pengumuman / Teks Informasi Baru',
+                                description: 'Ringkasan singkat topik pengumuman.',
+                                categoryBadge: 'Teks Informasi',
+                                textContent: 'Tulis isi teks pengumuman atau panduan lengkap di sini.',
+                                author: 'Sekretariat RW 11',
+                                date: 'Agustus 2026',
+                                enabled: true,
+                                order: current.length,
+                              };
+                              setTempRtRwConfig({ ...tempRtRwConfig, extraCards: [...current, newCard] });
+                            }}
+                            className="flex items-center gap-1 px-3 py-1.5 bg-blue-700 hover:bg-blue-800 text-white text-xs font-bold rounded-xl transition-all shadow-2xs cursor-pointer"
+                          >
+                            <Plus className="w-3.5 h-3.5 text-blue-200" />
+                            <span>+ Card Teks</span>
+                          </button>
+                        </div>
+                      </div>
+
+                      {(tempRtRwConfig.extraCards || []).length === 0 ? (
+                        <div className="p-6 bg-stone-50 rounded-2xl border border-stone-200 text-center text-stone-500 text-xs">
+                          Belum ada card konten tambahan. Klik salah satu tombol di atas untuk menambah Card PDF, Gambar, atau Teks.
+                        </div>
+                      ) : (
+                        <div className="space-y-4">
+                          {(tempRtRwConfig.extraCards || []).map((cardItem, cardIdx) => (
+                            <CollapsibleCard
+                              key={cardItem.id}
+                              title={`${cardIdx + 1}. [${cardItem.type.toUpperCase()}] ${cardItem.title || 'Card Tanpa Judul'}`}
+                              subtitle={cardItem.categoryBadge || cardItem.description || 'Konten tambahan RT/RW'}
+                              icon={
+                                cardItem.type === 'pdf' ? <FileText className="w-4 h-4 text-red-600" /> :
+                                cardItem.type === 'image' ? <ImageIcon className="w-4 h-4 text-amber-600" /> :
+                                <Info className="w-4 h-4 text-blue-600" />
+                              }
+                              defaultOpen={cardIdx === 0}
+                              badge={cardItem.enabled ? 'Aktif' : 'Nonaktif'}
+                            >
+                              <div className="space-y-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                  <div className="space-y-1">
+                                    <label className="text-[11px] font-bold text-stone-700 block">Tipe Card Konten:</label>
+                                    <select
+                                      value={cardItem.type}
+                                      onChange={(e) => {
+                                        const updated = [...(tempRtRwConfig.extraCards || [])];
+                                        updated[cardIdx].type = e.target.value as RtRwCardType;
+                                        setTempRtRwConfig({ ...tempRtRwConfig, extraCards: updated });
+                                      }}
+                                      className="w-full px-2.5 py-1.5 bg-stone-50 border border-stone-300 rounded-lg text-xs font-bold text-stone-900"
+                                    >
+                                      <option value="pdf">PDF Upload / Document</option>
+                                      <option value="image">Gambar / Infografis / Foto</option>
+                                      <option value="text">Teks Pengumuman / Panduan</option>
+                                    </select>
+                                  </div>
+
+                                  <div className="space-y-1 sm:col-span-2">
+                                    <label className="text-[11px] font-bold text-stone-700 block">Judul Card:</label>
+                                    <input
+                                      type="text"
+                                      value={cardItem.title}
+                                      onChange={(e) => {
+                                        const updated = [...(tempRtRwConfig.extraCards || [])];
+                                        updated[cardIdx].title = e.target.value;
+                                        setTempRtRwConfig({ ...tempRtRwConfig, extraCards: updated });
+                                      }}
+                                      className="w-full px-2.5 py-1.5 bg-stone-50 border border-stone-300 rounded-lg text-xs font-bold text-stone-900"
+                                    />
+                                  </div>
+
+                                  <div className="space-y-1 sm:col-span-2">
+                                    <label className="text-[11px] font-bold text-stone-700 block">Deskripsi Ringkas:</label>
+                                    <input
+                                      type="text"
+                                      value={cardItem.description || ''}
+                                      onChange={(e) => {
+                                        const updated = [...(tempRtRwConfig.extraCards || [])];
+                                        updated[cardIdx].description = e.target.value;
+                                        setTempRtRwConfig({ ...tempRtRwConfig, extraCards: updated });
+                                      }}
+                                      className="w-full px-2.5 py-1.5 bg-stone-50 border border-stone-300 rounded-lg text-xs text-stone-900"
+                                    />
+                                  </div>
+
+                                  <div className="space-y-1">
+                                    <label className="text-[11px] font-bold text-stone-700 block">Badge Kategori:</label>
+                                    <input
+                                      type="text"
+                                      value={cardItem.categoryBadge || ''}
+                                      onChange={(e) => {
+                                        const updated = [...(tempRtRwConfig.extraCards || [])];
+                                        updated[cardIdx].categoryBadge = e.target.value;
+                                        setTempRtRwConfig({ ...tempRtRwConfig, extraCards: updated });
+                                      }}
+                                      placeholder="e.g. Dokumen Peraturan"
+                                      className="w-full px-2.5 py-1.5 bg-stone-50 border border-stone-300 rounded-lg text-xs text-stone-900"
+                                    />
+                                  </div>
+                                </div>
+
+                                {/* FIELDS SPECIFIC TO TYPE: PDF */}
+                                {cardItem.type === 'pdf' && (
+                                  <div className="bg-red-50/50 p-3.5 rounded-xl border border-red-200/80 space-y-3">
+                                    <div className="text-xs font-bold text-red-900 flex items-center gap-1.5">
+                                      <FileText className="w-4 h-4 text-red-600" />
+                                      <span>Pengaturan File Dokumen PDF</span>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                      <div className="space-y-1 sm:col-span-2">
+                                        <label className="text-[11px] font-bold text-stone-700 block">Upload File PDF / URL File:</label>
+                                        <div className="flex items-center gap-2">
+                                          <input
+                                            type="text"
+                                            value={cardItem.fileUrl || ''}
+                                            onChange={(e) => {
+                                              const updated = [...(tempRtRwConfig.extraCards || [])];
+                                              updated[cardIdx].fileUrl = e.target.value;
+                                              setTempRtRwConfig({ ...tempRtRwConfig, extraCards: updated });
+                                            }}
+                                            placeholder="https://... / upload file PDF"
+                                            className="flex-1 px-2.5 py-1.5 bg-white border border-stone-300 rounded-lg text-xs font-mono text-stone-900"
+                                          />
+                                          <label className="px-3 py-1.5 bg-red-700 hover:bg-red-800 text-white rounded-lg text-xs font-bold transition-colors cursor-pointer shrink-0 flex items-center gap-1">
+                                            <Upload className="w-3.5 h-3.5" />
+                                            <span>Upload PDF</span>
+                                            <input
+                                              type="file"
+                                              accept="application/pdf"
+                                              className="hidden"
+                                              onChange={(e) => {
+                                                const file = e.target.files?.[0];
+                                                if (file) {
+                                                  const sizeMb = (file.size / (1024 * 1024)).toFixed(1) + ' MB';
+                                                  const reader = new FileReader();
+                                                  reader.onload = (event) => {
+                                                    const result = event.target?.result as string;
+                                                    const updated = [...(tempRtRwConfig.extraCards || [])];
+                                                    updated[cardIdx].fileUrl = result;
+                                                    updated[cardIdx].fileName = file.name;
+                                                    updated[cardIdx].fileSize = sizeMb;
+                                                    setTempRtRwConfig({ ...tempRtRwConfig, extraCards: updated });
+                                                    showToast(`PDF ${file.name} berhasil diunggah!`);
+                                                  };
+                                                  reader.readAsDataURL(file);
+                                                }
+                                              }}
+                                            />
+                                          </label>
+                                        </div>
+                                      </div>
+
+                                      <div className="space-y-1">
+                                        <label className="text-[11px] font-bold text-stone-700 block">Nama File Dokumen:</label>
+                                        <input
+                                          type="text"
+                                          value={cardItem.fileName || ''}
+                                          onChange={(e) => {
+                                            const updated = [...(tempRtRwConfig.extraCards || [])];
+                                            updated[cardIdx].fileName = e.target.value;
+                                            setTempRtRwConfig({ ...tempRtRwConfig, extraCards: updated });
+                                          }}
+                                          placeholder="Tata_Tertib_RW11.pdf"
+                                          className="w-full px-2.5 py-1.5 bg-white border border-stone-300 rounded-lg text-xs font-mono text-stone-900"
+                                        />
+                                      </div>
+
+                                      <div className="space-y-1">
+                                        <label className="text-[11px] font-bold text-stone-700 block">Ukuran File:</label>
+                                        <input
+                                          type="text"
+                                          value={cardItem.fileSize || ''}
+                                          onChange={(e) => {
+                                            const updated = [...(tempRtRwConfig.extraCards || [])];
+                                            updated[cardIdx].fileSize = e.target.value;
+                                            setTempRtRwConfig({ ...tempRtRwConfig, extraCards: updated });
+                                          }}
+                                          placeholder="1.4 MB"
+                                          className="w-full px-2.5 py-1.5 bg-white border border-stone-300 rounded-lg text-xs font-mono text-stone-900"
+                                        />
+                                      </div>
+
+                                      <div className="space-y-1 sm:col-span-2">
+                                        <label className="text-[11px] font-bold text-stone-700 block">Teks Tombol Unduh (CTA):</label>
+                                        <input
+                                          type="text"
+                                          value={cardItem.ctaText || ''}
+                                          onChange={(e) => {
+                                            const updated = [...(tempRtRwConfig.extraCards || [])];
+                                            updated[cardIdx].ctaText = e.target.value;
+                                            setTempRtRwConfig({ ...tempRtRwConfig, extraCards: updated });
+                                          }}
+                                          placeholder="Unduh Dokumen PDF"
+                                          className="w-full px-2.5 py-1.5 bg-white border border-stone-300 rounded-lg text-xs font-bold text-stone-900"
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* FIELDS SPECIFIC TO TYPE: IMAGE */}
+                                {cardItem.type === 'image' && (
+                                  <div className="bg-amber-50/50 p-3.5 rounded-xl border border-amber-200/80 space-y-3">
+                                    <div className="text-xs font-bold text-amber-900 flex items-center gap-1.5">
+                                      <ImageIcon className="w-4 h-4 text-amber-600" />
+                                      <span>Pengaturan Gambar / Infografis</span>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                      <div className="space-y-1 sm:col-span-2">
+                                        <label className="text-[11px] font-bold text-stone-700 block">Upload Gambar / URL Gambar:</label>
+                                        <div className="flex items-center gap-2">
+                                          <input
+                                            type="text"
+                                            value={cardItem.imageUrl || ''}
+                                            onChange={(e) => {
+                                              const updated = [...(tempRtRwConfig.extraCards || [])];
+                                              updated[cardIdx].imageUrl = e.target.value;
+                                              setTempRtRwConfig({ ...tempRtRwConfig, extraCards: updated });
+                                            }}
+                                            placeholder="https://... / data:image/..."
+                                            className="flex-1 px-2.5 py-1.5 bg-white border border-stone-300 rounded-lg text-xs font-mono text-stone-900"
+                                          />
+                                          <label className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-bold transition-colors cursor-pointer shrink-0 flex items-center gap-1">
+                                            <Upload className="w-3.5 h-3.5" />
+                                            <span>Upload Foto</span>
+                                            <input
+                                              type="file"
+                                              accept="image/*"
+                                              className="hidden"
+                                              onChange={(e) => {
+                                                const file = e.target.files?.[0];
+                                                if (file) {
+                                                  const reader = new FileReader();
+                                                  reader.onload = (event) => {
+                                                    const result = event.target?.result as string;
+                                                    const updated = [...(tempRtRwConfig.extraCards || [])];
+                                                    updated[cardIdx].imageUrl = result;
+                                                    setTempRtRwConfig({ ...tempRtRwConfig, extraCards: updated });
+                                                    showToast('Gambar berhasil diunggah!');
+                                                  };
+                                                  reader.readAsDataURL(file);
+                                                }
+                                              }}
+                                            />
+                                          </label>
+                                        </div>
+                                      </div>
+
+                                      <div className="space-y-1 sm:col-span-2">
+                                        <label className="text-[11px] font-bold text-stone-700 block">Caption / Keterangan Foto:</label>
+                                        <input
+                                          type="text"
+                                          value={cardItem.imageCaption || ''}
+                                          onChange={(e) => {
+                                            const updated = [...(tempRtRwConfig.extraCards || [])];
+                                            updated[cardIdx].imageCaption = e.target.value;
+                                            setTempRtRwConfig({ ...tempRtRwConfig, extraCards: updated });
+                                          }}
+                                          placeholder="e.g. Peta Wilayah Komplek Bintara Jaya Permai RW 11"
+                                          className="w-full px-2.5 py-1.5 bg-white border border-stone-300 rounded-lg text-xs text-stone-900"
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* FIELDS SPECIFIC TO TYPE: TEXT */}
+                                {cardItem.type === 'text' && (
+                                  <div className="bg-blue-50/50 p-3.5 rounded-xl border border-blue-200/80 space-y-3">
+                                    <div className="text-xs font-bold text-blue-900 flex items-center gap-1.5">
+                                      <Info className="w-4 h-4 text-blue-600" />
+                                      <span>Pengaturan Teks Pengumuman / Panduan</span>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                      <div className="space-y-1 sm:col-span-2">
+                                        <label className="text-[11px] font-bold text-stone-700 block">Isi Konten Teks Lengkap:</label>
+                                        <textarea
+                                          rows={4}
+                                          value={cardItem.textContent || ''}
+                                          onChange={(e) => {
+                                            const updated = [...(tempRtRwConfig.extraCards || [])];
+                                            updated[cardIdx].textContent = e.target.value;
+                                            setTempRtRwConfig({ ...tempRtRwConfig, extraCards: updated });
+                                          }}
+                                          placeholder="Tuliskan teks informasi, panduan, atau alur pelayanan di sini..."
+                                          className="w-full px-3 py-2 bg-white border border-stone-300 rounded-xl text-xs text-stone-900 leading-relaxed font-sans"
+                                        />
+                                      </div>
+
+                                      <div className="space-y-1">
+                                        <label className="text-[11px] font-bold text-stone-700 block">Penulis / Sumber:</label>
+                                        <input
+                                          type="text"
+                                          value={cardItem.author || ''}
+                                          onChange={(e) => {
+                                            const updated = [...(tempRtRwConfig.extraCards || [])];
+                                            updated[cardIdx].author = e.target.value;
+                                            setTempRtRwConfig({ ...tempRtRwConfig, extraCards: updated });
+                                          }}
+                                          placeholder="Sekretariat Pengurus RW 11"
+                                          className="w-full px-2.5 py-1.5 bg-white border border-stone-300 rounded-lg text-xs text-stone-900"
+                                        />
+                                      </div>
+
+                                      <div className="space-y-1">
+                                        <label className="text-[11px] font-bold text-stone-700 block">Tanggal / Keterangan Waktu:</label>
+                                        <input
+                                          type="text"
+                                          value={cardItem.date || ''}
+                                          onChange={(e) => {
+                                            const updated = [...(tempRtRwConfig.extraCards || [])];
+                                            updated[cardIdx].date = e.target.value;
+                                            setTempRtRwConfig({ ...tempRtRwConfig, extraCards: updated });
+                                          }}
+                                          placeholder="Agustus 2026"
+                                          className="w-full px-2.5 py-1.5 bg-white border border-stone-300 rounded-lg text-xs text-stone-900"
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* BOTTOM CONTROLS FOR CARD ITEM */}
+                                <div className="flex items-center justify-between pt-2 border-t border-stone-100">
+                                  <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-stone-800">
+                                    <input
+                                      type="checkbox"
+                                      checked={cardItem.enabled}
+                                      onChange={(e) => {
+                                        const updated = [...(tempRtRwConfig.extraCards || [])];
+                                        updated[cardIdx].enabled = e.target.checked;
+                                        setTempRtRwConfig({ ...tempRtRwConfig, extraCards: updated });
+                                      }}
+                                      className="w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500"
+                                    />
+                                    <span>Tampilkan Card Ini</span>
+                                  </label>
+
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      if (confirm('Apakah Anda yakin ingin menghapus card ini?')) {
+                                        const updated = (tempRtRwConfig.extraCards || []).filter((_, idx) => idx !== cardIdx);
+                                        setTempRtRwConfig({ ...tempRtRwConfig, extraCards: updated });
+                                        showToast('Card berhasil dihapus.');
+                                      }
+                                    }}
+                                    className="flex items-center gap-1 px-3 py-1 bg-red-50 hover:bg-red-100 text-red-700 rounded-lg text-xs font-bold transition-colors cursor-pointer"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                    <span>Hapus Card</span>
+                                  </button>
+                                </div>
+                              </div>
+                            </CollapsibleCard>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </CollapsibleCard>
