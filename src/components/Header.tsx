@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Search, Shield, Menu, X, LayoutGrid, Megaphone, HelpCircle, FileText, Vote } from 'lucide-react';
-import { BJP_LOGO_URL } from '../assets/logo';
+import { BJP_LOGO_URL, BJP_LOGO_FALLBACK_SVG } from '../assets/logo';
 import { NavbarTabConfig, RunningTextConfig } from '../types';
 import { formatImageUrl } from '../utils/imageUrl';
 import { RunningTextTicker } from './RunningTextTicker';
@@ -64,6 +64,12 @@ export const Header: React.FC<HeaderProps> = ({
               src={displayLogo}
               alt="BJP HUB Logo"
               className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl object-contain bg-white p-1 border border-amber-300/90 shadow-xs shrink-0 hover:scale-105 transition-transform"
+              onError={(e) => {
+                const target = e.currentTarget;
+                if (target.src !== BJP_LOGO_FALLBACK_SVG) {
+                  target.src = BJP_LOGO_FALLBACK_SVG;
+                }
+              }}
             />
             <div>
               <div className="flex items-center gap-2">

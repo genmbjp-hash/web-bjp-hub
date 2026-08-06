@@ -98,6 +98,19 @@ export interface SocialFeedItem {
   description?: string;
   url: string;
   platform: SocialFeedPlatform;
+  section?: 'terbaru' | 'album_foto' | 'album_video';
+  enabled: boolean;
+  order: number;
+}
+
+export interface MediaPartnerItem {
+  id: string;
+  name: string;
+  logoUrl?: string;
+  instagramUrl?: string;
+  instagramEnabled?: boolean;
+  youtubeUrl?: string;
+  youtubeEnabled?: boolean;
   enabled: boolean;
   order: number;
 }
@@ -174,6 +187,7 @@ export interface SiteSettings {
   navbarTabs: NavbarTabConfig[];
   categoryConfigs?: CategoryHeaderConfig[];
   socialFeeds?: SocialFeedItem[];
+  mediaPartners?: MediaPartnerItem[];
   runningText?: RunningTextConfig;
   documentTemplates?: DocumentTemplate[];
   pollingConfig?: PollingPageConfig;

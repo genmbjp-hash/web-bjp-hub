@@ -15,6 +15,8 @@ import {
   RtRwPageConfig,
   RtDetailItem,
   RtRwValueItem,
+  SocialFeedItem,
+  MediaPartnerItem,
 } from '../types';
 import {
   X, Plus, Edit3, Trash2, Copy, Download, Upload, RefreshCw, Check,
@@ -23,9 +25,9 @@ import {
   GripVertical, ArrowUp, ArrowDown, MapPin, Info, Globe, Sliders, Palette, Eye, EyeOff,
   Users, UserPlus, ShieldCheck, Shield, Lock, LogOut, CheckSquare, Square, Search, User as UserIcon,
   Database, Server, CheckCircle2, XCircle, Terminal, Code, FileText, Vote, Images, Layout, Layers, UploadCloud,
-  ChevronDown, ChevronUp, Building, Phone, Calendar
+  ChevronDown, ChevronUp, Building, Phone, Calendar, Video, Youtube, Instagram
 } from 'lucide-react';
-import { exportDataAsJSON, importDataFromJSON, resetToDefaults, DEFAULT_CATEGORY_CONFIGS, DEFAULT_RTRW_CONFIG } from '../utils/storage';
+import { exportDataAsJSON, importDataFromJSON, resetToDefaults, DEFAULT_CATEGORY_CONFIGS, DEFAULT_RTRW_CONFIG, DEFAULT_SITE_SETTINGS } from '../utils/storage';
 import { formatImageUrl } from '../utils/imageUrl';
 import { BJP_LOGO_URL } from '../assets/logo';
 import { InstagramIcon, FacebookIcon, TikTokIcon, WhatsAppIcon, SocialBadges } from './SocialIcons';
@@ -439,6 +441,19 @@ export const CMSModal: React.FC<CMSModalProps> = ({
     siteSettings?.categoryConfigs || DEFAULT_CATEGORY_CONFIGS
   );
 
+  // Social Feeds Config State
+  const [tempSocialFeeds, setTempSocialFeeds] = useState<SocialFeedItem[]>(
+    siteSettings?.socialFeeds || DEFAULT_SITE_SETTINGS.socialFeeds
+  );
+
+  // Selected Feed Section in CMS: 'terbaru' | 'album_foto' | 'album_video'
+  const [cmsFeedSection, setCmsFeedSection] = useState<'terbaru' | 'album_foto' | 'album_video'>('terbaru');
+
+  // Media Partners Config State
+  const [tempMediaPartners, setTempMediaPartners] = useState<MediaPartnerItem[]>(
+    siteSettings?.mediaPartners || DEFAULT_SITE_SETTINGS.mediaPartners || []
+  );
+
   // Running Text Config State
   const [tempRunningText, setTempRunningText] = useState<RunningTextConfig>(
     siteSettings?.runningText || {
@@ -446,6 +461,9 @@ export const CMSModal: React.FC<CMSModalProps> = ({
       text: '📢 SELAMAT DATANG DI PORTAL BJP HUB RW 11 — Informasi Resmi Kegiatan Warga, Sentra UMKM, Agenda RW, & Layanan Surat Menyurat Online Mandiri!',
     }
   );
+
+  // Accordion Section State for Navigasi & Branding Tab
+  const [expandedSiteSection, setExpandedSiteSection] = useState<number | null>(1);
 
   // Document Templates State
   const [tempDocumentTemplates, setTempDocumentTemplates] = useState<DocumentTemplate[]>(
@@ -3173,657 +3191,738 @@ export const CMSModal: React.FC<CMSModalProps> = ({
               </div>
 
               {/* Section 1: Upload Logo Website */}
-              <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-xs space-y-5">
-                <div className="flex items-center justify-between border-b border-stone-100 pb-3">
-                  <div className="flex items-center gap-2">
-                    <Palette className="w-5 h-5 text-emerald-700" />
-                    <h4 className="font-bold text-stone-900 text-sm sm:text-base">
-                      1. Upload Logo Website (Header, Footer, Favicon & OG Meta)
-                    </h4>
+              <div className={`bg-white rounded-2xl border transition-all duration-200 overflow-hidden shadow-xs ${
+                expandedSiteSection === 1 ? 'border-emerald-500/80 ring-1 ring-emerald-500/20' : 'border-stone-200 hover:border-stone-300'
+              }`}>
+                <div
+                  onClick={() => setExpandedSiteSection(expandedSiteSection === 1 ? null : 1)}
+                  className="w-full p-4 sm:p-5 bg-white hover:bg-stone-50/80 flex items-center justify-between cursor-pointer select-none transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`p-2 rounded-xl transition-colors ${expandedSiteSection === 1 ? 'bg-emerald-100 text-emerald-800' : 'bg-stone-100 text-stone-600'}`}>
+                      <Palette className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-extrabold text-stone-900 text-sm sm:text-base">
+                          1. Upload Logo Website & Identitas Web
+                        </h4>
+                        <span className="text-[11px] bg-emerald-50 text-emerald-800 font-semibold px-2.5 py-0.5 rounded-full border border-emerald-200 hidden sm:inline-block">
+                          Satu Logo untuk Semua
+                        </span>
+                      </div>
+                      <p className="text-xs text-stone-500 mt-0.5">
+                        Kelola logo website, judul homepage, deskripsi, dan pratinjau favicon.
+                      </p>
+                    </div>
                   </div>
-                  <span className="text-xs bg-emerald-50 text-emerald-800 font-semibold px-2.5 py-1 rounded-full border border-emerald-200">
-                    Satu Logo untuk Semua
-                  </span>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <div className={`px-2.5 py-1 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors ${
+                      expandedSiteSection === 1 ? 'bg-emerald-800 text-white' : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
+                    }`}>
+                      <span>{expandedSiteSection === 1 ? 'Tutup' : 'Buka & Atur'}</span>
+                      {expandedSiteSection === 1 ? <ChevronUp className="w-4 h-4 text-white" /> : <ChevronDown className="w-4 h-4 text-stone-600" />}
+                    </div>
+                  </div>
                 </div>
 
-                <p className="text-xs text-stone-600 leading-relaxed">
-                  Logo yang diunggah/diatur di sini akan otomatis diterapkan pada <strong>Header Navbar</strong>, <strong>Footer Website</strong>, <strong>Hero Banner</strong>, <strong>Favicon Tab Browser</strong>, serta <strong>Open Graph (OG Image)</strong> saat link website dibagikan ke WhatsApp / media sosial.
-                </p>
+                {expandedSiteSection === 1 && (
+                  <div className="p-4 sm:p-6 pt-2 border-t border-stone-100 space-y-5">
+                    <p className="text-xs text-stone-600 leading-relaxed">
+                      Logo yang diunggah/diatur di sini akan otomatis diterapkan pada <strong>Header Navbar</strong>, <strong>Footer Website</strong>, <strong>Hero Banner</strong>, <strong>Favicon Tab Browser</strong>, serta <strong>Open Graph (OG Image)</strong> saat link website dibagikan ke WhatsApp / media sosial.
+                    </p>
 
-                {/* Recommendation Banner */}
-                <div className="bg-emerald-50/80 border border-emerald-200 rounded-xl p-3 flex items-start gap-2.5 text-xs text-emerald-950">
-                  <Sparkles className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" />
-                  <div>
-                    <strong className="font-bold text-emerald-900 block">Rekomendasi Format & Ukuran Logo HD:</strong>
-                    <ul className="list-disc list-inside mt-1 space-y-0.5 text-[11px] text-emerald-850">
-                      <li><strong>Dimensi Ideal:</strong> <code className="bg-emerald-100 px-1 py-0.2 rounded font-mono font-bold">512 x 512 px</code> atau <code className="bg-emerald-100 px-1 py-0.2 rounded font-mono font-bold">1024 x 1024 px</code> (Rasio 1:1 Persegi).</li>
-                      <li><strong>Format File:</strong> PNG Transparan (tanpa background) atau SVG / JPG kualitas tinggi.</li>
-                      <li><strong>Tips HD:</strong> Logo resolusi tinggi otomatis akan tampil tajam di seluruh layar Retina, HP, dan Desktop.</li>
-                    </ul>
-                  </div>
-                </div>
-
-                {/* Logo Upload / URL Options */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-                  {/* Form Controls */}
-                  <div className="space-y-4">
-                    {/* Option A: Upload File */}
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-stone-800 block">
-                        Upload Gambar dari Komputer:
-                      </label>
-                      <label className="flex items-center justify-center gap-2 p-3 bg-stone-50 border-2 border-dashed border-stone-300 hover:border-emerald-600 rounded-xl cursor-pointer transition-colors text-xs font-semibold text-stone-700">
-                        <Upload className="w-4 h-4 text-emerald-600" />
-                        <span>Pilih File Gambar Logo</span>
-                        <input
-                          type="file"
-                          accept="image/*"
-                          className="hidden"
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (file) {
-                              const reader = new FileReader();
-                              reader.onload = (evt) => {
-                                if (evt.target?.result) {
-                                  setTempLogoUrl(evt.target.result as string);
-                                }
-                              };
-                              reader.readAsDataURL(file);
-                            }
-                          }}
-                        />
-                      </label>
-                    </div>
-
-                    <div className="relative flex py-1 items-center">
-                      <div className="flex-grow border-t border-stone-200"></div>
-                      <span className="flex-shrink mx-3 text-[10px] font-bold text-stone-400 uppercase">atau masukan URL</span>
-                      <div className="flex-grow border-t border-stone-200"></div>
-                    </div>
-
-                    {/* Option B: Direct URL Input */}
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-stone-800 block">
-                        Tautan URL Gambar / Logo Website:
-                      </label>
-                      <input
-                        type="text"
-                        value={tempLogoUrl}
-                        onChange={(e) => setTempLogoUrl(e.target.value)}
-                        placeholder="https://... / data:image/..."
-                        className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 font-mono"
-                      />
-                    </div>
-
-                    {/* Judul Website / Homepage Title */}
-                    <div className="space-y-1.5 pt-2 border-t border-stone-200">
-                      <label className="text-xs font-bold text-stone-800 block">
-                        Judul Utama Website (Home Page Title):
-                      </label>
-                      <input
-                        type="text"
-                        value={tempSiteTitle}
-                        onChange={(e) => setTempSiteTitle(e.target.value)}
-                        placeholder="BJP HUB Bintara Jaya Permai"
-                        className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-xs font-bold text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-                      />
-                    </div>
-
-                    {/* Deskripsi Website / Homepage Description */}
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-stone-800 block">
-                        Deskripsi Penjelasan Homepage:
-                      </label>
-                      <textarea
-                        rows={2}
-                        value={tempSiteDescription}
-                        onChange={(e) => setTempSiteDescription(e.target.value)}
-                        placeholder="Portal Resmi Ekosistem & Kegiatan Warga Komplek Bintara Jaya Permai (RW 11)"
-                        className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-xs text-stone-800 focus:outline-none focus:ring-2 focus:ring-emerald-600 resize-none"
-                      />
-                    </div>
-
-                    {/* Reset Button */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setTempLogoUrl(BJP_LOGO_URL);
-                        setTempSiteTitle('BJP HUB Bintara Jaya Permai');
-                        setTempSiteDescription('Portal Resmi Ekosistem & Kegiatan Warga Komplek Bintara Jaya Permai (RW 11)');
-                      }}
-                      className="inline-flex items-center gap-1.5 text-xs text-stone-600 hover:text-stone-900 bg-stone-100 hover:bg-stone-200 px-3 py-1.5 rounded-lg border border-stone-200 font-medium transition-colors cursor-pointer"
-                    >
-                      <RefreshCw className="w-3.5 h-3.5 text-stone-500" />
-                      <span>Kembalikan ke Identitas Default</span>
-                    </button>
-                  </div>
-
-                  {/* Preview Box */}
-                  <div className="bg-stone-900 p-5 rounded-2xl text-white space-y-4 border border-stone-800 shadow-inner">
-                    <div className="flex items-center justify-between border-b border-stone-800 pb-2">
-                      <span className="text-xs font-bold text-amber-300 flex items-center gap-1.5">
-                        <Eye className="w-3.5 h-3.5" /> Pratinjau Tampilan Logo
-                      </span>
-                      <span className="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-md border border-emerald-500/30 font-medium">
-                        Live Preview
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-4 bg-stone-800/80 p-3 rounded-xl border border-stone-700">
-                      <img
-                        src={tempLogoUrl || BJP_LOGO_URL}
-                        alt="Pratinjau Logo"
-                        className="w-14 h-14 rounded-lg object-cover border border-amber-400/50 shadow-md bg-stone-900"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = BJP_LOGO_URL;
-                        }}
-                      />
+                    {/* Recommendation Banner */}
+                    <div className="bg-emerald-50/80 border border-emerald-200 rounded-xl p-3 flex items-start gap-2.5 text-xs text-emerald-950">
+                      <Sparkles className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" />
                       <div>
-                        <h5 className="font-extrabold text-white text-sm">BJP.hub</h5>
-                        <p className="text-[11px] text-stone-400">RW 11 Bintara Jaya Permai</p>
+                        <strong className="font-bold text-emerald-900 block">Rekomendasi Format & Ukuran Logo HD:</strong>
+                        <ul className="list-disc list-inside mt-1 space-y-0.5 text-[11px] text-emerald-850">
+                          <li><strong>Dimensi Ideal:</strong> <code className="bg-emerald-100 px-1 py-0.2 rounded font-mono font-bold">512 x 512 px</code> atau <code className="bg-emerald-100 px-1 py-0.2 rounded font-mono font-bold">1024 x 1024 px</code> (Rasio 1:1 Persegi).</li>
+                          <li><strong>Format File:</strong> PNG Transparan (tanpa background) atau SVG / JPG kualitas tinggi.</li>
+                          <li><strong>Tips HD:</strong> Logo resolusi tinggi otomatis akan tampil tajam di seluruh layar Retina, HP, dan Desktop.</li>
+                        </ul>
                       </div>
                     </div>
 
-                    <div className="space-y-1.5 text-[11px] text-stone-300 pt-1">
-                      <div className="flex items-center gap-2">
-                        <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                        <span>Favicon Tab Browser</span>
+                    {/* Logo Upload / URL Options */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                      {/* Form Controls */}
+                      <div className="space-y-4">
+                        {/* Option A: Upload File */}
+                        <div className="space-y-1.5">
+                          <label className="text-xs font-bold text-stone-800 block">
+                            Upload Gambar dari Komputer:
+                          </label>
+                          <label className="flex items-center justify-center gap-2 p-3 bg-stone-50 border-2 border-dashed border-stone-300 hover:border-emerald-600 rounded-xl cursor-pointer transition-colors text-xs font-semibold text-stone-700">
+                            <Upload className="w-4 h-4 text-emerald-600" />
+                            <span>Pilih File Gambar Logo</span>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                  const reader = new FileReader();
+                                  reader.onload = (evt) => {
+                                    if (evt.target?.result) {
+                                      setTempLogoUrl(evt.target.result as string);
+                                    }
+                                  };
+                                  reader.readAsDataURL(file);
+                                }
+                              }}
+                            />
+                          </label>
+                        </div>
+
+                        <div className="relative flex py-1 items-center">
+                          <div className="flex-grow border-t border-stone-200"></div>
+                          <span className="flex-shrink mx-3 text-[10px] font-bold text-stone-400 uppercase">atau masukan URL</span>
+                          <div className="flex-grow border-t border-stone-200"></div>
+                        </div>
+
+                        {/* Option B: Direct URL Input */}
+                        <div className="space-y-1.5">
+                          <label className="text-xs font-bold text-stone-800 block">
+                            Tautan URL Gambar / Logo Website:
+                          </label>
+                          <input
+                            type="text"
+                            value={tempLogoUrl}
+                            onChange={(e) => setTempLogoUrl(e.target.value)}
+                            placeholder="https://... / data:image/..."
+                            className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 font-mono"
+                          />
+                        </div>
+
+                        {/* Judul Website / Homepage Title */}
+                        <div className="space-y-1.5 pt-2 border-t border-stone-200">
+                          <label className="text-xs font-bold text-stone-800 block">
+                            Judul Utama Website (Home Page Title):
+                          </label>
+                          <input
+                            type="text"
+                            value={tempSiteTitle}
+                            onChange={(e) => setTempSiteTitle(e.target.value)}
+                            placeholder="BJP HUB Bintara Jaya Permai"
+                            className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-xs font-bold text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                          />
+                        </div>
+
+                        {/* Deskripsi Website / Homepage Description */}
+                        <div className="space-y-1.5">
+                          <label className="text-xs font-bold text-stone-800 block">
+                            Deskripsi Penjelasan Homepage:
+                          </label>
+                          <textarea
+                            rows={2}
+                            value={tempSiteDescription}
+                            onChange={(e) => setTempSiteDescription(e.target.value)}
+                            placeholder="Portal Resmi Ekosistem & Kegiatan Warga Komplek Bintara Jaya Permai (RW 11)"
+                            className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-xs text-stone-800 focus:outline-none focus:ring-2 focus:ring-emerald-600 resize-none"
+                          />
+                        </div>
+
+                        {/* Reset Button */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setTempLogoUrl(BJP_LOGO_URL);
+                            setTempSiteTitle('BJP HUB Bintara Jaya Permai');
+                            setTempSiteDescription('Portal Resmi Ekosistem & Kegiatan Warga Komplek Bintara Jaya Permai (RW 11)');
+                          }}
+                          className="inline-flex items-center gap-1.5 text-xs text-stone-600 hover:text-stone-900 bg-stone-100 hover:bg-stone-200 px-3 py-1.5 rounded-lg border border-stone-200 font-medium transition-colors cursor-pointer"
+                        >
+                          <RefreshCw className="w-3.5 h-3.5 text-stone-500" />
+                          <span>Kembalikan ke Identitas Default</span>
+                        </button>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                        <span>Header Navbar & Footer Web</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                        <span>Open Graph Image (WhatsApp Share Preview)</span>
+
+                      {/* Preview Box */}
+                      <div className="bg-stone-900 p-5 rounded-2xl text-white space-y-4 border border-stone-800 shadow-inner">
+                        <div className="flex items-center justify-between border-b border-stone-800 pb-2">
+                          <span className="text-xs font-bold text-amber-300 flex items-center gap-1.5">
+                            <Eye className="w-3.5 h-3.5" /> Pratinjau Tampilan Logo
+                          </span>
+                          <span className="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-md border border-emerald-500/30 font-medium">
+                            Live Preview
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-4 bg-stone-800/80 p-3 rounded-xl border border-stone-700">
+                          <img
+                            src={tempLogoUrl || BJP_LOGO_URL}
+                            alt="Pratinjau Logo"
+                            className="w-14 h-14 rounded-lg object-cover border border-amber-400/50 shadow-md bg-stone-900"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = BJP_LOGO_URL;
+                            }}
+                          />
+                          <div>
+                            <h5 className="font-extrabold text-white text-sm">BJP.hub</h5>
+                            <p className="text-[11px] text-stone-400">RW 11 Bintara Jaya Permai</p>
+                          </div>
+                        </div>
+
+                        <div className="space-y-1.5 text-[11px] text-stone-300 pt-1">
+                          <div className="flex items-center gap-2">
+                            <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                            <span>Favicon Tab Browser</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                            <span>Header Navbar & Footer Web</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                            <span>Open Graph Image (WhatsApp Share Preview)</span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
 
               {/* Section 2: Reposisi & Rename Tab Navbar */}
-              <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-xs space-y-5">
-                <div className="flex items-center justify-between border-b border-stone-100 pb-3">
-                  <div className="flex items-center gap-2">
-                    <Sliders className="w-5 h-5 text-emerald-700" />
-                    <h4 className="font-bold text-stone-900 text-sm sm:text-base">
-                      2. Reposisi & Rename Tab Navigasi Navbar
-                    </h4>
-                  </div>
-                  <span className="text-xs bg-amber-50 text-amber-800 font-semibold px-2.5 py-1 rounded-full border border-amber-200">
-                    Atur Urutan & Nama Tab
-                  </span>
-                </div>
-
-                <p className="text-xs text-stone-600 leading-relaxed">
-                  Gunakan tombol panah ke atas/bawah untuk <strong>mengatur posisi urutan (reposisi)</strong> dan ubah teks input untuk <strong>mengganti nama (rename)</strong> tab navigasi yang tampil di navbar bagian atas website.
-                </p>
-
-                <div className="space-y-3">
-                  {[...tempNavbarTabs]
-                    .sort((a, b) => a.order - b.order)
-                    .map((tab, idx, arr) => (
-                      <div
-                        key={tab.id}
-                        className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-stone-50 rounded-xl border border-stone-200"
-                      >
-                        {/* Order Buttons */}
-                        <div className="flex items-center gap-2">
-                          <div className="flex flex-col gap-1">
-                            <button
-                              type="button"
-                              disabled={idx === 0}
-                              onClick={() => {
-                                if (idx === 0) return;
-                                const newTabs = [...arr];
-                                const tempOrder = newTabs[idx].order;
-                                newTabs[idx].order = newTabs[idx - 1].order;
-                                newTabs[idx - 1].order = tempOrder;
-                                setTempNavbarTabs(newTabs);
-                              }}
-                              className="p-1 bg-white hover:bg-stone-200 disabled:opacity-30 border border-stone-200 rounded text-stone-700"
-                              title="Pindahkan Ke Atas / Lebih Kiri"
-                            >
-                              <ArrowUp className="w-3.5 h-3.5" />
-                            </button>
-                            <button
-                              type="button"
-                              disabled={idx === arr.length - 1}
-                              onClick={() => {
-                                if (idx === arr.length - 1) return;
-                                const newTabs = [...arr];
-                                const tempOrder = newTabs[idx].order;
-                                newTabs[idx].order = newTabs[idx + 1].order;
-                                newTabs[idx + 1].order = tempOrder;
-                                setTempNavbarTabs(newTabs);
-                              }}
-                              className="p-1 bg-white hover:bg-stone-200 disabled:opacity-30 border border-stone-200 rounded text-stone-700"
-                              title="Pindahkan Ke Bawah / Lebih Kanan"
-                            >
-                              <ArrowDown className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
-
-                          <span className="w-6 h-6 rounded-full bg-stone-200 text-stone-800 text-xs font-bold flex items-center justify-center">
-                            {idx + 1}
-                          </span>
-
-                          <span className="text-xs font-bold text-stone-500 uppercase tracking-wider">
-                            {tab.id === 'entities' ? 'Tab Entitas' : 'Tab Pengumuman'}
-                          </span>
-                        </div>
-
-                        {/* Label Edit Field */}
-                        <div className="flex-1 space-y-1">
-                          <label className="text-[11px] font-bold text-stone-700 block">
-                            Nama Label Tab (Rename):
-                          </label>
-                          <input
-                            type="text"
-                            value={tab.label}
-                            onChange={(e) => {
-                              const newLabel = e.target.value;
-                              setTempNavbarTabs(
-                                tempNavbarTabs.map((t) =>
-                                  t.id === tab.id ? { ...t, label: newLabel } : t
-                                )
-                              );
-                            }}
-                            className="w-full px-3 py-1.5 bg-white border border-stone-300 rounded-lg text-xs font-semibold text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-                          />
-                        </div>
-
-                        {/* Active Toggle */}
-                        <div className="flex items-center gap-2">
-                          <label className="flex items-center gap-2 text-xs font-semibold text-stone-700 cursor-pointer">
-                            <input
-                              type="checkbox"
-                              checked={tab.enabled}
-                              onChange={(e) => {
-                                const isChecked = e.target.checked;
-                                setTempNavbarTabs(
-                                  tempNavbarTabs.map((t) =>
-                                    t.id === tab.id ? { ...t, enabled: isChecked } : t
-                                  )
-                                );
-                              }}
-                              className="w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500"
-                            />
-                            <span>Tampilkan Tab</span>
-                          </label>
-                        </div>
-                      </div>
-                    ))}
-                </div>
-
-                {/* Navbar Live Mockup Preview */}
-                <div className="p-4 bg-stone-100 rounded-xl border border-stone-200 space-y-2">
-                  <span className="text-xs font-bold text-stone-700 block">
-                    Pratinjau Hasil Tampilan Tab Navbar Utama:
-                  </span>
-                  <div className="flex items-center gap-2 bg-white p-2 rounded-lg border border-stone-300 shadow-2xs">
-                    {[...tempNavbarTabs]
-                      .filter((t) => t.enabled)
-                      .sort((a, b) => a.order - b.order)
-                      .map((t, index) => (
-                        <div
-                          key={t.id}
-                          className={`px-3 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1.5 ${
-                            index === 0
-                              ? 'bg-emerald-50 text-emerald-900 border border-emerald-200'
-                              : 'bg-stone-100 text-stone-700'
-                          }`}
-                        >
-                          {t.id === 'entities' ? (
-                            <LayoutGrid className="w-3.5 h-3.5 text-emerald-700" />
-                          ) : (
-                            <Megaphone className="w-3.5 h-3.5 text-emerald-700" />
-                          )}
-                          <span>{t.label}</span>
-                        </div>
-                      ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Section 3: Kelola Logo, Nama Tab, Layout & Single Page Content per Entitas / Kategori */}
-              <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-xs space-y-5">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-stone-100 pb-3">
-                  <div className="flex items-center gap-2">
-                    <Palette className="w-5 h-5 text-emerald-700" />
-                    <h4 className="font-bold text-stone-900 text-sm sm:text-base">
-                      3. Kelola Entitas Baru & Opsi Layout Halaman
-                    </h4>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const newId = `Entitas Baru ${tempCategoryConfigs.length + 1}`;
-                      setTempCategoryConfigs([
-                        ...tempCategoryConfigs,
-                        {
-                          id: newId,
-                          name: newId,
-                          description: 'Deskripsi halaman entitas baru...',
-                          logoUrl: '',
-                          layoutType: 'default',
-                        },
-                      ]);
-                      showToast('Entitas/Halaman baru telah ditambahkan. Silakan atur konfigurasi layout!');
-                    }}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0"
-                  >
-                    <Plus className="w-4 h-4" />
-                    <span>Tambah Entitas / Page Baru</span>
-                  </button>
-                </div>
-
-                <p className="text-xs text-stone-600 leading-relaxed">
-                  Pilih opsi layout untuk setiap halaman entitas: <strong>Default Existing</strong> (format card biasa), <strong>Photo Album</strong> (format album foto carousel), atau <strong>Single Page</strong> (halaman tunggal dengan hero image & rich text editor).
-                </p>
-
-                {/* Recommendation Banner */}
-                <div className="bg-emerald-50/80 border border-emerald-200 rounded-xl p-3 flex items-start gap-2.5 text-xs text-emerald-950">
-                  <Sparkles className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" />
-                  <div>
-                    <strong className="font-bold text-emerald-900 block">Rekomendasi Logo & Content Layout:</strong>
-                    <span className="text-[11px] text-emerald-850 block mt-0.5">
-                      Gunakan logo persegi HD (512x512px). Jika memilih tipe <strong>Single Page</strong>, pengunjung akan langsung melihat artikel / hero image utuh tanpa opsi pembuatan card.
-                    </span>
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  {tempCategoryConfigs.map((catConfig) => (
-                    <div
-                      key={catConfig.id}
-                      className="p-4 sm:p-5 bg-stone-50 rounded-2xl border border-stone-200 space-y-4 shadow-2xs"
-                    >
-                      <div className="flex items-center justify-between border-b border-stone-200/80 pb-2.5">
-                        <span className="text-xs font-bold text-stone-900 flex items-center gap-2">
-                          <span className="w-2 h-2 rounded-full bg-emerald-600"></span>
-                          Halaman / Entitas: <strong className="text-emerald-800">{catConfig.name}</strong>
-                          <span className="text-[10px] text-stone-400 font-mono font-normal">({catConfig.id})</span>
+              <div className={`bg-white rounded-2xl border transition-all duration-200 overflow-hidden shadow-xs ${
+                expandedSiteSection === 2 ? 'border-amber-500/80 ring-1 ring-amber-500/20' : 'border-stone-200 hover:border-stone-300'
+              }`}>
+                <div
+                  onClick={() => setExpandedSiteSection(expandedSiteSection === 2 ? null : 2)}
+                  className="w-full p-4 sm:p-5 bg-white hover:bg-stone-50/80 flex items-center justify-between cursor-pointer select-none transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`p-2 rounded-xl transition-colors ${expandedSiteSection === 2 ? 'bg-amber-100 text-amber-800' : 'bg-stone-100 text-stone-600'}`}>
+                      <Sliders className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-extrabold text-stone-900 text-sm sm:text-base">
+                          2. Reposisi & Rename Tab Navigasi Navbar
+                        </h4>
+                        <span className="text-[11px] bg-amber-50 text-amber-800 font-semibold px-2.5 py-0.5 rounded-full border border-amber-200 hidden sm:inline-block">
+                          {tempNavbarTabs.filter((t) => t.enabled).length} Tab Aktif
                         </span>
-
-                        <div className="flex items-center gap-2">
-                          <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase ${
-                            catConfig.layoutType === 'single_page'
-                              ? 'bg-purple-100 text-purple-800 border border-purple-200'
-                              : catConfig.layoutType === 'photo_album'
-                              ? 'bg-blue-100 text-blue-800 border border-blue-200'
-                              : 'bg-emerald-100 text-emerald-800 border border-emerald-200'
-                          }`}>
-                            Layout: {catConfig.layoutType === 'single_page' ? 'Single Page' : catConfig.layoutType === 'photo_album' ? 'Photo Album' : 'Default Card'}
-                          </span>
-
-                          <button
-                            type="button"
-                            onClick={() => {
-                              if (confirm(`Apakah Anda yakin ingin menghapus entitas "${catConfig.name}"?`)) {
-                                setTempCategoryConfigs(tempCategoryConfigs.filter((c) => c.id !== catConfig.id));
-                                showToast(`Entitas "${catConfig.name}" dihapus dari navigasi.`);
-                              }
-                            }}
-                            className="p-1 text-stone-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                            title="Hapus Entitas"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
                       </div>
+                      <p className="text-xs text-stone-500 mt-0.5">
+                        Atur posisi urutan (reposisi) dan ubah nama label (rename) tab navbar.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <div className={`px-2.5 py-1 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors ${
+                      expandedSiteSection === 2 ? 'bg-amber-800 text-white' : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
+                    }`}>
+                      <span>{expandedSiteSection === 2 ? 'Tutup' : 'Buka & Atur'}</span>
+                      {expandedSiteSection === 2 ? <ChevronUp className="w-4 h-4 text-white" /> : <ChevronDown className="w-4 h-4 text-stone-600" />}
+                    </div>
+                  </div>
+                </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {/* Option Layout Selector */}
-                        <div className="space-y-2 md:col-span-2 bg-white p-3.5 rounded-xl border border-stone-200">
-                          <label className="text-xs font-bold text-stone-800 block">
-                            Pilih Format Layout Halaman Entitas Ini:
-                          </label>
-                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setTempCategoryConfigs(
-                                  tempCategoryConfigs.map((c) =>
-                                    c.id === catConfig.id ? { ...c, layoutType: 'default' } : c
-                                  )
-                                );
-                              }}
-                              className={`p-3 rounded-xl border-2 text-left transition-all ${
-                                (catConfig.layoutType || 'default') === 'default'
-                                  ? 'border-emerald-600 bg-emerald-50/60 shadow-2xs'
-                                  : 'border-stone-200 bg-stone-50 hover:bg-stone-100'
-                              }`}
-                            >
-                              <div className="flex items-center gap-2 mb-1">
-                                <Layout className="w-4 h-4 text-emerald-700" />
-                                <span className="font-bold text-xs text-stone-900">1. Default Existing</span>
-                              </div>
-                              <p className="text-[11px] text-stone-500 leading-tight">
-                                Menggunakan format daftar card standar (seperti kegiatan / UMKM existing).
-                              </p>
-                            </button>
+                {expandedSiteSection === 2 && (
+                  <div className="p-4 sm:p-6 pt-2 border-t border-stone-100 space-y-5">
+                    <p className="text-xs text-stone-600 leading-relaxed">
+                      Gunakan tombol panah ke atas/bawah untuk <strong>mengatur posisi urutan (reposisi)</strong> dan ubah teks input untuk <strong>mengganti nama (rename)</strong> tab navigasi yang tampil di navbar bagian atas website.
+                    </p>
 
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setTempCategoryConfigs(
-                                  tempCategoryConfigs.map((c) =>
-                                    c.id === catConfig.id ? { ...c, layoutType: 'photo_album' } : c
-                                  )
-                                );
-                              }}
-                              className={`p-3 rounded-xl border-2 text-left transition-all ${
-                                catConfig.layoutType === 'photo_album'
-                                  ? 'border-blue-600 bg-blue-50/60 shadow-2xs'
-                                  : 'border-stone-200 bg-stone-50 hover:bg-stone-100'
-                              }`}
-                            >
-                              <div className="flex items-center gap-2 mb-1">
-                                <Images className="w-4 h-4 text-blue-700" />
-                                <span className="font-bold text-xs text-stone-900">2. Photo Album</span>
-                              </div>
-                              <p className="text-[11px] text-stone-500 leading-tight">
-                                Tipe album foto galeri kegiatan (carousel slide, max 10 foto & caption).
-                              </p>
-                            </button>
-
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setTempCategoryConfigs(
-                                  tempCategoryConfigs.map((c) =>
-                                    c.id === catConfig.id ? { ...c, layoutType: 'single_page' } : c
-                                  )
-                                );
-                              }}
-                              className={`p-3 rounded-xl border-2 text-left transition-all ${
-                                catConfig.layoutType === 'single_page'
-                                  ? 'border-purple-600 bg-purple-50/60 shadow-2xs'
-                                  : 'border-stone-200 bg-stone-50 hover:bg-stone-100'
-                              }`}
-                            >
-                              <div className="flex items-center gap-2 mb-1">
-                                <FileText className="w-4 h-4 text-purple-700" />
-                                <span className="font-bold text-xs text-stone-900">3. Single Page</span>
-                              </div>
-                              <p className="text-[11px] text-stone-500 leading-tight">
-                                Halaman tunggal langsung berisi Hero Image & Rich Text (tanpa opsi card).
-                              </p>
-                            </button>
-                          </div>
-                        </div>
-
-                        {/* Logo Upload Box */}
-                        <div className="space-y-2 md:col-span-2 bg-white p-3.5 rounded-xl border border-stone-200">
-                          <label className="text-xs font-bold text-stone-800 block">
-                            Logo Header Kategori:
-                          </label>
-                          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-                            {catConfig.logoUrl ? (
-                              <img
-                                src={formatImageUrl(catConfig.logoUrl)}
-                                alt={catConfig.name}
-                                className="w-14 h-14 rounded-xl object-contain bg-stone-50 border border-stone-300 p-1 shadow-2xs shrink-0"
-                                onError={(e) => {
-                                  (e.target as HTMLImageElement).style.display = 'none';
-                                }}
-                              />
-                            ) : (
-                              <div className="w-14 h-14 rounded-xl bg-stone-100 text-stone-400 flex items-center justify-center shrink-0 border border-dashed border-stone-300">
-                                <ImageIcon className="w-6 h-6" />
-                              </div>
-                            )}
-
-                            <div className="flex-1 space-y-2 w-full">
-                              <div className="flex flex-wrap items-center gap-2">
-                                <input
-                                  type="text"
-                                  value={catConfig.logoUrl || ''}
-                                  onChange={(e) => {
-                                    const newUrl = e.target.value;
-                                    setTempCategoryConfigs(
-                                      tempCategoryConfigs.map((c) =>
-                                        c.id === catConfig.id ? { ...c, logoUrl: newUrl } : c
-                                      )
-                                    );
+                    <div className="space-y-3">
+                      {[...tempNavbarTabs]
+                        .sort((a, b) => a.order - b.order)
+                        .map((tab, idx, arr) => (
+                          <div
+                            key={tab.id}
+                            className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-stone-50 rounded-xl border border-stone-200"
+                          >
+                            {/* Order Buttons */}
+                            <div className="flex items-center gap-2">
+                              <div className="flex flex-col gap-1">
+                                <button
+                                  type="button"
+                                  disabled={idx === 0}
+                                  onClick={() => {
+                                    if (idx === 0) return;
+                                    const newTabs = [...arr];
+                                    const tempOrder = newTabs[idx].order;
+                                    newTabs[idx].order = newTabs[idx - 1].order;
+                                    newTabs[idx - 1].order = tempOrder;
+                                    setTempNavbarTabs(newTabs);
                                   }}
-                                  placeholder="Tautan URL Gambar (https://... / /images/...)"
-                                  className="flex-1 min-w-[220px] px-3 py-1.5 bg-stone-50 border border-stone-300 rounded-lg text-xs font-mono text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-                                />
-
-                                <label className="cursor-pointer inline-flex items-center gap-1 px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-medium transition-colors shrink-0">
-                                  <Upload className="w-3.5 h-3.5" />
-                                  <span>Upload Logo</span>
-                                  <input
-                                    type="file"
-                                    accept="image/*"
-                                    className="hidden"
-                                    onChange={(e) => {
-                                      const file = e.target.files?.[0];
-                                      if (file) {
-                                        const reader = new FileReader();
-                                        reader.onload = (ev) => {
-                                          const result = ev.target?.result as string;
-                                          if (result) {
-                                            setTempCategoryConfigs(
-                                              tempCategoryConfigs.map((c) =>
-                                                c.id === catConfig.id ? { ...c, logoUrl: result } : c
-                                              )
-                                            );
-                                          }
-                                        };
-                                        reader.readAsDataURL(file);
-                                      }
-                                    }}
-                                  />
-                                </label>
-
-                                {catConfig.logoUrl && (
-                                  <button
-                                    type="button"
-                                    onClick={() => {
-                                      setTempCategoryConfigs(
-                                        tempCategoryConfigs.map((c) =>
-                                          c.id === catConfig.id ? { ...c, logoUrl: '' } : c
-                                        )
-                                      );
-                                    }}
-                                    className="px-2.5 py-1.5 bg-stone-200 hover:bg-red-100 hover:text-red-700 text-stone-700 rounded-lg text-xs font-medium transition-colors"
-                                  >
-                                    Hapus Logo
-                                  </button>
-                                )}
+                                  className="p-1 bg-white hover:bg-stone-200 disabled:opacity-30 border border-stone-200 rounded text-stone-700"
+                                  title="Pindahkan Ke Atas / Lebih Kiri"
+                                >
+                                  <ArrowUp className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  type="button"
+                                  disabled={idx === arr.length - 1}
+                                  onClick={() => {
+                                    if (idx === arr.length - 1) return;
+                                    const newTabs = [...arr];
+                                    const tempOrder = newTabs[idx].order;
+                                    newTabs[idx].order = newTabs[idx + 1].order;
+                                    newTabs[idx + 1].order = tempOrder;
+                                    setTempNavbarTabs(newTabs);
+                                  }}
+                                  className="p-1 bg-white hover:bg-stone-200 disabled:opacity-30 border border-stone-200 rounded text-stone-700"
+                                  title="Pindahkan Ke Bawah / Lebih Kanan"
+                                >
+                                  <ArrowDown className="w-3.5 h-3.5" />
+                                </button>
                               </div>
-                            </div>
-                          </div>
-                        </div>
 
-                        {/* Nama Kategori / Rename Tab */}
-                        <div className="space-y-1">
-                          <label className="text-xs font-bold text-stone-700 block">
-                            Nama Entitas / Page:
-                          </label>
-                          <input
-                            type="text"
-                            value={catConfig.name}
-                            onChange={(e) => {
-                              const newName = e.target.value;
-                              setTempCategoryConfigs(
-                                tempCategoryConfigs.map((c) =>
-                                  c.id === catConfig.id ? { ...c, name: newName } : c
-                                )
-                              );
-                            }}
-                            className="w-full px-3 py-2 bg-white border border-stone-300 rounded-xl text-xs font-bold text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-                          />
-                        </div>
-
-                        {/* Deskripsi Header */}
-                        <div className="space-y-1">
-                          <label className="text-xs font-bold text-stone-700 block">
-                            Deskripsi Penjelasan Header:
-                          </label>
-                          <input
-                            type="text"
-                            value={catConfig.description}
-                            onChange={(e) => {
-                              const newDesc = e.target.value;
-                              setTempCategoryConfigs(
-                                tempCategoryConfigs.map((c) =>
-                                  c.id === catConfig.id ? { ...c, description: newDesc } : c
-                                )
-                              );
-                            }}
-                            className="w-full px-3 py-2 bg-white border border-stone-300 rounded-xl text-xs text-stone-800 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-                          />
-                        </div>
-
-                        {/* IF LAYOUT TYPE === 'single_page' -> Rich Text & Hero Image Config */}
-                        {catConfig.layoutType === 'single_page' && (
-                          <div className="space-y-3 md:col-span-2 bg-purple-50/50 p-4 rounded-xl border border-purple-200">
-                            <div className="flex items-center justify-between border-b border-purple-200 pb-2">
-                              <span className="text-xs font-bold text-purple-950 flex items-center gap-1.5">
-                                <Sparkles className="w-4 h-4 text-purple-700" />
-                                Pengaturan Konten Single Page ({catConfig.name})
+                              <span className="w-6 h-6 rounded-full bg-stone-200 text-stone-800 text-xs font-bold flex items-center justify-center">
+                                {idx + 1}
                               </span>
-                              <span className="text-[10px] bg-purple-200 text-purple-900 px-2 py-0.5 rounded font-bold">
-                                Hero Image + Rich Text
+
+                              <span className="text-xs font-bold text-stone-500 uppercase tracking-wider">
+                                {tab.id === 'entities' ? 'Tab Entitas' : 'Tab Pengumuman'}
                               </span>
                             </div>
 
-                            {/* Hero Image Field */}
-                            <div className="space-y-1">
-                              <label className="text-xs font-bold text-stone-800 block">
-                                URL Gambar Hero Banner Single Page:
+                            {/* Label Edit Field */}
+                            <div className="flex-1 space-y-1">
+                              <label className="text-[11px] font-bold text-stone-700 block">
+                                Nama Label Tab (Rename):
                               </label>
                               <input
                                 type="text"
-                                value={catConfig.singlePageHeroImage || ''}
+                                value={tab.label}
                                 onChange={(e) => {
-                                  const val = e.target.value;
-                                  setTempCategoryConfigs(
-                                    tempCategoryConfigs.map((c) =>
-                                      c.id === catConfig.id ? { ...c, singlePageHeroImage: val } : c
+                                  const newLabel = e.target.value;
+                                  setTempNavbarTabs(
+                                    tempNavbarTabs.map((t) =>
+                                      t.id === tab.id ? { ...t, label: newLabel } : t
                                     )
                                   );
                                 }}
-                                placeholder="https://images.unsplash.com/... atau /images/..."
-                                className="w-full px-3 py-2 bg-white border border-stone-300 rounded-xl text-xs font-mono text-stone-900 focus:outline-none focus:ring-2 focus:ring-purple-600"
+                                className="w-full px-3 py-1.5 bg-white border border-stone-300 rounded-lg text-xs font-semibold text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
                               />
                             </div>
 
-                            {/* Quick Preset Template Buttons */}
-                            <div className="space-y-1.5">
-                              <label className="text-xs font-bold text-stone-800 block">
-                                Isikan Draf Konten Cepat (Preset Template):
+                            {/* Active Toggle */}
+                            <div className="flex items-center gap-2">
+                              <label className="flex items-center gap-2 text-xs font-semibold text-stone-700 cursor-pointer">
+                                <input
+                                  type="checkbox"
+                                  checked={tab.enabled}
+                                  onChange={(e) => {
+                                    const isChecked = e.target.checked;
+                                    setTempNavbarTabs(
+                                      tempNavbarTabs.map((t) =>
+                                        t.id === tab.id ? { ...t, enabled: isChecked } : t
+                                      )
+                                    );
+                                  }}
+                                  className="w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500"
+                                />
+                                <span>Tampilkan Tab</span>
                               </label>
-                              <div className="flex flex-wrap items-center gap-2">
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+
+                    {/* Navbar Live Mockup Preview */}
+                    <div className="p-4 bg-stone-100 rounded-xl border border-stone-200 space-y-2">
+                      <span className="text-xs font-bold text-stone-700 block">
+                        Pratinjau Hasil Tampilan Tab Navbar Utama:
+                      </span>
+                      <div className="flex items-center gap-2 bg-white p-2 rounded-lg border border-stone-300 shadow-2xs overflow-x-auto">
+                        {[...tempNavbarTabs]
+                          .filter((t) => t.enabled)
+                          .sort((a, b) => a.order - b.order)
+                          .map((t, index) => (
+                            <div
+                              key={t.id}
+                              className={`px-3 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1.5 shrink-0 ${
+                                index === 0
+                                  ? 'bg-emerald-50 text-emerald-900 border border-emerald-200'
+                                  : 'bg-stone-100 text-stone-700'
+                              }`}
+                            >
+                              {t.id === 'entities' ? (
+                                <LayoutGrid className="w-3.5 h-3.5 text-emerald-700" />
+                              ) : (
+                                <Megaphone className="w-3.5 h-3.5 text-emerald-700" />
+                              )}
+                              <span>{t.label}</span>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Section 3: Kelola Logo, Nama Tab, Layout & Single Page Content per Entitas / Kategori */}
+              <div className={`bg-white rounded-2xl border transition-all duration-200 overflow-hidden shadow-xs ${
+                expandedSiteSection === 3 ? 'border-emerald-500/80 ring-1 ring-emerald-500/20' : 'border-stone-200 hover:border-stone-300'
+              }`}>
+                <div
+                  onClick={() => setExpandedSiteSection(expandedSiteSection === 3 ? null : 3)}
+                  className="w-full p-4 sm:p-5 bg-white hover:bg-stone-50/80 flex items-center justify-between cursor-pointer select-none transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`p-2 rounded-xl transition-colors ${expandedSiteSection === 3 ? 'bg-emerald-100 text-emerald-800' : 'bg-stone-100 text-stone-600'}`}>
+                      <LayoutGrid className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-extrabold text-stone-900 text-sm sm:text-base">
+                          3. Kelola Entitas Baru & Opsi Layout Halaman
+                        </h4>
+                        <span className="text-[11px] bg-emerald-50 text-emerald-800 font-semibold px-2.5 py-0.5 rounded-full border border-emerald-200 hidden sm:inline-block">
+                          {tempCategoryConfigs.length} Entitas Terdaftar
+                        </span>
+                      </div>
+                      <p className="text-xs text-stone-500 mt-0.5">
+                        Tambah entitas/halaman baru, atur logo, serta pilih format layout (Default Card, Photo Album, Single Page).
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <div className={`px-2.5 py-1 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors ${
+                      expandedSiteSection === 3 ? 'bg-emerald-800 text-white' : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
+                    }`}>
+                      <span>{expandedSiteSection === 3 ? 'Tutup' : 'Buka & Atur'}</span>
+                      {expandedSiteSection === 3 ? <ChevronUp className="w-4 h-4 text-white" /> : <ChevronDown className="w-4 h-4 text-stone-600" />}
+                    </div>
+                  </div>
+                </div>
+
+                {expandedSiteSection === 3 && (
+                  <div className="p-4 sm:p-6 pt-2 border-t border-stone-100 space-y-5">
+                    <div className="flex justify-between items-center pb-2">
+                      <p className="text-xs text-stone-600 leading-relaxed">
+                        Pilih opsi layout untuk setiap halaman entitas: <strong>Default Existing</strong> (format card biasa), <strong>Photo Album</strong> (format album foto carousel), atau <strong>Single Page</strong> (halaman tunggal dengan hero image & rich text editor).
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const newId = `Entitas Baru ${tempCategoryConfigs.length + 1}`;
+                          setTempCategoryConfigs([
+                            ...tempCategoryConfigs,
+                            {
+                              id: newId,
+                              name: newId,
+                              description: 'Deskripsi halaman entitas baru...',
+                              logoUrl: '',
+                              layoutType: 'default',
+                            },
+                          ]);
+                          showToast('Entitas/Halaman baru telah ditambahkan. Silakan atur konfigurasi layout!');
+                        }}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0"
+                      >
+                        <Plus className="w-4 h-4" />
+                        <span>Tambah Entitas Baru</span>
+                      </button>
+                    </div>
+
+                    {/* Recommendation Banner */}
+                    <div className="bg-emerald-50/80 border border-emerald-200 rounded-xl p-3 flex items-start gap-2.5 text-xs text-emerald-950">
+                      <Sparkles className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" />
+                      <div>
+                        <strong className="font-bold text-emerald-900 block">Rekomendasi Logo & Content Layout:</strong>
+                        <span className="text-[11px] text-emerald-850 block mt-0.5">
+                          Gunakan logo persegi HD (512x512px). Jika memilih tipe <strong>Single Page</strong>, pengunjung akan langsung melihat artikel / hero image utuh tanpa opsi pembuatan card.
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      {tempCategoryConfigs.map((catConfig) => (
+                        <div
+                          key={catConfig.id}
+                          className="p-4 sm:p-5 bg-stone-50 rounded-2xl border border-stone-200 space-y-4 shadow-2xs"
+                        >
+                          <div className="flex items-center justify-between border-b border-stone-200/80 pb-2.5">
+                            <span className="text-xs font-bold text-stone-900 flex items-center gap-2">
+                              <span className="w-2 h-2 rounded-full bg-emerald-600"></span>
+                              Halaman / Entitas: <strong className="text-emerald-800">{catConfig.name}</strong>
+                              <span className="text-[10px] text-stone-400 font-mono font-normal">({catConfig.id})</span>
+                            </span>
+
+                            <div className="flex items-center gap-2">
+                              <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase ${
+                                catConfig.layoutType === 'single_page'
+                                  ? 'bg-purple-100 text-purple-800 border border-purple-200'
+                                  : catConfig.layoutType === 'photo_album'
+                                  ? 'bg-blue-100 text-blue-800 border border-blue-200'
+                                  : 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                              }`}>
+                                Layout: {catConfig.layoutType === 'single_page' ? 'Single Page' : catConfig.layoutType === 'photo_album' ? 'Photo Album' : 'Default Card'}
+                              </span>
+
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  if (confirm(`Apakah Anda yakin ingin menghapus entitas "${catConfig.name}"?`)) {
+                                    setTempCategoryConfigs(tempCategoryConfigs.filter((c) => c.id !== catConfig.id));
+                                    showToast(`Entitas "${catConfig.name}" dihapus dari navigasi.`);
+                                  }
+                                }}
+                                className="p-1 text-stone-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                title="Hapus Entitas"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {/* Option Layout Selector */}
+                            <div className="space-y-2 md:col-span-2 bg-white p-3.5 rounded-xl border border-stone-200">
+                              <label className="text-xs font-bold text-stone-800 block">
+                                Pilih Format Layout Halaman Entitas Ini:
+                              </label>
+                              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                                 <button
                                   type="button"
                                   onClick={() => {
-                                    const preset = `<h3>Visi & Misi Pengurus RW 11 Bintara Jaya Permai</h3>
+                                    setTempCategoryConfigs(
+                                      tempCategoryConfigs.map((c) =>
+                                        c.id === catConfig.id ? { ...c, layoutType: 'default' } : c
+                                      )
+                                    );
+                                  }}
+                                  className={`p-3 rounded-xl border-2 text-left transition-all ${
+                                    (catConfig.layoutType || 'default') === 'default'
+                                      ? 'border-emerald-600 bg-emerald-50/60 shadow-2xs'
+                                      : 'border-stone-200 bg-stone-50 hover:bg-stone-100'
+                                  }`}
+                                >
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <Layout className="w-4 h-4 text-emerald-700" />
+                                    <span className="font-bold text-xs text-stone-900">1. Default Existing</span>
+                                  </div>
+                                  <p className="text-[11px] text-stone-500 leading-tight">
+                                    Menggunakan format daftar card standar (seperti kegiatan / UMKM existing).
+                                  </p>
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setTempCategoryConfigs(
+                                      tempCategoryConfigs.map((c) =>
+                                        c.id === catConfig.id ? { ...c, layoutType: 'photo_album' } : c
+                                      )
+                                    );
+                                  }}
+                                  className={`p-3 rounded-xl border-2 text-left transition-all ${
+                                    catConfig.layoutType === 'photo_album'
+                                      ? 'border-blue-600 bg-blue-50/60 shadow-2xs'
+                                      : 'border-stone-200 bg-stone-50 hover:bg-stone-100'
+                                  }`}
+                                >
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <Images className="w-4 h-4 text-blue-700" />
+                                    <span className="font-bold text-xs text-stone-900">2. Photo Album</span>
+                                  </div>
+                                  <p className="text-[11px] text-stone-500 leading-tight">
+                                    Tipe album foto galeri kegiatan (carousel slide, max 10 foto & caption).
+                                  </p>
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setTempCategoryConfigs(
+                                      tempCategoryConfigs.map((c) =>
+                                        c.id === catConfig.id ? { ...c, layoutType: 'single_page' } : c
+                                      )
+                                    );
+                                  }}
+                                  className={`p-3 rounded-xl border-2 text-left transition-all ${
+                                    catConfig.layoutType === 'single_page'
+                                      ? 'border-purple-600 bg-purple-50/60 shadow-2xs'
+                                      : 'border-stone-200 bg-stone-50 hover:bg-stone-100'
+                                  }`}
+                                >
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <FileText className="w-4 h-4 text-purple-700" />
+                                    <span className="font-bold text-xs text-stone-900">3. Single Page</span>
+                                  </div>
+                                  <p className="text-[11px] text-stone-500 leading-tight">
+                                    Halaman tunggal langsung berisi Hero Image & Rich Text (tanpa opsi card).
+                                  </p>
+                                </button>
+                              </div>
+                            </div>
+
+                            {/* Logo Upload Box */}
+                            <div className="space-y-2 md:col-span-2 bg-white p-3.5 rounded-xl border border-stone-200">
+                              <label className="text-xs font-bold text-stone-800 block">
+                                Logo Header Kategori:
+                              </label>
+                              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                                {catConfig.logoUrl ? (
+                                  <img
+                                    src={formatImageUrl(catConfig.logoUrl)}
+                                    alt={catConfig.name}
+                                    className="w-14 h-14 rounded-xl object-contain bg-stone-50 border border-stone-300 p-1 shadow-2xs shrink-0"
+                                    onError={(e) => {
+                                      (e.target as HTMLImageElement).style.display = 'none';
+                                    }}
+                                  />
+                                ) : (
+                                  <div className="w-14 h-14 rounded-xl bg-stone-100 text-stone-400 flex items-center justify-center shrink-0 border border-dashed border-stone-300">
+                                    <ImageIcon className="w-6 h-6" />
+                                  </div>
+                                )}
+
+                                <div className="flex-1 space-y-2 w-full">
+                                  <div className="flex flex-wrap items-center gap-2">
+                                    <input
+                                      type="text"
+                                      value={catConfig.logoUrl || ''}
+                                      onChange={(e) => {
+                                        const newUrl = e.target.value;
+                                        setTempCategoryConfigs(
+                                          tempCategoryConfigs.map((c) =>
+                                            c.id === catConfig.id ? { ...c, logoUrl: newUrl } : c
+                                          )
+                                        );
+                                      }}
+                                      placeholder="Tautan URL Gambar (https://... / /images/...)"
+                                      className="flex-1 min-w-[220px] px-3 py-1.5 bg-stone-50 border border-stone-300 rounded-lg text-xs font-mono text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                                    />
+
+                                    <label className="cursor-pointer inline-flex items-center gap-1 px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-medium transition-colors shrink-0">
+                                      <Upload className="w-3.5 h-3.5" />
+                                      <span>Upload Logo</span>
+                                      <input
+                                        type="file"
+                                        accept="image/*"
+                                        className="hidden"
+                                        onChange={(e) => {
+                                          const file = e.target.files?.[0];
+                                          if (file) {
+                                            const reader = new FileReader();
+                                            reader.onload = (ev) => {
+                                              const result = ev.target?.result as string;
+                                              if (result) {
+                                                setTempCategoryConfigs(
+                                                  tempCategoryConfigs.map((c) =>
+                                                    c.id === catConfig.id ? { ...c, logoUrl: result } : c
+                                                  )
+                                                );
+                                              }
+                                            };
+                                            reader.readAsDataURL(file);
+                                          }
+                                        }}
+                                      />
+                                    </label>
+
+                                    {catConfig.logoUrl && (
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          setTempCategoryConfigs(
+                                            tempCategoryConfigs.map((c) =>
+                                              c.id === catConfig.id ? { ...c, logoUrl: '' } : c
+                                            )
+                                          );
+                                        }}
+                                        className="px-2.5 py-1.5 bg-stone-200 hover:bg-red-100 hover:text-red-700 text-stone-700 rounded-lg text-xs font-medium transition-colors"
+                                      >
+                                        Hapus Logo
+                                      </button>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Nama Kategori / Rename Tab */}
+                            <div className="space-y-1">
+                              <label className="text-xs font-bold text-stone-700 block">
+                                Nama Entitas / Page:
+                              </label>
+                              <input
+                                type="text"
+                                value={catConfig.name}
+                                onChange={(e) => {
+                                  const newName = e.target.value;
+                                  setTempCategoryConfigs(
+                                    tempCategoryConfigs.map((c) =>
+                                      c.id === catConfig.id ? { ...c, name: newName } : c
+                                    )
+                                  );
+                                }}
+                                className="w-full px-3 py-2 bg-white border border-stone-300 rounded-xl text-xs font-bold text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                              />
+                            </div>
+
+                            {/* Deskripsi Header */}
+                            <div className="space-y-1">
+                              <label className="text-xs font-bold text-stone-700 block">
+                                Deskripsi Penjelasan Header:
+                              </label>
+                              <input
+                                type="text"
+                                value={catConfig.description}
+                                onChange={(e) => {
+                                  const newDesc = e.target.value;
+                                  setTempCategoryConfigs(
+                                    tempCategoryConfigs.map((c) =>
+                                      c.id === catConfig.id ? { ...c, description: newDesc } : c
+                                    )
+                                  );
+                                }}
+                                className="w-full px-3 py-2 bg-white border border-stone-300 rounded-xl text-xs text-stone-800 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                              />
+                            </div>
+
+                            {/* IF LAYOUT TYPE === 'single_page' -> Rich Text & Hero Image Config */}
+                            {catConfig.layoutType === 'single_page' && (
+                              <div className="space-y-3 md:col-span-2 bg-purple-50/50 p-4 rounded-xl border border-purple-200">
+                                <div className="flex items-center justify-between border-b border-purple-200 pb-2">
+                                  <span className="text-xs font-bold text-purple-950 flex items-center gap-1.5">
+                                    <Sparkles className="w-4 h-4 text-purple-700" />
+                                    Pengaturan Konten Single Page ({catConfig.name})
+                                  </span>
+                                  <span className="text-[10px] bg-purple-200 text-purple-900 px-2 py-0.5 rounded font-bold">
+                                    Hero Image + Rich Text
+                                  </span>
+                                </div>
+
+                                {/* Hero Image Field */}
+                                <div className="space-y-1">
+                                  <label className="text-xs font-bold text-stone-800 block">
+                                    URL Gambar Hero Banner Single Page:
+                                  </label>
+                                  <input
+                                    type="text"
+                                    value={catConfig.singlePageHeroImage || ''}
+                                    onChange={(e) => {
+                                      const val = e.target.value;
+                                      setTempCategoryConfigs(
+                                        tempCategoryConfigs.map((c) =>
+                                          c.id === catConfig.id ? { ...c, singlePageHeroImage: val } : c
+                                        )
+                                      );
+                                    }}
+                                    placeholder="https://images.unsplash.com/... atau /images/..."
+                                    className="w-full px-3 py-2 bg-white border border-stone-300 rounded-xl text-xs font-mono text-stone-900 focus:outline-none focus:ring-2 focus:ring-purple-600"
+                                  />
+                                </div>
+
+                                {/* Quick Preset Template Buttons */}
+                                <div className="space-y-1.5">
+                                  <label className="text-xs font-bold text-stone-800 block">
+                                    Isikan Draf Konten Cepat (Preset Template):
+                                  </label>
+                                  <div className="flex flex-wrap items-center gap-2">
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const preset = `<h3>Visi & Misi Pengurus RW 11 Bintara Jaya Permai</h3>
 <p>Menjadi kawasan permukiman yang aman, bersih, harmonis, religius, serta responsif berbasis teknologi digital dan gotong royong warga.</p>
 <h4>Program Unggulan:</h4>
 <ul>
@@ -3832,21 +3931,21 @@ export const CMSModal: React.FC<CMSModalProps> = ({
   <li>Keamanan Terpadu 24 Jam & CCTV Lingkungan</li>
   <li>Pembinaan UMKM Warga & Sentra Usaha</li>
 </ul>`;
-                                    setTempCategoryConfigs(
-                                      tempCategoryConfigs.map((c) =>
-                                        c.id === catConfig.id ? { ...c, singlePageContent: preset } : c
-                                      )
-                                    );
-                                  }}
-                                  className="px-2.5 py-1 bg-purple-100 hover:bg-purple-200 text-purple-900 text-[11px] font-medium rounded-lg border border-purple-300 transition-colors"
-                                >
-                                  + Preset Visi Misi
-                                </button>
+                                        setTempCategoryConfigs(
+                                          tempCategoryConfigs.map((c) =>
+                                            c.id === catConfig.id ? { ...c, singlePageContent: preset } : c
+                                          )
+                                        );
+                                      }}
+                                      className="px-2.5 py-1 bg-purple-100 hover:bg-purple-200 text-purple-900 text-[11px] font-medium rounded-lg border border-purple-300 transition-colors"
+                                    >
+                                      + Preset Visi Misi
+                                    </button>
 
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    const preset = `<h3>Panduan Layanan Administrasi & Fasilitas Bersama</h3>
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const preset = `<h3>Panduan Layanan Administrasi & Fasilitas Bersama</h3>
 <p>Pengurus RW 11 menyediakan pelayanan administrasi kependudukan dan penyewaan fasilitas warga dengan ketentuan sebagai berikut:</p>
 <h4>Jam Pelayanan Sekretariat:</h4>
 <p>Senin - Sabtu: Pukul 09.00 - 17.00 WIB (Sekretariat RW 11)</p>
@@ -3856,53 +3955,532 @@ export const CMSModal: React.FC<CMSModalProps> = ({
   <li>Bukti Lunas Iuran Pemeliharaan Lingkungan (IPL)</li>
   <li>Mengisi formulir permohonan online melalui portal BJP HUB</li>
 </ul>`;
-                                    setTempCategoryConfigs(
-                                      tempCategoryConfigs.map((c) =>
-                                        c.id === catConfig.id ? { ...c, singlePageContent: preset } : c
-                                      )
-                                    );
+                                        setTempCategoryConfigs(
+                                          tempCategoryConfigs.map((c) =>
+                                            c.id === catConfig.id ? { ...c, singlePageContent: preset } : c
+                                          )
+                                        );
+                                      }}
+                                      className="px-2.5 py-1 bg-purple-100 hover:bg-purple-200 text-purple-900 text-[11px] font-medium rounded-lg border border-purple-300 transition-colors"
+                                    >
+                                      + Preset Panduan Layanan
+                                    </button>
+                                  </div>
+                                </div>
+
+                                {/* Rich Text Editor Field */}
+                                <div className="space-y-1">
+                                  <label className="text-xs font-bold text-stone-800 block">
+                                    Editor Isian Konten / Rich Text (HTML / Text Format):
+                                  </label>
+                                  <textarea
+                                    rows={6}
+                                    value={catConfig.singlePageContent || ''}
+                                    onChange={(e) => {
+                                      const val = e.target.value;
+                                      setTempCategoryConfigs(
+                                        tempCategoryConfigs.map((c) =>
+                                          c.id === catConfig.id ? { ...c, singlePageContent: val } : c
+                                        )
+                                      );
+                                    }}
+                                    placeholder="Tuliskan isi artikel lengkap, deskripsi profil, atau panduan informasi warga di sini..."
+                                    className="w-full px-3 py-2 bg-white border border-stone-300 rounded-xl text-xs font-mono text-stone-900 focus:outline-none focus:ring-2 focus:ring-purple-600"
+                                  />
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Section 4: Pengaturan 3 Section Media Feeds & Dokumentasi (Slide Terbaru, Album Foto, Album Video) */}
+              <div className={`bg-white rounded-2xl border transition-all duration-200 overflow-hidden shadow-xs ${
+                expandedSiteSection === 4 ? 'border-emerald-500/80 ring-1 ring-emerald-500/20' : 'border-stone-200 hover:border-stone-300'
+              }`}>
+                <div
+                  onClick={() => setExpandedSiteSection(expandedSiteSection === 4 ? null : 4)}
+                  className="w-full p-4 sm:p-5 bg-white hover:bg-stone-50/80 flex items-center justify-between cursor-pointer select-none transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`p-2 rounded-xl transition-colors ${expandedSiteSection === 4 ? 'bg-emerald-100 text-emerald-800' : 'bg-stone-100 text-stone-600'}`}>
+                      <Video className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-extrabold text-stone-900 text-sm sm:text-base">
+                          4. Pengaturan Media Feeds (3 Section: Slide Terbaru, Album Foto, Album Video)
+                        </h4>
+                        <span className="text-[11px] bg-emerald-50 text-emerald-800 font-semibold px-2.5 py-0.5 rounded-full border border-emerald-200 hidden sm:inline-block">
+                          {tempSocialFeeds.length} Total Feeds
+                        </span>
+                      </div>
+                      <p className="text-xs text-stone-500 mt-0.5">
+                        Atur URL Embed, Judul, Deskripsi, dan Toggle On/Off untuk galeri feeds.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <div className={`px-2.5 py-1 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors ${
+                      expandedSiteSection === 4 ? 'bg-emerald-800 text-white' : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
+                    }`}>
+                      <span>{expandedSiteSection === 4 ? 'Tutup' : 'Buka & Atur'}</span>
+                      {expandedSiteSection === 4 ? <ChevronUp className="w-4 h-4 text-white" /> : <ChevronDown className="w-4 h-4 text-stone-600" />}
+                    </div>
+                  </div>
+                </div>
+
+                {expandedSiteSection === 4 && (
+                  <div className="p-4 sm:p-6 pt-2 border-t border-stone-100 space-y-5">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-1">
+                      <p className="text-xs text-stone-600">
+                        Atur URL Embed, Judul, Deskripsi, dan Toggle On/Off untuk masing-masing 3 section galeri feeds @bintarajayapermai.ofc.
+                      </p>
+                      {tempSocialFeeds.filter(f => (cmsFeedSection === 'terbaru' ? (!f.section || f.section === 'terbaru') : f.section === cmsFeedSection)).length < 5 && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const newFeed: SocialFeedItem = {
+                              id: `feed-${Date.now()}`,
+                              title: 'Konten Feeds Baru',
+                              description: 'Deskripsi informasi terkini...',
+                              url: 'https://www.instagram.com/bintarajayapermai.ofc/',
+                              platform: 'instagram',
+                              section: cmsFeedSection,
+                              enabled: true,
+                              order: tempSocialFeeds.length,
+                            };
+                            setTempSocialFeeds([...tempSocialFeeds, newFeed]);
+                          }}
+                          className="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm cursor-pointer shrink-0"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                          <span>Tambah Konten ({tempSocialFeeds.filter(f => (cmsFeedSection === 'terbaru' ? (!f.section || f.section === 'terbaru') : f.section === cmsFeedSection)).length}/5)</span>
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Sub-Section Selector Tabs */}
+                    <div className="flex flex-wrap items-center gap-2 p-1.5 bg-stone-100 rounded-xl">
+                      <button
+                        type="button"
+                        onClick={() => setCmsFeedSection('terbaru')}
+                        className={`px-3.5 py-2 rounded-lg text-xs font-extrabold transition-all cursor-pointer flex items-center gap-1.5 ${
+                          cmsFeedSection === 'terbaru'
+                            ? 'bg-emerald-700 text-white shadow-xs'
+                            : 'text-stone-600 hover:text-stone-900 hover:bg-stone-200/70'
+                        }`}
+                      >
+                        <Sparkles className="w-3.5 h-3.5" />
+                        <span>Slide Konten Terbaru</span>
+                        <span className="px-1.5 py-0.2 bg-black/20 rounded text-[10px]">
+                          {tempSocialFeeds.filter(f => !f.section || f.section === 'terbaru').length}
+                        </span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setCmsFeedSection('album_foto')}
+                        className={`px-3.5 py-2 rounded-lg text-xs font-extrabold transition-all cursor-pointer flex items-center gap-1.5 ${
+                          cmsFeedSection === 'album_foto'
+                            ? 'bg-emerald-700 text-white shadow-xs'
+                            : 'text-stone-600 hover:text-stone-900 hover:bg-stone-200/70'
+                        }`}
+                      >
+                        <Images className="w-3.5 h-3.5" />
+                        <span>Album Foto BJP</span>
+                        <span className="px-1.5 py-0.2 bg-black/20 rounded text-[10px]">
+                          {tempSocialFeeds.filter(f => f.section === 'album_foto').length}
+                        </span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setCmsFeedSection('album_video')}
+                        className={`px-3.5 py-2 rounded-lg text-xs font-extrabold transition-all cursor-pointer flex items-center gap-1.5 ${
+                          cmsFeedSection === 'album_video'
+                            ? 'bg-emerald-700 text-white shadow-xs'
+                            : 'text-stone-600 hover:text-stone-900 hover:bg-stone-200/70'
+                        }`}
+                      >
+                        <Video className="w-3.5 h-3.5" />
+                        <span>Album Video BJP</span>
+                        <span className="px-1.5 py-0.2 bg-black/20 rounded text-[10px]">
+                          {tempSocialFeeds.filter(f => f.section === 'album_video').length}
+                        </span>
+                      </button>
+                    </div>
+
+                    {/* Feeds Items for Selected Sub-Section */}
+                    <div className="space-y-4">
+                      {tempSocialFeeds
+                        .filter(f => (cmsFeedSection === 'terbaru' ? (!f.section || f.section === 'terbaru') : f.section === cmsFeedSection))
+                        .map((feed, idx) => (
+                          <div
+                            key={feed.id}
+                            className="p-4 bg-stone-50 rounded-2xl border border-stone-200 space-y-3.5 relative"
+                          >
+                            <div className="flex items-center justify-between border-b border-stone-200 pb-2">
+                              <div className="flex items-center gap-2">
+                                <span className="w-6 h-6 rounded-full bg-stone-900 text-amber-300 font-extrabold text-xs flex items-center justify-center">
+                                  #{idx + 1}
+                                </span>
+                                <span className="text-xs font-bold text-stone-800">
+                                  {feed.title || `Konten #${idx + 1}`}
+                                </span>
+                              </div>
+
+                              <div className="flex items-center gap-3">
+                                {/* Toggle On/Off */}
+                                <label className="inline-flex items-center gap-2 cursor-pointer text-xs font-bold text-stone-700">
+                                  <input
+                                    type="checkbox"
+                                    checked={feed.enabled}
+                                    onChange={(e) => {
+                                      const isChecked = e.target.checked;
+                                      setTempSocialFeeds(
+                                        tempSocialFeeds.map((item) =>
+                                          item.id === feed.id ? { ...item, enabled: isChecked } : item
+                                        )
+                                      );
+                                    }}
+                                    className="w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500 cursor-pointer"
+                                  />
+                                  <span className={feed.enabled ? 'text-emerald-700 font-extrabold' : 'text-stone-400'}>
+                                    {feed.enabled ? 'Aktif' : 'Nonaktif'}
+                                  </span>
+                                </label>
+
+                                {/* Delete Item */}
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setTempSocialFeeds(tempSocialFeeds.filter((item) => item.id !== feed.id));
                                   }}
-                                  className="px-2.5 py-1 bg-purple-100 hover:bg-purple-200 text-purple-900 text-[11px] font-medium rounded-lg border border-purple-300 transition-colors"
+                                  className="p-1.5 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                                  title="Hapus Konten Ini"
                                 >
-                                  + Preset Panduan Layanan
+                                  <Trash2 className="w-4 h-4" />
                                 </button>
                               </div>
                             </div>
 
-                            {/* Rich Text Editor Field */}
-                            <div className="space-y-1">
-                              <label className="text-xs font-bold text-stone-800 block">
-                                Editor Isian Konten / Rich Text (HTML / Text Format):
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                              {/* Field 1: Embed URL */}
+                              <div className="space-y-1">
+                                <label className="font-bold text-stone-700 block">
+                                  URL Tautan (Embed / YouTube / Instagram):
+                                </label>
+                                <input
+                                  type="text"
+                                  value={feed.url}
+                                  onChange={(e) => {
+                                    const val = e.target.value;
+                                    let newPlatform: 'youtube' | 'instagram' | 'tiktok' | 'other' = 'other';
+                                    if (val.includes('youtube.com') || val.includes('youtu.be')) newPlatform = 'youtube';
+                                    else if (val.includes('instagram.com')) newPlatform = 'instagram';
+                                    else if (val.includes('tiktok.com')) newPlatform = 'tiktok';
+
+                                    setTempSocialFeeds(
+                                      tempSocialFeeds.map((item) =>
+                                        item.id === feed.id ? { ...item, url: val, platform: newPlatform } : item
+                                      )
+                                    );
+                                  }}
+                                  placeholder="https://www.youtube.com/watch?v=... atau https://www.instagram.com/p/..."
+                                  className="w-full px-3 py-2 bg-white border border-stone-300 rounded-xl font-mono text-xs focus:ring-2 focus:ring-emerald-600 focus:outline-none"
+                                />
+                              </div>
+
+                              {/* Field 2: Judul Konten */}
+                              <div className="space-y-1">
+                                <label className="font-bold text-stone-700 block">Judul Konten Feeds:</label>
+                                <input
+                                  type="text"
+                                  value={feed.title}
+                                  onChange={(e) => {
+                                    const val = e.target.value;
+                                    setTempSocialFeeds(
+                                      tempSocialFeeds.map((item) =>
+                                        item.id === feed.id ? { ...item, title: val } : item
+                                      )
+                                    );
+                                  }}
+                                  placeholder="Judul tayangan feeds..."
+                                  className="w-full px-3 py-2 bg-white border border-stone-300 rounded-xl font-bold text-xs text-stone-900 focus:ring-2 focus:ring-emerald-600 focus:outline-none"
+                                />
+                              </div>
+
+                              {/* Field 3: Deskripsi Teks */}
+                              <div className="md:col-span-2 space-y-1">
+                                <label className="font-bold text-stone-700 block">Deskripsi Penjelasan Konten:</label>
+                                <textarea
+                                  rows={2}
+                                  value={feed.description}
+                                  onChange={(e) => {
+                                    const val = e.target.value;
+                                    setTempSocialFeeds(
+                                      tempSocialFeeds.map((item) =>
+                                        item.id === feed.id ? { ...item, description: val } : item
+                                      )
+                                    );
+                                  }}
+                                  placeholder="Tuliskan deskripsi ringkas tayangan..."
+                                  className="w-full px-3 py-2 bg-white border border-stone-300 rounded-xl text-xs text-stone-800 focus:ring-2 focus:ring-emerald-600 focus:outline-none resize-none"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Section 5: Pengaturan Media Partner & Komunitas (Slider Logo & Sosmed) */}
+              <div className={`bg-white rounded-2xl border transition-all duration-200 overflow-hidden shadow-xs ${
+                expandedSiteSection === 5 ? 'border-amber-500/80 ring-1 ring-amber-500/20' : 'border-stone-200 hover:border-stone-300'
+              }`}>
+                <div
+                  onClick={() => setExpandedSiteSection(expandedSiteSection === 5 ? null : 5)}
+                  className="w-full p-4 sm:p-5 bg-white hover:bg-stone-50/80 flex items-center justify-between cursor-pointer select-none transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`p-2 rounded-xl transition-colors ${expandedSiteSection === 5 ? 'bg-amber-100 text-amber-800' : 'bg-stone-100 text-stone-600'}`}>
+                      <Users className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-extrabold text-stone-900 text-sm sm:text-base">
+                          5. Pengaturan Media Partner
+                        </h4>
+                        <span className="text-[11px] bg-amber-50 text-amber-800 font-semibold px-2.5 py-0.5 rounded-full border border-amber-200 hidden sm:inline-block">
+                          {tempMediaPartners.filter((p) => p.enabled).length} Partner Aktif
+                        </span>
+                      </div>
+                      <p className="text-xs text-stone-500 mt-0.5">
+                        Atur logo, nama media partner, serta toggle & URL Instagram dan YouTube.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <div className={`px-2.5 py-1 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors ${
+                      expandedSiteSection === 5 ? 'bg-amber-800 text-white' : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
+                    }`}>
+                      <span>{expandedSiteSection === 5 ? 'Tutup' : 'Buka & Atur'}</span>
+                      {expandedSiteSection === 5 ? <ChevronUp className="w-4 h-4 text-white" /> : <ChevronDown className="w-4 h-4 text-stone-600" />}
+                    </div>
+                  </div>
+                </div>
+
+                {expandedSiteSection === 5 && (
+                  <div className="p-4 sm:p-6 pt-2 border-t border-stone-100 space-y-5">
+                    <div className="flex justify-between items-center pb-1">
+                      <p className="text-xs text-stone-600">
+                        Atur logo, nama media partner/komunitas, serta toggle & URL Instagram dan YouTube.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const newPartner: MediaPartnerItem = {
+                            id: `mp-${Date.now()}`,
+                            name: 'Nama Partner Baru',
+                            logoUrl: '',
+                            instagramUrl: 'https://www.instagram.com/',
+                            instagramEnabled: true,
+                            youtubeUrl: '',
+                            youtubeEnabled: false,
+                            enabled: true,
+                            order: tempMediaPartners.length,
+                          };
+                          setTempMediaPartners([...tempMediaPartners, newPartner]);
+                        }}
+                        className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm cursor-pointer shrink-0"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>Tambah Media Partner</span>
+                      </button>
+                    </div>
+
+                    <div className="space-y-4">
+                      {tempMediaPartners.map((partner, pIdx) => (
+                        <div
+                          key={partner.id}
+                          className="p-4 bg-stone-50 rounded-2xl border border-stone-200 space-y-3.5 relative"
+                        >
+                          <div className="flex items-center justify-between border-b border-stone-200 pb-2">
+                            <div className="flex items-center gap-2">
+                              <span className="w-6 h-6 rounded-full bg-amber-600 text-white font-extrabold text-xs flex items-center justify-center">
+                                #{pIdx + 1}
+                              </span>
+                              <span className="text-xs font-bold text-stone-900">
+                                {partner.name || `Partner #${pIdx + 1}`}
+                              </span>
+                            </div>
+
+                            <div className="flex items-center gap-3">
+                              <label className="inline-flex items-center gap-2 cursor-pointer text-xs font-bold text-stone-700">
+                                <input
+                                  type="checkbox"
+                                  checked={partner.enabled}
+                                  onChange={(e) => {
+                                    const isChecked = e.target.checked;
+                                    setTempMediaPartners(
+                                      tempMediaPartners.map((p) =>
+                                        p.id === partner.id ? { ...p, enabled: isChecked } : p
+                                      )
+                                    );
+                                  }}
+                                  className="w-4 h-4 text-amber-600 rounded focus:ring-amber-500 cursor-pointer"
+                                />
+                                <span className={partner.enabled ? 'text-amber-700 font-extrabold' : 'text-stone-400'}>
+                                  {partner.enabled ? 'Aktif' : 'Nonaktif'}
+                                </span>
                               </label>
-                              <textarea
-                                rows={6}
-                                value={catConfig.singlePageContent || ''}
+
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setTempMediaPartners(tempMediaPartners.filter((p) => p.id !== partner.id));
+                                }}
+                                className="p-1.5 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                                title="Hapus Partner Ini"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                            {/* Nama Partner */}
+                            <div className="space-y-1">
+                              <label className="font-bold text-stone-700 block">Nama Partner / Komunitas:</label>
+                              <input
+                                type="text"
+                                value={partner.name}
                                 onChange={(e) => {
                                   const val = e.target.value;
-                                  setTempCategoryConfigs(
-                                    tempCategoryConfigs.map((c) =>
-                                      c.id === catConfig.id ? { ...c, singlePageContent: val } : c
+                                  setTempMediaPartners(
+                                    tempMediaPartners.map((p) =>
+                                      p.id === partner.id ? { ...p, name: val } : p
                                     )
                                   );
                                 }}
-                                placeholder="Tuliskan isi artikel lengkap, deskripsi profil, atau panduan informasi warga di sini..."
-                                className="w-full px-3 py-2 bg-white border border-stone-300 rounded-xl text-xs font-mono text-stone-900 focus:outline-none focus:ring-2 focus:ring-purple-600"
+                                placeholder="Contoh: Bintarajayapermai.ofc"
+                                className="w-full px-3 py-2 bg-white border border-stone-300 rounded-xl font-bold text-xs text-stone-900 focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                              />
+                            </div>
+
+                            {/* URL Logo */}
+                            <div className="space-y-1">
+                              <label className="font-bold text-stone-700 block">URL Logo / Foto Partner:</label>
+                              <input
+                                type="text"
+                                value={partner.logoUrl || ''}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setTempMediaPartners(
+                                    tempMediaPartners.map((p) =>
+                                      p.id === partner.id ? { ...p, logoUrl: val } : p
+                                    )
+                                  );
+                                }}
+                                placeholder="https://... atau upload gambar"
+                                className="w-full px-3 py-2 bg-white border border-stone-300 rounded-xl text-xs focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                              />
+                            </div>
+
+                            {/* Instagram Link Toggle & URL */}
+                            <div className="space-y-1.5 bg-white p-2.5 rounded-xl border border-stone-200">
+                              <div className="flex items-center justify-between">
+                                <label className="font-bold text-stone-800 flex items-center gap-1.5">
+                                  <Instagram className="w-3.5 h-3.5 text-pink-500" />
+                                  <span>Instagram URL</span>
+                                </label>
+                                <input
+                                  type="checkbox"
+                                  checked={partner.instagramEnabled ?? true}
+                                  onChange={(e) => {
+                                    const isChecked = e.target.checked;
+                                    setTempMediaPartners(
+                                      tempMediaPartners.map((p) =>
+                                        p.id === partner.id ? { ...p, instagramEnabled: isChecked } : p
+                                      )
+                                    );
+                                  }}
+                                  className="w-3.5 h-3.5 text-pink-600 rounded cursor-pointer"
+                                />
+                              </div>
+                              <input
+                                type="text"
+                                value={partner.instagramUrl || ''}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setTempMediaPartners(
+                                    tempMediaPartners.map((p) =>
+                                      p.id === partner.id ? { ...p, instagramUrl: val } : p
+                                    )
+                                  );
+                                }}
+                                placeholder="https://www.instagram.com/..."
+                                className="w-full px-2.5 py-1.5 bg-stone-50 border border-stone-300 rounded-lg text-xs font-mono focus:outline-none"
+                              />
+                            </div>
+
+                            {/* YouTube Link Toggle & URL */}
+                            <div className="space-y-1.5 bg-white p-2.5 rounded-xl border border-stone-200">
+                              <div className="flex items-center justify-between">
+                                <label className="font-bold text-stone-800 flex items-center gap-1.5">
+                                  <Youtube className="w-3.5 h-3.5 text-red-500" />
+                                  <span>YouTube URL</span>
+                                </label>
+                                <input
+                                  type="checkbox"
+                                  checked={partner.youtubeEnabled ?? false}
+                                  onChange={(e) => {
+                                    const isChecked = e.target.checked;
+                                    setTempMediaPartners(
+                                      tempMediaPartners.map((p) =>
+                                        p.id === partner.id ? { ...p, youtubeEnabled: isChecked } : p
+                                      )
+                                    );
+                                  }}
+                                  className="w-3.5 h-3.5 text-red-600 rounded cursor-pointer"
+                                />
+                              </div>
+                              <input
+                                type="text"
+                                value={partner.youtubeUrl || ''}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setTempMediaPartners(
+                                    tempMediaPartners.map((p) =>
+                                      p.id === partner.id ? { ...p, youtubeUrl: val } : p
+                                    )
+                                  );
+                                }}
+                                placeholder="https://www.youtube.com/@..."
+                                className="w-full px-2.5 py-1.5 bg-stone-50 border border-stone-300 rounded-lg text-xs font-mono focus:outline-none"
                               />
                             </div>
                           </div>
-                        )}
-                      </div>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </div>
+                )}
               </div>
 
               {/* Save All Settings Button */}
               <div className="bg-white p-5 rounded-2xl border border-stone-200 shadow-xs flex items-center justify-between">
                 <div>
-                  <h4 className="font-bold text-stone-900 text-sm">Simpan Perubahan Navigasi, Branding & Layout Entitas</h4>
+                  <h4 className="font-bold text-stone-900 text-sm">Simpan Perubahan Navigasi, Branding & Media</h4>
                   <p className="text-xs text-stone-500">
-                    Klik tombol di samping untuk menerapkan seluruh konfigurasi logo, susunan tab navbar, dan layout halaman entitas secara langsung.
+                    Klik tombol di samping untuk menerapkan seluruh konfigurasi logo, susunan tab navbar, layout entitas, 3 section media feeds, dan media partner secara langsung.
                   </p>
                 </div>
 
@@ -3918,12 +4496,14 @@ export const CMSModal: React.FC<CMSModalProps> = ({
                       categoryConfigs: tempCategoryConfigs,
                       documentTemplates: tempDocumentTemplates,
                       pollingConfig: tempPollingConfig,
+                      socialFeeds: tempSocialFeeds,
+                      mediaPartners: tempMediaPartners,
                     });
-                    showToast('Pengaturan navigasi, branding, dan layout entitas berhasil disimpan!');
+                    showToast('Pengaturan navigasi, branding, layout, media feeds, dan media partner berhasil disimpan!');
                   }}
                   className="flex items-center gap-2 px-5 py-2.5 bg-emerald-800 hover:bg-emerald-900 text-white rounded-xl font-semibold text-xs sm:text-sm shadow-md transition-all shrink-0 cursor-pointer"
                 >
-                  <Check className="w-4 h-4 text-emerald-300" />
+                  <Check className="w-4 h-4" />
                   <span>Simpan Pengaturan</span>
                 </button>
               </div>

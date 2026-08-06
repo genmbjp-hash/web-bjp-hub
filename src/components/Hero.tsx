@@ -1,6 +1,6 @@
 import React from 'react';
 import { Sparkles } from 'lucide-react';
-import { BJP_LOGO_URL } from '../assets/logo';
+import { BJP_LOGO_URL, BJP_LOGO_FALLBACK_SVG } from '../assets/logo';
 
 interface HeroProps {
   onOpenCMS: () => void;
@@ -38,6 +38,12 @@ export const Hero: React.FC<HeroProps> = ({ totalEntities, logoUrl }) => {
               src={displayLogo}
               alt="Logo BJP HUB RW 11"
               className="w-20 h-20 rounded-xl object-cover border border-amber-400/40 shadow-xl"
+              onError={(e) => {
+                const target = e.currentTarget;
+                if (target.src !== BJP_LOGO_FALLBACK_SVG) {
+                  target.src = BJP_LOGO_FALLBACK_SVG;
+                }
+              }}
             />
             <span className="text-xs font-bold text-amber-300 mt-2">BJP HUB</span>
             <span className="text-[10px] text-stone-400 font-medium">Official RW 11 Portal</span>
@@ -47,4 +53,5 @@ export const Hero: React.FC<HeroProps> = ({ totalEntities, logoUrl }) => {
     </div>
   );
 };
+
 

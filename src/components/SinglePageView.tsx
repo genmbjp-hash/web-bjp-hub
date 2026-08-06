@@ -20,13 +20,14 @@ export const SinglePageView: React.FC<SinglePageViewProps> = ({
 }) => {
   const pageTitle = title || categoryConfig?.name || 'Informasi Halaman';
   const pageDesc = description || categoryConfig?.description || '';
+  const defaultHero = 'https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=1200&q=80';
   const heroImage = heroImageUrl
     ? formatImageUrl(heroImageUrl)
     : categoryConfig?.singlePageHeroImage
     ? formatImageUrl(categoryConfig.singlePageHeroImage)
     : categoryConfig?.logoUrl
     ? formatImageUrl(categoryConfig.logoUrl)
-    : '/images/hero_bjp.jpg';
+    : defaultHero;
 
   const content = contentHtml || categoryConfig?.singlePageContent || `
 <h3 class="text-xl font-extrabold text-stone-900 mb-3">Selamat Datang di Halaman Resmi ${pageTitle}</h3>
@@ -52,6 +53,9 @@ export const SinglePageView: React.FC<SinglePageViewProps> = ({
           src={heroImage}
           alt={pageTitle}
           className="w-full h-full object-cover"
+          onError={(e) => {
+            e.currentTarget.src = defaultHero;
+          }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/40 to-transparent flex flex-col justify-end p-6 sm:p-10 text-white">
           <div className="flex items-center gap-2 mb-2">

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header';
 import { HomePageHeader } from './components/HomePageHeader';
+import { HomepageSearch } from './components/HomepageSearch';
 import { CategoryPageHeader } from './components/CategoryPageHeader';
 import { CategoryCarousel } from './components/CategoryCarousel';
 import { CategoryFilter } from './components/CategoryFilter';
@@ -9,6 +10,8 @@ import { PhotoAlbumCard } from './components/PhotoAlbumCard';
 import { SinglePageView } from './components/SinglePageView';
 import { RtRwView } from './components/RtRwView';
 import { SocialFeedsSection } from './components/SocialFeedsSection';
+import { MapSection } from './components/MapSection';
+import { MediaPartnersSection } from './components/MediaPartnersSection';
 import { DocumentGeneratorPage } from './components/DocumentGeneratorPage';
 import { PollingPage } from './components/PollingPage';
 import { EntityDetailModal } from './components/EntityDetailModal';
@@ -292,8 +295,29 @@ export default function App() {
                     totalEntities={entities.length}
                   />
 
-                  {/* Homepage Feeds Embed Section (YouTube & Instagram Feeds) */}
+                  {/* Dedicated Interactive Homepage Search Feature */}
+                  <HomepageSearch
+                    entities={entities}
+                    announcements={announcements}
+                    categoryConfigs={categoryConfigs}
+                    documentTemplates={siteSettings.documentTemplates}
+                    socialFeeds={siteSettings.socialFeeds}
+                    onSelectEntity={(entity) => setSelectedEntityForModal(entity)}
+                    onSelectCategory={(catName) => {
+                      setSelectedCategory(catName);
+                      setActiveTab('entities');
+                    }}
+                    onSelectTab={(tab) => setActiveTab(tab)}
+                  />
+
+                  {/* Homepage Feeds Embed Section (3 Section: Slide Terbaru, Album Foto, Album Video) */}
                   <SocialFeedsSection feeds={siteSettings.socialFeeds} />
+
+                  {/* Google Map Section */}
+                  <MapSection />
+
+                  {/* Media Partner Slider Section */}
+                  <MediaPartnersSection mediaPartners={siteSettings.mediaPartners} />
 
                   {/* If user typed a search term on Homepage, show matching Entity Cards */}
                   {searchTerm ? (

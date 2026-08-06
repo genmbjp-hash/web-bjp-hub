@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Share2, Check, Sparkles, ExternalLink, Copy } from 'lucide-react';
-import { BJP_LOGO_URL } from '../assets/logo';
+import { BJP_LOGO_URL, BJP_LOGO_FALLBACK_SVG } from '../assets/logo';
 import { formatImageUrl } from '../utils/imageUrl';
 
 interface HomePageHeaderProps {
@@ -107,7 +107,10 @@ export const HomePageHeader: React.FC<HomePageHeaderProps> = ({
             alt={siteTitle}
             className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 rounded-2xl sm:rounded-3xl object-contain bg-white border-2 border-amber-400 p-2 shadow-xl shrink-0"
             onError={(e) => {
-              (e.target as HTMLImageElement).src = BJP_LOGO_URL;
+              const target = e.currentTarget;
+              if (target.src !== BJP_LOGO_FALLBACK_SVG) {
+                target.src = BJP_LOGO_FALLBACK_SVG;
+              }
             }}
           />
           <div className="text-left md:text-center space-y-0.5">
