@@ -55,10 +55,10 @@ export const DocumentTemplatesCMS: React.FC<DocumentTemplatesCMSProps> = ({ site
           </div>
           <button
             onClick={handleSave}
-            className="flex items-center gap-2 px-6 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-xl transition-all shadow-md hover:shadow-lg shrink-0"
+            className="flex items-center gap-2 px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white font-semibold rounded-lg transition-colors text-sm shrink-0"
           >
             <Save className="w-4 h-4" />
-            <span>Simpan Template</span>
+            Simpan
           </button>
         </div>
       </div>
@@ -180,10 +180,10 @@ export const DocumentTemplatesCMS: React.FC<DocumentTemplatesCMSProps> = ({ site
         <button
           type="button"
           onClick={addTemplate}
-          className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-stone-100 hover:bg-stone-200 text-stone-800 font-bold rounded-2xl text-xs transition-colors border border-dashed border-stone-300"
+          className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-stone-100 hover:bg-stone-200 text-stone-800 font-semibold rounded-lg text-xs transition-colors border border-dashed border-stone-300"
         >
           <Plus className="w-4 h-4 text-emerald-700" />
-          <span>Tambah Template Surat Baru</span>
+          Tambah Template Surat Baru
         </button>
       </div>
     </div>

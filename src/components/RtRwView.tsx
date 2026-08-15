@@ -5,6 +5,7 @@ import {
   ShieldCheck, FileText, Download, Image as ImageIcon, FileCode, Info, Maximize2, X, Home
 } from 'lucide-react';
 import { formatImageUrl } from '../utils/imageUrl';
+import { getDrivePreviewUrl, getDriveViewUrl } from '../utils/driveUrl';
 
 interface RtRwViewProps {
   config: RtRwPageConfig;
@@ -249,10 +250,13 @@ export const RtRwView: React.FC<RtRwViewProps> = ({ config, onBack }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {activeExtraCards.map((card) => {
               if (card.type === 'pdf') {
+                const drivePreviewUrl = getDrivePreviewUrl(card.fileUrl);
+                const driveViewUrl = getDriveViewUrl(card.fileUrl);
+
                 return (
                   <div
                     key={card.id}
-                    className="bg-white rounded-2xl border border-stone-200/90 shadow-2xs hover:shadow-md transition-all p-5 flex flex-col justify-between space-y-4"
+                    className="bg-white rounded-2xl border border-stone-200/90 shadow-2xs hover:shadow-md transition-all p-5 flex flex-col justify-between space-y-4 md:col-span-2 lg:col-span-1"
                   >
                     <div className="space-y-3">
                       <div className="flex items-center justify-between gap-2">
@@ -284,10 +288,29 @@ export const RtRwView: React.FC<RtRwViewProps> = ({ config, onBack }) => {
                           <span className="truncate">{card.fileName}</span>
                         </div>
                       )}
+
+                      {drivePreviewUrl && (
+                        <iframe
+                          src={drivePreviewUrl}
+                          title={card.title}
+                          className="w-full h-72 rounded-xl border border-stone-200"
+                          loading="lazy"
+                        />
+                      )}
                     </div>
 
                     <div className="pt-2 border-t border-stone-100">
-                      {card.fileUrl ? (
+                      {driveViewUrl ? (
+                        <a
+                          href={driveViewUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold rounded-xl transition-all shadow-2xs"
+                        >
+                          <Download className="w-4 h-4 text-emerald-300" />
+                          <span>{card.ctaText || 'Buka Dokumen Lengkap'}</span>
+                        </a>
+                      ) : card.fileUrl ? (
                         <a
                           href={card.fileUrl}
                           target="_blank"

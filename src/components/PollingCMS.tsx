@@ -45,10 +45,10 @@ export const PollingCMS: React.FC<PollingCMSProps> = ({ siteSettings, onSaveSite
         </div>
         <button
           onClick={handleSave}
-          className="flex items-center gap-2 px-6 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-xl transition-all shadow-md hover:shadow-lg shrink-0"
+          className="flex items-center gap-2 px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white font-semibold rounded-lg transition-colors text-sm shrink-0"
         >
           <Save className="w-4 h-4" />
-          <span>Simpan Polling</span>
+          Simpan
         </button>
       </div>
 

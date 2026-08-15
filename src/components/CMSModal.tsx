@@ -6,7 +6,7 @@ import {
   Bold, Italic, List, Heading, ExternalLink, ShieldAlert, ArrowLeft,
   GripVertical, ArrowUp, ArrowDown, MapPin, Info, Globe, Sliders, Palette, Eye, EyeOff,
   Users, UserPlus, ShieldCheck, Shield, Lock, LogOut, CheckSquare, Square, Search, User as UserIcon,
-  Database, Server, CheckCircle2, XCircle, Terminal, Code, FileText, Vote, Youtube, Instagram
+  Database, Server, CheckCircle2, XCircle, Terminal, Code, FileText, Vote, Youtube, Instagram, Save
 } from 'lucide-react';
 import { exportDataAsJSON, importDataFromJSON, resetToDefaults, DEFAULT_CATEGORY_CONFIGS } from '../utils/storage';
 import { formatImageUrl } from '../utils/imageUrl';
@@ -842,7 +842,7 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
             <button
               type="button"
               onClick={handleExport}
-              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-stone-800 hover:bg-stone-700 text-stone-200 rounded-xl text-xs font-semibold border border-stone-700 transition-colors cursor-pointer"
+              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-stone-800 hover:bg-stone-700 text-stone-200 rounded-lg text-xs font-semibold border border-stone-700 transition-colors"
               title="Download Backup File JSON Data"
             >
               <Download className="w-3.5 h-3.5 text-emerald-400" />
@@ -853,7 +853,7 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
               <button
                 type="button"
                 onClick={onLogout}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-red-950/80 hover:bg-red-900 text-red-200 rounded-xl text-xs font-bold border border-red-800/80 transition-colors cursor-pointer"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-red-950/80 hover:bg-red-900 text-red-200 rounded-lg text-xs font-semibold border border-red-800/80 transition-colors"
                 title="Keluar dari Akun CMS"
               >
                 <LogOut className="w-3.5 h-3.5 text-red-300" />
@@ -863,7 +863,7 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
 
             <button
               onClick={onClose}
-              className="p-2 text-stone-400 hover:text-white bg-stone-800 hover:bg-stone-700 rounded-xl transition-colors cursor-pointer"
+              className="p-2 text-stone-400 hover:text-white bg-stone-800 hover:bg-stone-700 rounded-lg transition-colors"
               title="Tutup CMS"
             >
               <X className="w-5 h-5" />
@@ -1638,15 +1638,16 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
                             setEditingEntity(null);
                             setIsCreatingNewEntity(false);
                           }}
-                          className="px-4 py-2 text-stone-600 hover:text-stone-900 text-xs font-semibold rounded-xl hover:bg-stone-100"
+                          className="px-4 py-2 text-stone-600 hover:text-stone-900 hover:bg-stone-100 text-sm font-semibold rounded-lg transition-colors"
                         >
                           Batal
                         </button>
                         <button
                           type="submit"
-                          className="bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-xs sm:text-sm px-6 py-2.5 rounded-xl shadow-md transition-colors"
+                          className="flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-white font-semibold text-sm px-4 py-2 rounded-lg transition-colors"
                         >
-                          Simpan Komunitas Ini
+                          <Save className="w-4 h-4" />
+                          Simpan
                         </button>
                       </div>
                     </form>
@@ -1762,10 +1763,10 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
 
                     <button
                       onClick={() => handleStartNewEntity()}
-                      className="flex items-center gap-2 bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-xs sm:text-sm px-4 py-2 rounded-xl transition-colors shadow-xs"
+                      className="flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-white font-semibold text-sm px-4 py-2 rounded-lg transition-colors shrink-0"
                     >
                       <Plus className="w-4 h-4" />
-                      <span>+ Tambah Card Baru</span>
+                      <span>Tambah Card Baru</span>
                     </button>
                   </div>
 
@@ -1866,10 +1867,10 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
                                   </span>
                                   <button
                                     onClick={() => handleStartEditEntity(item)}
-                                    className="flex items-center gap-1 bg-white hover:bg-emerald-50 text-emerald-800 text-xs font-bold px-3 py-1.5 rounded-lg border border-stone-200 hover:border-emerald-300 transition-colors"
+                                    className="flex items-center gap-1 bg-white hover:bg-emerald-50 text-emerald-800 text-xs font-semibold px-3 py-1.5 rounded-lg border border-stone-200 hover:border-emerald-300 transition-colors"
                                   >
                                     <Edit3 className="w-3.5 h-3.5" />
-                                    <span>Edit Detail</span>
+                                    <span>Edit</span>
                                   </button>
                                 </div>
                               </div>
@@ -2018,15 +2019,16 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
                         setEditingAnn(null);
                         setIsCreatingAnn(false);
                       }}
-                      className="px-4 py-2 text-stone-600 text-xs font-semibold"
+                      className="px-4 py-2 text-stone-600 hover:text-stone-900 hover:bg-stone-100 text-sm font-semibold rounded-lg transition-colors"
                     >
                       Batal
                     </button>
                     <button
                       type="submit"
-                      className="bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-xs px-5 py-2 rounded-xl"
+                      className="flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-white font-semibold text-sm px-4 py-2 rounded-lg transition-colors"
                     >
-                      Simpan Pengumuman
+                      <Save className="w-4 h-4" />
+                      Simpan
                     </button>
                   </div>
                 </form>
@@ -2039,10 +2041,10 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
                     </div>
                     <button
                       onClick={() => setIsCreatingAnn(true)}
-                      className="flex items-center gap-1.5 bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-xs px-4 py-2 rounded-xl transition-colors shadow-xs"
+                      className="flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-white font-semibold text-sm px-4 py-2 rounded-lg transition-colors shrink-0"
                     >
                       <Plus className="w-4 h-4" />
-                      <span>Buat Pengumuman Baru</span>
+                      <span>Tambah Pengumuman Baru</span>
                     </button>
                   </div>
 
@@ -2153,86 +2155,6 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
                   </div>
                 </div>
               )}
-            </div>
-          )}
-
-          {/* TAB 3: BACKUP & VERCEL PUBLISH GUIDE */}
-          {activeTab === 'backup' && (
-            <div className="max-w-3xl mx-auto space-y-6">
-              {/* Download / Upload Card */}
-              <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-xs space-y-4">
-                <h3 className="font-bold text-stone-900 text-base border-b border-stone-100 pb-3 flex items-center gap-2">
-                  <Download className="w-5 h-5 text-emerald-700" />
-                  <span>Ekspor & Impor Backup Data JSON</span>
-                </h3>
-
-                <p className="text-stone-600 text-xs leading-relaxed">
-                  Semua perubahan yang Anda masukkan tersimpan di browser lokal HP/Laptop Anda. Gunakan opsi di bawah ini untuk mengunduh cadangan data atau memindahkannya ke perangkat lain.
-                </p>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                  <button
-                    onClick={handleExport}
-                    className="flex items-center justify-center gap-2 bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-xs sm:text-sm py-3 px-4 rounded-xl shadow-xs transition-colors"
-                  >
-                    <Download className="w-4 h-4" />
-                    <span>Download File JSON Backup</span>
-                  </button>
-
-                  <label className="flex items-center justify-center gap-2 bg-stone-800 hover:bg-stone-900 text-white font-bold text-xs sm:text-sm py-3 px-4 rounded-xl cursor-pointer shadow-xs transition-colors">
-                    <Upload className="w-4 h-4" />
-                    <span>Upload File JSON Backup</span>
-                    <input type="file" accept=".json" onChange={handleImportFile} className="hidden" />
-                  </label>
-                </div>
-
-                <div className="pt-3 border-t border-stone-100 flex justify-end">
-                  <button
-                    onClick={handleResetData}
-                    className="flex items-center gap-1.5 text-red-600 hover:text-red-700 text-xs font-semibold hover:bg-red-50 px-3 py-1.5 rounded-lg border border-red-200 transition-colors"
-                  >
-                    <RefreshCw className="w-3.5 h-3.5" />
-                    <span>Reset Data ke 13 Komunitas Awal PDF</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Step-by-step Vercel Guide for Non-Coders */}
-              <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-xs space-y-4">
-                <h3 className="font-bold text-stone-900 text-base border-b border-stone-100 pb-3 flex items-center gap-2">
-                  <ExternalLink className="w-5 h-5 text-amber-600" />
-                  <span>Panduan Cara Publish ke Vercel (Gratis & Mudah)</span>
-                </h3>
-
-                <div className="space-y-3 text-xs text-stone-700 leading-relaxed">
-                  <p className="font-semibold text-stone-900">
-                    Aplikasi ini dirancang 100% siap untuk dipublish di Vercel tanpa perlu setup server database khusus:
-                  </p>
-
-                  <ol className="list-decimal pl-5 space-y-2">
-                    <li>
-                      <strong>Ekspor / Export project ke GitHub / ZIP:</strong>
-                      <br />
-                      Klik menu <em>Settings</em> di pojok kanan atas AI Studio lalu pilih <strong>Export to GitHub</strong> atau <strong>Download ZIP</strong>.
-                    </li>
-                    <li>
-                      <strong>Login ke Vercel:</strong>
-                      <br />
-                      Buka website <a href="https://vercel.com" target="_blank" rel="noreferrer" className="text-emerald-800 font-bold underline">Vercel.com</a>, daftar/login secara gratis menggunakan akun Google/GitHub pengurus.
-                    </li>
-                    <li>
-                      <strong>Import Repository / Upload:</strong>
-                      <br />
-                      Pilih <strong>"Add New" → "Project"</strong>, lalu hubungkan repository GitHub hasil export tadi.
-                    </li>
-                    <li>
-                      <strong>Deploy:</strong>
-                      <br />
-                      Sistem Vercel akan mendeteksi framework <em>Vite + React</em> secara otomatis. Klik tombol <strong>"Deploy"</strong> dan tunggu 1 menit hingga website aktif!
-                    </li>
-                  </ol>
-                </div>
-              </div>
             </div>
           )}
 
@@ -2867,9 +2789,9 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
                     });
                     showToast('Pengaturan logo, judul website, tab navbar, & header komunitas berhasil disimpan!');
                   }}
-                  className="flex items-center gap-2 px-5 py-2.5 bg-emerald-800 hover:bg-emerald-900 text-white rounded-xl font-semibold text-xs sm:text-sm shadow-md transition-all shrink-0 cursor-pointer"
+                  className="flex items-center gap-2 px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg font-semibold text-sm transition-colors shrink-0"
                 >
-                  <Check className="w-4 h-4 text-emerald-300" />
+                  <Save className="w-4 h-4" />
                   <span>Simpan Pengaturan</span>
                 </button>
               </div>
@@ -3141,17 +3063,17 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
                           setEditingUser(null);
                           setIsCreatingUser(false);
                         }}
-                        className="px-4 py-2.5 text-stone-600 hover:text-stone-900 text-xs font-semibold rounded-xl border border-stone-200 transition-colors cursor-pointer"
+                        className="px-4 py-2 text-stone-600 hover:text-stone-900 hover:bg-stone-100 text-sm font-semibold rounded-lg transition-colors"
                       >
                         Batal
                       </button>
 
                       <button
                         type="submit"
-                        className="flex items-center gap-2 bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-xs sm:text-sm px-6 py-2.5 rounded-xl transition-all shadow-md cursor-pointer"
+                        className="flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-white font-semibold text-sm px-4 py-2 rounded-lg transition-colors"
                       >
-                        <Check className="w-4 h-4 text-emerald-300" />
-                        <span>{editingUser ? 'Simpan Perubahan Akun' : 'Buat Akun Pengurus'}</span>
+                        <Save className="w-4 h-4" />
+                        {editingUser ? 'Simpan Perubahan' : 'Buat Akun'}
                       </button>
                     </div>
                   </form>
@@ -3174,10 +3096,10 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
                     {isSuperAdmin && (
                       <button
                         onClick={handleStartNewUser}
-                        className="flex items-center gap-2 bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-xs sm:text-sm px-4 py-2.5 rounded-xl transition-all shadow-xs shrink-0 cursor-pointer"
+                        className="flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-white font-semibold text-sm px-4 py-2 rounded-lg transition-colors shrink-0"
                       >
                         <UserPlus className="w-4 h-4" />
-                        <span>+ Tambah Akun Pengurus</span>
+                        <span>Tambah Akun Baru</span>
                       </button>
                     )}
                   </div>
@@ -3398,7 +3320,7 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
                     type="button"
                     onClick={handleTestSupabase}
                     disabled={supabaseTesting}
-                    className="flex items-center justify-center gap-2 px-4 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-900 border border-stone-300 rounded-xl font-bold text-xs transition-all cursor-pointer disabled:opacity-50"
+                    className="flex items-center justify-center gap-2 px-4 py-2 bg-stone-100 hover:bg-stone-200 text-stone-900 border border-stone-300 rounded-lg font-semibold text-xs transition-colors disabled:opacity-50"
                   >
                     <RefreshCw className={`w-4 h-4 text-stone-700 ${supabaseTesting ? 'animate-spin' : ''}`} />
                     <span>{supabaseTesting ? 'Menguji...' : 'Uji Koneksi Supabase'}</span>
@@ -3408,7 +3330,7 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
                     type="button"
                     onClick={handlePushToSupabase}
                     disabled={supabaseSyncing || !isSupabaseConfigured()}
-                    className="flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-800 hover:bg-emerald-900 text-white rounded-xl font-bold text-xs transition-all shadow-xs cursor-pointer disabled:opacity-50"
+                    className="flex items-center justify-center gap-2 px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg font-semibold text-xs transition-colors disabled:opacity-50"
                   >
                     <Upload className="w-4 h-4 text-emerald-300" />
                     <span>{supabaseSyncing ? 'Mengirim...' : 'Upload Data Lokal ke Supabase'}</span>
@@ -3418,7 +3340,7 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
                     type="button"
                     onClick={handlePullFromSupabase}
                     disabled={supabaseSyncing || !isSupabaseConfigured()}
-                    className="flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-700 hover:bg-blue-800 text-white rounded-xl font-bold text-xs transition-all shadow-xs cursor-pointer disabled:opacity-50"
+                    className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-lg font-semibold text-xs transition-colors disabled:opacity-50"
                   >
                     <Download className="w-4 h-4 text-blue-200" />
                     <span>{supabaseSyncing ? 'Mengunduh...' : 'Tarik Data dari Supabase'}</span>
@@ -3509,7 +3431,7 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
                   <button
                     type="button"
                     onClick={handleCopySqlScript}
-                    className="flex items-center gap-1.5 px-4 py-2 bg-emerald-800 hover:bg-emerald-900 text-white rounded-xl text-xs font-bold transition-all cursor-pointer shadow-xs"
+                    className="flex items-center gap-1.5 px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-semibold transition-colors"
                   >
                     {copiedSql ? (
                       <>
@@ -3602,9 +3524,9 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
                   <button
                     type="button"
                     onClick={handleExport}
-                    className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-emerald-800 hover:bg-emerald-900 text-white rounded-xl font-bold text-xs sm:text-sm shadow-md transition-all cursor-pointer"
+                    className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg font-semibold text-sm shadow-sm transition-colors"
                   >
-                    <Download className="w-4 h-4 text-emerald-300" />
+                    <Download className="w-4 h-4" />
                     <span>Download Backup Data (.json)</span>
                   </button>
                 </div>
@@ -3634,8 +3556,8 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
                     </div>
                   </div>
 
-                  <label className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-blue-700 hover:bg-blue-800 text-white rounded-xl font-bold text-xs sm:text-sm shadow-md transition-all cursor-pointer">
-                    <Upload className="w-4 h-4 text-blue-200" />
+                  <label className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-blue-700 hover:bg-blue-800 text-white rounded-lg font-semibold text-sm shadow-sm transition-colors cursor-pointer">
+                    <Upload className="w-4 h-4" />
                     <span>Pilih File Backup JSON & Import</span>
                     <input
                       type="file"
@@ -3673,7 +3595,7 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
                   <button
                     type="button"
                     onClick={handleResetData}
-                    className="flex items-center gap-2 px-4 py-2.5 bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 rounded-xl font-bold text-xs transition-all cursor-pointer"
+                    className="flex items-center gap-2 px-4 py-2 bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 rounded-lg font-semibold text-xs transition-colors"
                   >
                     <RefreshCw className="w-4 h-4 text-amber-700" />
                     <span>Reset Data Ke 13 Komunitas Awal</span>

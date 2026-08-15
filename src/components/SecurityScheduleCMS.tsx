@@ -90,10 +90,10 @@ export const SecurityScheduleCMS: React.FC<SecurityScheduleCMSProps> = ({
         
         <button
           onClick={handleSave}
-          className="flex items-center gap-2 px-6 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-xl transition-all shadow-md hover:shadow-lg"
+          className="flex items-center gap-2 px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white font-semibold text-sm rounded-lg transition-colors shrink-0"
         >
           <Save className="w-4 h-4" />
-          <span>Simpan Jadwal</span>
+          Simpan
         </button>
       </div>
 

@@ -157,6 +157,18 @@ export const DEFAULT_RTRW_CONFIG: RtRwPageConfig = {
       enabled: true,
       order: 1,
     },
+    {
+      id: 'card-pdf-1',
+      type: 'pdf',
+      title: 'Tatib Warga RW 011 (2026)',
+      description: 'Dokumen resmi Tata Tertib Warga RW 011 Bintara Jaya Permai versi 2026.',
+      categoryBadge: 'Peraturan Warga',
+      fileUrl: 'https://drive.google.com/file/d/1GLF1PYdr3Fy903pRUVLtyJSxouEgughb/view?usp=sharing',
+      fileName: 'Tatib Warga RW11 BJP 2026.pdf',
+      ctaText: 'Buka Dokumen Lengkap',
+      enabled: true,
+      order: 2,
+    },
   ],
 };
 
