@@ -37,11 +37,11 @@ export const GoogleMapSection: React.FC = () => {
         </div>
 
         {/* Map Embed */}
-        <div className="rounded-3xl overflow-hidden shadow-xl border border-stone-200">
+        <div className="rounded-3xl overflow-hidden shadow-xl border border-stone-200 h-[260px] sm:h-[320px] lg:h-[400px]">
           <iframe
             src={MAP_EMBED_URL}
             width="100%"
-            height="400"
+            height="100%"
             style={{ border: 0 }}
             allowFullScreen
             loading="lazy"

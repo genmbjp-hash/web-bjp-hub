@@ -250,6 +250,8 @@ export const EntityDetailModal: React.FC<EntityDetailModalProps> = ({
                             <img
                               src={formatImageUrl(photo)}
                               alt={caption || `${entity.name} produk ${idx + 1}`}
+                              loading="lazy"
+                              decoding="async"
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                               onError={(e) => {
                                 (e.target as HTMLImageElement).src =
@@ -356,16 +358,9 @@ export const EntityDetailModal: React.FC<EntityDetailModalProps> = ({
           )}
         </div>
 
-        {/* Modal Footer Actions (Without Edit Entity Button) */}
-        <div className="p-4 bg-stone-50 border-t border-stone-200 flex flex-wrap items-center justify-between gap-3 rounded-b-2xl">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 text-stone-600 hover:text-stone-900 text-xs font-semibold rounded-xl hover:bg-stone-200 transition-colors cursor-pointer"
-          >
-            Tutup
-          </button>
-
-          <div className="flex items-center gap-2 ml-auto">
+        {/* Modal Footer Actions */}
+        <div className="p-4 bg-stone-50 border-t border-stone-200 flex flex-wrap items-center justify-end gap-3 rounded-b-2xl">
+          <div className="flex items-center gap-2">
             <button
               onClick={handleShare}
               className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${

@@ -50,6 +50,8 @@ export const PengumumanSection: React.FC<PengumumanSectionProps> = ({
                     <img
                       src={formatImageUrl(ann.image) || FALLBACK_IMAGE_URL}
                       alt={ann.title}
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMAGE_URL; }}
                     />

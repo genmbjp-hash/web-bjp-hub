@@ -34,7 +34,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
         {/* Title & Tagline */}
         <div className="space-y-8 md:space-y-10 max-w-3xl">
           <div className="flex flex-col items-center justify-center gap-4 md:gap-5">
-            <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-widest leading-tight drop-shadow-2xl text-center whitespace-nowrap">
+            <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-widest leading-tight drop-shadow-2xl text-center sm:whitespace-nowrap">
               SELAMAT DATANG DI BJP.hub
             </h1>
             <h2 className="text-sm sm:text-base md:text-lg text-emerald-300 font-bold tracking-[0.15em] uppercase drop-shadow-lg text-center">

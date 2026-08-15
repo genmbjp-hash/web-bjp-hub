@@ -51,6 +51,8 @@ export const CommunityLogos: React.FC = () => {
               <img
                 src={logo.src}
                 alt={logo.name}
+                loading="lazy"
+                decoding="async"
                 className="h-16 sm:h-20 md:h-24 object-contain drop-shadow-sm group-hover:scale-110 transition-transform duration-300"
                 title={logo.name}
               />

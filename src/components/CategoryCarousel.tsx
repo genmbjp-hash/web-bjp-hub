@@ -96,6 +96,8 @@ export const CategoryCarousel: React.FC<CategoryCarouselProps> = ({
             <img
               src={categoryLogo}
               alt={catConfig.name}
+              loading="lazy"
+              decoding="async"
               className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-contain bg-white border border-stone-200 p-1.5 shadow-2xs shrink-0"
               onError={(e) => {
                 const parent = (e.target as HTMLImageElement).parentElement;
@@ -199,7 +201,7 @@ export const CategoryCarousel: React.FC<CategoryCarouselProps> = ({
             {canScrollLeft && (
               <button
                 onClick={handleScrollLeft}
-                className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white/95 text-stone-800 shadow-lg border border-stone-200 flex items-center justify-center hover:bg-white hover:scale-105 transition-all cursor-pointer sm:hidden"
+                className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/95 text-stone-800 shadow-lg border border-stone-200 flex items-center justify-center hover:bg-white hover:scale-105 transition-all cursor-pointer sm:hidden"
                 aria-label="Scroll Left"
               >
                 <ChevronLeft className="w-5 h-5 text-stone-700" />
@@ -208,7 +210,7 @@ export const CategoryCarousel: React.FC<CategoryCarouselProps> = ({
             {canScrollRight && (
               <button
                 onClick={handleScrollRight}
-                className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white/95 text-stone-800 shadow-lg border border-stone-200 flex items-center justify-center hover:bg-white hover:scale-105 transition-all cursor-pointer sm:hidden"
+                className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/95 text-stone-800 shadow-lg border border-stone-200 flex items-center justify-center hover:bg-white hover:scale-105 transition-all cursor-pointer sm:hidden"
                 aria-label="Scroll Right"
               >
                 <ChevronRight className="w-5 h-5 text-stone-700" />

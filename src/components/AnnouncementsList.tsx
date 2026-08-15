@@ -65,6 +65,8 @@ export const AnnouncementsList: React.FC<AnnouncementsListProps> = ({
                     <img
                       src={formatImageUrl(ann.image)}
                       alt={ann.title}
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-300"
                       onError={(e) => {
                         (e.target as HTMLImageElement).src =

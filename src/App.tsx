@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { Entity, Announcement, SiteSettings, CategoryHeaderConfig, User } from './types';
 import { SearchX, Plus } from 'lucide-react';
@@ -12,11 +12,16 @@ import {
   EntityCard,
   EntityDetailModal,
   AnnouncementsList,
-  CMSModal,
   PasswordModal,
   Footer,
   ShareModal,
 } from './components';
+
+// CMSModal is large (admin-only panel) and rarely used by regular visitors,
+// so it's code-split into its own chunk instead of bloating the main bundle.
+const CMSModal = lazy(() =>
+  import('./components/CMSModal').then((m) => ({ default: m.CMSModal }))
+);
 
 // Custom Hooks
 import { useEntities, useAnnouncements, useAuth } from './hooks';
@@ -179,10 +184,7 @@ export default function App() {
 
   const getEntitiesForSectionConfig = (catConfig: CategoryHeaderConfig) =>
     entities.filter((ent) => {
-      const matchesSearch =
-        ent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        ent.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        ent.category.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesSearch = ent.name.toLowerCase().includes(searchTerm.toLowerCase());
 
       const eCat = ent.category.toLowerCase();
       const cId = catConfig.id.toLowerCase();
@@ -195,10 +197,7 @@ export default function App() {
     });
 
   const totalFilteredCount = entities.filter((ent) => {
-    const matchesSearch =
-      ent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      ent.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      ent.category.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = ent.name.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesCategory =
       selectedCategory === 'Semua' ||
@@ -226,11 +225,6 @@ export default function App() {
         totalEntitiesCount={entities.length}
         logoUrl={siteSettings.logoUrl}
         navbarTabs={siteSettings.navbarTabs}
-        onSearchSubmit={(term) => {
-          setSearchTerm(term);
-          setSelectedCategory('Semua');
-          navigate('/komunitas');
-        }}
       />
 
       {/* Running Teks — global, di bawah navbar */}
@@ -257,6 +251,8 @@ export default function App() {
               onSelectCategory={setSelectedCategory}
               entities={entities}
               categoryConfigs={categoryConfigs}
+              searchTerm={searchTerm}
+              onSearchChange={setSearchTerm}
             />
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -274,10 +270,7 @@ export default function App() {
                 const displayedEntities =
                   selectedCategory === 'Semua'
                     ? entities.filter((e) =>
-                        !searchTerm ||
-                        e.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                        e.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                        e.category.toLowerCase().includes(searchTerm.toLowerCase())
+                        !searchTerm || e.name.toLowerCase().includes(searchTerm.toLowerCase())
                       )
                     : getEntitiesForSectionConfig(currentConfig);
 
@@ -391,26 +384,30 @@ export default function App() {
         logoUrl={siteSettings.logoUrl}
       />
 
-      <CMSModal
-        isOpen={isCMSOpen}
-        onClose={() => {
-          setIsCMSOpen(false);
-          setEditingEntityForCMS(null);
-          setPendingCategoryForCard(null);
-        }}
-        entities={entities}
-        onSaveEntities={handleSaveEntities}
-        announcements={announcements}
-        onSaveAnnouncements={handleSaveAnnouncements}
-        siteSettings={siteSettings}
-        onSaveSiteSettings={handleSaveSiteSettings}
-        users={users}
-        onSaveUsers={handleSaveUsers}
-        currentUser={currentUser}
-        onLogout={handleLogout}
-        editingEntityInit={editingEntityForCMS}
-        initialCategoryForNewEntity={pendingCategoryForCard}
-      />
+      {isCMSOpen && (
+        <Suspense fallback={null}>
+          <CMSModal
+            isOpen={isCMSOpen}
+            onClose={() => {
+              setIsCMSOpen(false);
+              setEditingEntityForCMS(null);
+              setPendingCategoryForCard(null);
+            }}
+            entities={entities}
+            onSaveEntities={handleSaveEntities}
+            announcements={announcements}
+            onSaveAnnouncements={handleSaveAnnouncements}
+            siteSettings={siteSettings}
+            onSaveSiteSettings={handleSaveSiteSettings}
+            users={users}
+            onSaveUsers={handleSaveUsers}
+            currentUser={currentUser}
+            onLogout={handleLogout}
+            editingEntityInit={editingEntityForCMS}
+            initialCategoryForNewEntity={pendingCategoryForCard}
+          />
+        </Suspense>
+      )}
 
       {/* Footer */}
       <Footer

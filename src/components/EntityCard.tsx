@@ -32,6 +32,8 @@ export const EntityCard: React.FC<EntityCardProps> = ({
         <img
           src={formatImageUrl(entity.image)}
           alt={entity.name}
+          loading="lazy"
+          decoding="async"
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           onError={(e) => {
             (e.target as HTMLImageElement).src =
@@ -107,7 +109,7 @@ export const EntityCard: React.FC<EntityCardProps> = ({
         {/* Social badges */}
         {(entity.socials || entity.instagram) && (
           <div className="flex items-center gap-1 flex-wrap border-t border-stone-100 pt-2">
-            <SocialBadges socials={entity.socials} fallbackInstagram={entity.instagram} />
+            <SocialBadges socials={entity.socials} fallbackInstagram={entity.instagram} size="md" />
           </div>
         )}
 

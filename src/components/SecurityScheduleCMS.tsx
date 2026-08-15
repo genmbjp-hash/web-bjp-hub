@@ -114,7 +114,7 @@ export const SecurityScheduleCMS: React.FC<SecurityScheduleCMSProps> = ({
 
         {selectedMonth ? (
           <div className="bg-white border border-stone-200 rounded-xl overflow-hidden shadow-xs">
-            <div className="grid grid-cols-[100px_1fr] bg-stone-100 border-b border-stone-200 text-xs font-bold text-stone-600 uppercase">
+            <div className="grid grid-cols-[70px_1fr] sm:grid-cols-[100px_1fr] bg-stone-100 border-b border-stone-200 text-xs font-bold text-stone-600 uppercase">
               <div className="p-3 text-center border-r border-stone-200">Tanggal</div>
               <div className="p-3 pl-4">Nama Petugas Berjaga</div>
             </div>
@@ -125,7 +125,7 @@ export const SecurityScheduleCMS: React.FC<SecurityScheduleCMSProps> = ({
                 const isWeekend = dateObj.getDay() === 0 || dateObj.getDay() === 6;
 
                 return (
-                  <div key={dateStr} className={`grid grid-cols-[100px_1fr] items-center hover:bg-stone-50 transition-colors ${isWeekend ? 'bg-red-50/30' : ''}`}>
+                  <div key={dateStr} className={`grid grid-cols-[70px_1fr] sm:grid-cols-[100px_1fr] items-center hover:bg-stone-50 transition-colors ${isWeekend ? 'bg-red-50/30' : ''}`}>
                     <div className="p-3 text-center border-r border-stone-100 text-sm">
                       <span className={`font-bold ${isWeekend ? 'text-red-600' : 'text-stone-700'}`}>
                         {dateStr.split('-')[2]}

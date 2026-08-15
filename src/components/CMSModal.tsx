@@ -1093,7 +1093,7 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
                                 key={idx}
                                 type="button"
                                 onClick={() => setFormEntity({ ...formEntity, image: p.url })}
-                                className={`text-[10px] p-1.5 rounded-lg border text-left truncate transition-all ${
+                                className={`text-[10px] py-2 px-1.5 rounded-lg border text-left truncate transition-all ${
                                   formEntity.image === p.url
                                     ? 'bg-emerald-800 text-white border-emerald-900 font-bold'
                                     : 'bg-white text-stone-700 border-stone-200 hover:bg-stone-100'
@@ -1563,7 +1563,7 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
                     </form>
 
                     {/* LIVE PREVIEW (RIGHT) */}
-                    <div className="lg:col-span-5 bg-white p-5 rounded-2xl border border-stone-200 shadow-xs space-y-3 sticky top-0">
+                    <div className="lg:col-span-5 bg-white p-5 rounded-2xl border border-stone-200 shadow-xs space-y-3 lg:sticky lg:top-0">
                       <div className="flex items-center gap-2 text-xs font-bold text-stone-400 uppercase tracking-wider border-b border-stone-100 pb-2">
                         <Sparkles className="w-4 h-4 text-amber-500" />
                         <span>Pratinjau Kartu (Live Preview)</span>
@@ -2562,7 +2562,7 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
                                     );
                                   }}
                                   placeholder="Tautan URL Gambar (https://... / /images/...)"
-                                  className="flex-1 min-w-[220px] px-3 py-1.5 bg-stone-50 border border-stone-300 rounded-lg text-xs font-mono text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                                  className="w-full sm:flex-1 sm:min-w-[220px] px-3 py-1.5 bg-stone-50 border border-stone-300 rounded-lg text-xs font-mono text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
                                 />
 
                                 <label className="cursor-pointer inline-flex items-center gap-1 px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-medium transition-colors shrink-0">

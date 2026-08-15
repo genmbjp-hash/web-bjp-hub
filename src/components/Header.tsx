@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Shield, Menu, X, LayoutGrid, Megaphone, Home, Settings, Search } from 'lucide-react';
+import { Shield, Menu, X, LayoutGrid, Megaphone, Home, Settings } from 'lucide-react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { BJP_LOGO_URL } from '../assets/logo';
 import { NavbarTabConfig } from '../types';
@@ -11,7 +11,6 @@ interface HeaderProps {
   totalEntitiesCount: number;
   logoUrl?: string;
   navbarTabs?: NavbarTabConfig[];
-  onSearchSubmit?: (term: string) => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -20,20 +19,9 @@ export const Header: React.FC<HeaderProps> = ({
   totalEntitiesCount,
   logoUrl,
   navbarTabs,
-  onSearchSubmit,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [localSearch, setLocalSearch] = useState('');
   const location = useLocation();
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (localSearch.trim() && onSearchSubmit) {
-      onSearchSubmit(localSearch);
-      setLocalSearch('');
-      setMobileMenuOpen(false);
-    }
-  };
 
   const displayLogo = logoUrl ? formatImageUrl(logoUrl) : BJP_LOGO_URL;
 
@@ -103,21 +91,8 @@ export const Header: React.FC<HeaderProps> = ({
             })}
           </nav>
 
-          {/* Right: Search, CMS + Mobile Toggle */}
+          {/* Right: CMS + Mobile Toggle */}
           <div className="flex items-center gap-2 sm:gap-4 z-10">
-            
-            {/* Desktop Search */}
-            <form onSubmit={handleSearch} className="hidden lg:block relative group">
-              <input
-                type="text"
-                value={localSearch}
-                onChange={(e) => setLocalSearch(e.target.value)}
-                placeholder="Cari..."
-                className="w-40 xl:w-56 pl-9 pr-4 py-1.5 bg-stone-50 border border-stone-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all focus:bg-white"
-              />
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-stone-400 group-focus-within:text-emerald-600 transition-colors" />
-            </form>
-
             <button
               onClick={onOpenCMS}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-xs ${
@@ -134,7 +109,7 @@ export const Header: React.FC<HeaderProps> = ({
             {/* Mobile Hamburger */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 text-stone-600 hover:text-stone-900 hover:bg-stone-100 rounded-lg"
+              className="md:hidden p-2.5 text-stone-600 hover:text-stone-900 hover:bg-stone-100 rounded-lg"
               aria-label="Toggle menu"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -146,16 +121,6 @@ export const Header: React.FC<HeaderProps> = ({
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-stone-100 bg-white py-3 px-4">
-          <form onSubmit={handleSearch} className="relative mb-4">
-            <input
-              type="text"
-              value={localSearch}
-              onChange={(e) => setLocalSearch(e.target.value)}
-              placeholder="Cari komunitas/kegiatan..."
-              className="w-full pl-10 pr-4 py-2.5 bg-stone-100 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-            />
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
-          </form>
           <div className="flex flex-col gap-1">
             {NAV_ITEMS.map(({ id, path, label, icon: Icon }) => {
               const isActive = path === '/' ? location.pathname === '/' : location.pathname.startsWith(path);
