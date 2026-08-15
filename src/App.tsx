@@ -10,6 +10,8 @@ import {
   CategoryCarousel,
   CategoryFilter,
   EntityCard,
+  PhotoAlbumCard,
+  SinglePageView,
   EntityDetailModal,
   AnnouncementsList,
   PasswordModal,
@@ -23,11 +25,23 @@ const CMSModal = lazy(() =>
   import('./components/CMSModal').then((m) => ({ default: m.CMSModal }))
 );
 
+// RtRwView / DocumentGeneratorPage / PollingPage are secondary routes most
+// visitors never open in a given session, so they're code-split per-route.
+const RtRwView = lazy(() =>
+  import('./components/RtRwView').then((m) => ({ default: m.RtRwView }))
+);
+const DocumentGeneratorPage = lazy(() =>
+  import('./components/DocumentGeneratorPage').then((m) => ({ default: m.DocumentGeneratorPage }))
+);
+const PollingPage = lazy(() =>
+  import('./components/PollingPage').then((m) => ({ default: m.PollingPage }))
+);
+
 // Custom Hooks
 import { useEntities, useAnnouncements, useAuth } from './hooks';
 
 // Utils
-import { getSiteSettings, saveSiteSettings, DEFAULT_CATEGORY_CONFIGS } from './utils/storage';
+import { getSiteSettings, saveSiteSettings, DEFAULT_CATEGORY_CONFIGS, DEFAULT_RTRW_CONFIG } from './utils/storage';
 import { setEntityMetaTags, resetMetaTags } from './utils/meta';
 import { setAnnouncementMetaTags } from './utils/meta';
 
@@ -249,8 +263,6 @@ export default function App() {
               categories={categoryNames}
               selectedCategory={selectedCategory}
               onSelectCategory={setSelectedCategory}
-              entities={entities}
-              categoryConfigs={categoryConfigs}
               searchTerm={searchTerm}
               onSearchChange={setSearchTerm}
             />
@@ -273,6 +285,13 @@ export default function App() {
                         !searchTerm || e.name.toLowerCase().includes(searchTerm.toLowerCase())
                       )
                     : getEntitiesForSectionConfig(currentConfig);
+
+                // Category-level layout override (Halaman Konten Tunggal)
+                if ((currentConfig as CategoryHeaderConfig).layoutType === 'single_page') {
+                  return <SinglePageView categoryConfig={currentConfig as CategoryHeaderConfig} />;
+                }
+
+                const isPhotoAlbumLayout = (currentConfig as CategoryHeaderConfig).layoutType === 'photo_album';
 
                 return (
                   <div className="space-y-5">
@@ -327,6 +346,19 @@ export default function App() {
                           </button>
                         </div>
                       </div>
+                    ) : isPhotoAlbumLayout ? (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                        {displayedEntities.map((entity) => (
+                          <PhotoAlbumCard
+                            key={entity.id}
+                            entity={entity}
+                            onSelect={setSelectedEntityForModal}
+                            onShare={(ent) => setShareModalItem({ item: ent, type: 'entity' })}
+                            onEdit={handleEditEntityInCMS}
+                            isCMSAllowed={isCMSOpen}
+                          />
+                        ))}
+                      </div>
                     ) : (
                       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
                         {displayedEntities.map((entity) => (
@@ -357,6 +389,35 @@ export default function App() {
                 onShare={(ann) => setShareModalItem({ item: ann, type: 'announcement' })}
               />
             </div>
+          } />
+
+          <Route path="/rt-rw" element={
+            <Suspense fallback={null}>
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <RtRwView
+                  config={siteSettings.rtRwConfig || DEFAULT_RTRW_CONFIG}
+                  onBack={() => navigate('/')}
+                />
+              </div>
+            </Suspense>
+          } />
+
+          <Route path="/layanan-surat" element={
+            <Suspense fallback={null}>
+              <DocumentGeneratorPage
+                templates={siteSettings.documentTemplates}
+                onGoHome={() => navigate('/')}
+              />
+            </Suspense>
+          } />
+
+          <Route path="/polling" element={
+            <Suspense fallback={null}>
+              <PollingPage
+                config={siteSettings.pollingConfig}
+                onGoHome={() => navigate('/')}
+              />
+            </Suspense>
           } />
         </Routes>
       </main>

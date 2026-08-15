@@ -42,3 +42,9 @@ export const CATEGORY_LEGACY_MAP: Record<string, string> = {
 };
 
 export const DEFAULT_PORT = 8080;
+
+// -----------------------------------------------------------------------------
+// Card Text Limits (keeps titles & descriptions consistent across all cards)
+// -----------------------------------------------------------------------------
+export const CARD_TITLE_MAX_LENGTH = 20;
+export const CARD_DESCRIPTION_MAX_LENGTH = 60;

@@ -6,13 +6,19 @@ import {
   Bold, Italic, List, Heading, ExternalLink, ShieldAlert, ArrowLeft,
   GripVertical, ArrowUp, ArrowDown, MapPin, Info, Globe, Sliders, Palette, Eye, EyeOff,
   Users, UserPlus, ShieldCheck, Shield, Lock, LogOut, CheckSquare, Square, Search, User as UserIcon,
-  Database, Server, CheckCircle2, XCircle, Terminal, Code
+  Database, Server, CheckCircle2, XCircle, Terminal, Code, FileText, Vote, Youtube, Instagram
 } from 'lucide-react';
 import { exportDataAsJSON, importDataFromJSON, resetToDefaults, DEFAULT_CATEGORY_CONFIGS } from '../utils/storage';
 import { formatImageUrl } from '../utils/imageUrl';
 import { BJP_LOGO_URL } from '../assets/logo';
+import { CARD_TITLE_MAX_LENGTH, CARD_DESCRIPTION_MAX_LENGTH } from '../constants/defaults';
 import { InstagramIcon, FacebookIcon, TikTokIcon, WhatsAppIcon, SocialBadges } from './SocialIcons';
+import { CharCounter } from './CharCounter';
 import { SecurityScheduleCMS } from './SecurityScheduleCMS';
+import { RtRwCMS } from './RtRwCMS';
+import { DocumentTemplatesCMS } from './DocumentTemplatesCMS';
+import { PollingCMS } from './PollingCMS';
+import { MediaPartnersCMS } from './MediaPartnersCMS';
 import {
   isSupabaseConfigured,
   testSupabaseConnection,
@@ -99,7 +105,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
   editingEntityInit,
   initialCategoryForNewEntity,
 }) => {
-const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'settings' | 'security' | 'users' | 'supabase' | 'backup'>('entities');
+const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'settings' | 'security' | 'rtrw' | 'documents' | 'polling' | 'users' | 'supabase' | 'backup'>('entities');
   
   // Supabase State & Handlers
   const [supabaseTesting, setSupabaseTesting] = useState<boolean>(false);
@@ -232,6 +238,7 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
     category: 'Pusat Hub',
     description: '',
     image: IMAGE_PRESETS[0].url,
+    cardType: 'standard',
     ctaUrl: '',
     ctaWording: 'Kunjungi Tautan',
     instagram: '',
@@ -508,6 +515,7 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
         address: formEntity.address || '',
         infoNotes: formEntity.infoNotes || '',
         isFeatured: formEntity.isFeatured || false,
+        cardType: formEntity.cardType || 'standard',
         productPhotos: finalPhotos,
         productPhotoCaptions: finalCaptions,
         createdAt: now,
@@ -929,6 +937,48 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
 
           <button
             onClick={() => {
+              setActiveTab('rtrw');
+            }}
+            className={`flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-semibold border-b-2 transition-all whitespace-nowrap ${
+              activeTab === 'rtrw'
+                ? 'border-emerald-700 text-emerald-900 bg-emerald-50/50 rounded-t-lg'
+                : 'border-transparent text-stone-600 hover:text-stone-900'
+            }`}
+          >
+            <MapPin className="w-4 h-4 text-emerald-700" />
+            <span>Informasi RT/RW</span>
+          </button>
+
+          <button
+            onClick={() => {
+              setActiveTab('documents');
+            }}
+            className={`flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-semibold border-b-2 transition-all whitespace-nowrap ${
+              activeTab === 'documents'
+                ? 'border-emerald-700 text-emerald-900 bg-emerald-50/50 rounded-t-lg'
+                : 'border-transparent text-stone-600 hover:text-stone-900'
+            }`}
+          >
+            <FileText className="w-4 h-4 text-emerald-700" />
+            <span>Layanan Surat Online</span>
+          </button>
+
+          <button
+            onClick={() => {
+              setActiveTab('polling');
+            }}
+            className={`flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-semibold border-b-2 transition-all whitespace-nowrap ${
+              activeTab === 'polling'
+                ? 'border-emerald-700 text-emerald-900 bg-emerald-50/50 rounded-t-lg'
+                : 'border-transparent text-stone-600 hover:text-stone-900'
+            }`}
+          >
+            <Vote className="w-4 h-4 text-emerald-700" />
+            <span>Polling & Aspirasi</span>
+          </button>
+
+          <button
+            onClick={() => {
               setActiveTab('users');
               setEditingUser(null);
               setIsCreatingUser(false);
@@ -1010,10 +1060,14 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
 
                       {/* Title */}
                       <div className="space-y-1">
-                        <label className="text-xs font-bold text-stone-700">1. Nama Komunitas / Unit Kegiatan *</label>
+                        <div className="flex items-center justify-between">
+                          <label className="text-xs font-bold text-stone-700">1. Nama Komunitas / Unit Kegiatan *</label>
+                          <CharCounter value={formEntity.name} max={CARD_TITLE_MAX_LENGTH} />
+                        </div>
                         <input
                           type="text"
                           required
+                          maxLength={CARD_TITLE_MAX_LENGTH}
                           value={formEntity.name || ''}
                           onChange={(e) => setFormEntity({ ...formEntity, name: e.target.value })}
                           placeholder="Contoh: Badminton Club BJP, DKM Masjid Al Aqwam..."
@@ -1412,6 +1466,41 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
                         </div>
                       </div>
 
+                      {/* Photo Album Card Type Toggle */}
+                      <div className="border-t border-stone-200 pt-4">
+                        <div className="bg-stone-50 p-4 rounded-xl border border-stone-200 flex items-center justify-between gap-3">
+                          <div className="flex items-center gap-2">
+                            <ImageIcon className="w-4 h-4 text-emerald-700" />
+                            <div>
+                              <h4 className="text-xs font-bold text-stone-800">
+                                Tampilkan sebagai Kartu Album Foto (Carousel)
+                              </h4>
+                              <p className="text-[11px] text-stone-500">
+                                Kartu di grid akan menampilkan carousel foto otomatis memakai foto pada bagian "Foto Produk & Galeri Usaha" di bawah ini.
+                              </p>
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setFormEntity({
+                                ...formEntity,
+                                cardType: formEntity.cardType === 'photo_album' ? 'standard' : 'photo_album',
+                              })
+                            }
+                            className={`w-9 h-5 flex items-center rounded-full p-0.5 transition-colors cursor-pointer shrink-0 ${
+                              formEntity.cardType === 'photo_album' ? 'bg-emerald-600' : 'bg-stone-300'
+                            }`}
+                          >
+                            <span
+                              className={`w-4 h-4 bg-white rounded-full shadow-md transform transition-transform ${
+                                formEntity.cardType === 'photo_album' ? 'translate-x-4' : 'translate-x-0'
+                              }`}
+                            />
+                          </button>
+                        </div>
+                      </div>
+
                       {/* Product / Gallery Photos Section with Toggle & 5 Fields */}
                       <div className="border-t border-stone-200 pt-4 space-y-3">
                         <div className="bg-stone-50 p-4 rounded-xl border border-stone-200 space-y-3">
@@ -1805,10 +1894,14 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
                   </h3>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-stone-700">Judul Pengumuman *</label>
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs font-bold text-stone-700">Judul Pengumuman *</label>
+                      <CharCounter value={formAnn.title} max={CARD_TITLE_MAX_LENGTH} />
+                    </div>
                     <input
                       type="text"
                       required
+                      maxLength={CARD_TITLE_MAX_LENGTH}
                       value={formAnn.title || ''}
                       onChange={(e) => setFormAnn({ ...formAnn, title: e.target.value })}
                       placeholder="Contoh: Jadwal Bazar UMKM Hari Minggu..."
@@ -2631,11 +2724,15 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
 
                         {/* Nama Kategori / Rename Tab */}
                         <div className="space-y-1">
-                          <label className="text-xs font-bold text-stone-700 block">
-                            Nama Kategori (Judul & Tab Navbar):
-                          </label>
+                          <div className="flex items-center justify-between">
+                            <label className="text-xs font-bold text-stone-700 block">
+                              Nama Kategori (Judul & Tab Navbar):
+                            </label>
+                            <CharCounter value={catConfig.name} max={CARD_TITLE_MAX_LENGTH} />
+                          </div>
                           <input
                             type="text"
+                            maxLength={CARD_TITLE_MAX_LENGTH}
                             value={catConfig.name}
                             onChange={(e) => {
                               const newName = e.target.value;
@@ -2651,11 +2748,15 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
 
                         {/* Deskripsi Header */}
                         <div className="space-y-1">
-                          <label className="text-xs font-bold text-stone-700 block">
-                            Deskripsi Penjelasan Header:
-                          </label>
+                          <div className="flex items-center justify-between">
+                            <label className="text-xs font-bold text-stone-700 block">
+                              Deskripsi Penjelasan Header:
+                            </label>
+                            <CharCounter value={catConfig.description} max={CARD_DESCRIPTION_MAX_LENGTH} />
+                          </div>
                           <input
                             type="text"
+                            maxLength={CARD_DESCRIPTION_MAX_LENGTH}
                             value={catConfig.description}
                             onChange={(e) => {
                               const newDesc = e.target.value;
@@ -2668,11 +2769,81 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
                             className="w-full px-3 py-2 bg-white border border-stone-300 rounded-xl text-xs text-stone-800 focus:outline-none focus:ring-2 focus:ring-emerald-600"
                           />
                         </div>
+
+                        {/* Layout Type Selector */}
+                        <div className="space-y-1 md:col-span-2">
+                          <label className="text-xs font-bold text-stone-700 block">
+                            Tampilan Halaman Kategori:
+                          </label>
+                          <select
+                            value={catConfig.layoutType || 'default'}
+                            onChange={(e) => {
+                              const newLayout = e.target.value as CategoryHeaderConfig['layoutType'];
+                              setTempCategoryConfigs(
+                                tempCategoryConfigs.map((c) =>
+                                  c.id === catConfig.id ? { ...c, layoutType: newLayout } : c
+                                )
+                              );
+                            }}
+                            className="w-full px-3 py-2 bg-white border border-stone-300 rounded-xl text-xs font-semibold text-stone-800 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                          >
+                            <option value="default">🗂️ Default (Grid Kartu Komunitas)</option>
+                            <option value="photo_album">📷 Album Foto (Carousel per Kartu)</option>
+                            <option value="single_page">📄 Halaman Konten Tunggal</option>
+                          </select>
+                        </div>
+
+                        {/* Single Page fields (only when layoutType === 'single_page') */}
+                        {catConfig.layoutType === 'single_page' && (
+                          <div className="md:col-span-2 space-y-3 bg-white p-3.5 rounded-xl border border-stone-200">
+                            <div className="space-y-1">
+                              <label className="text-xs font-bold text-stone-700 block">
+                                URL Gambar Hero Halaman Tunggal:
+                              </label>
+                              <input
+                                type="text"
+                                value={catConfig.singlePageHeroImage || ''}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setTempCategoryConfigs(
+                                    tempCategoryConfigs.map((c) =>
+                                      c.id === catConfig.id ? { ...c, singlePageHeroImage: val } : c
+                                    )
+                                  );
+                                }}
+                                placeholder="https://... / /images/..."
+                                className="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded-xl text-xs font-mono text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                              />
+                            </div>
+                            <div className="space-y-1">
+                              <label className="text-xs font-bold text-stone-700 block">
+                                Konten Halaman (HTML diperbolehkan):
+                              </label>
+                              <textarea
+                                rows={5}
+                                value={catConfig.singlePageContent || ''}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setTempCategoryConfigs(
+                                    tempCategoryConfigs.map((c) =>
+                                      c.id === catConfig.id ? { ...c, singlePageContent: val } : c
+                                    )
+                                  );
+                                }}
+                                placeholder="<p>Tulis konten halaman di sini...</p>"
+                                className="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded-xl text-xs font-mono text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                              />
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
+
+              {/* Section 4: Media Partner & Komunitas */}
+              <MediaPartnersCMS siteSettings={siteSettings} onSaveSiteSettings={onSaveSiteSettings} />
 
               {/* Save All Settings Button */}
               <div className="bg-white p-5 rounded-2xl border border-stone-200 shadow-xs flex items-center justify-between">
@@ -2687,6 +2858,7 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
                   type="button"
                   onClick={() => {
                     onSaveSiteSettings({
+                      ...siteSettings,
                       logoUrl: tempLogoUrl,
                       siteTitle: tempSiteTitle,
                       siteDescription: tempSiteDescription,
@@ -2707,10 +2879,27 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
           {/* TAB: JADWAL SECURITY */}
           {activeTab === 'security' && (
             <div className="max-w-5xl mx-auto pb-6">
-              <SecurityScheduleCMS 
-                siteSettings={siteSettings} 
-                onSaveSiteSettings={onSaveSiteSettings} 
+              <SecurityScheduleCMS
+                siteSettings={siteSettings}
+                onSaveSiteSettings={onSaveSiteSettings}
               />
+            </div>
+          )}
+
+          {/* TAB: INFORMASI RT/RW */}
+          {activeTab === 'rtrw' && (
+            <RtRwCMS siteSettings={siteSettings} onSaveSiteSettings={onSaveSiteSettings} />
+          )}
+
+          {/* TAB: LAYANAN SURAT ONLINE */}
+          {activeTab === 'documents' && (
+            <DocumentTemplatesCMS siteSettings={siteSettings} onSaveSiteSettings={onSaveSiteSettings} />
+          )}
+
+          {/* TAB: POLLING & ASPIRASI */}
+          {activeTab === 'polling' && (
+            <div className="max-w-5xl mx-auto pb-6">
+              <PollingCMS siteSettings={siteSettings} onSaveSiteSettings={onSaveSiteSettings} />
             </div>
           )}
 

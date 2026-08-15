@@ -1,4 +1,4 @@
-import { Entity, Announcement, SiteSettings, CategoryHeaderConfig, User } from '../types';
+import { Entity, Announcement, SiteSettings, CategoryHeaderConfig, User, RtRwPageConfig } from '../types';
 import { INITIAL_ENTITIES, INITIAL_ANNOUNCEMENTS } from '../data/initialData';
 import { BJP_LOGO_URL } from '../assets/logo';
 import { updateSiteFaviconAndOgImage } from './meta';
@@ -36,12 +36,22 @@ export const DEFAULT_USERS: User[] = [
     password: initialAdminPassword,
     name: 'Pengurus Sentra Usaha UMKM',
     role: 'entity_admin',
-    allowedEntityIds: ['ent-umkm-1', 'ent-umkm-2', 'ent-4'],
+    allowedEntityIds: [
+      'ent-umkm-1', 'ent-umkm-2', 'ent-umkm-3', 'ent-umkm-4', 'ent-umkm-5',
+      'ent-umkm-6', 'ent-umkm-7', 'ent-umkm-8', 'ent-umkm-9', 'ent-umkm-10', 'ent-4',
+    ],
     createdAt: '2026-01-01T00:00:00.000Z',
   },
 ];
 
 export const DEFAULT_CATEGORY_CONFIGS: CategoryHeaderConfig[] = [
+  {
+    id: 'Galeri Warga',
+    name: 'Galeri Warga',
+    description: 'Dokumentasi foto kegiatan warga, gotong royong, acara peringatan, dan momen kebersamaan Bintara Jaya Permai (RW 11)',
+    logoUrl: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=800&q=80',
+    layoutType: 'photo_album',
+  },
   {
     id: 'Sentra Usaha BJP',
     name: 'Sentra Usaha BJP',
@@ -98,15 +108,176 @@ export const DEFAULT_CATEGORY_CONFIGS: CategoryHeaderConfig[] = [
   },
 ];
 
+export const DEFAULT_RTRW_CONFIG: RtRwPageConfig = {
+  enabled: true,
+  pageTitle: 'Informasi RT/RW 11 Bintara Jaya Permai',
+  pageDescription: 'Visi misi pengurus dan data RT 01 s/d RT 09 Bintara Jaya Permai.',
+  heroImage: 'https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=1200&q=80',
+  visionTitle: '🏛️ Visi & Misi Resmi RW 11',
+  visionHeading: 'Visi & Misi Pengurus RW 11 Bintara Jaya Permai',
+  visionText: 'Mewujudkan lingkungan RW 011 dengan prinsip TeGAR sebagai sebuah komitmen bersama. Dengan menjadi warga yang Tertib pada aturan, Guyub dalam persaudaraan, Antusias dalam berpartisipasi, dan Rukun dalam perbedaan, Perumahan Bintara Jaya Permai RW 011 akan menjadi rumah idaman yang aman, nyaman, dan membawa kebahagiaan bagi seluruh penghuninya.',
+  missions: [
+    'Berpartisipasi aktif dalam pelestarian lingkungan hidup dengan menciptakan lingkungan yang asri: sehat, maju, aman, rukun dan tentram.',
+    'Mendukung program yang dicanangkan oleh pemerintah Kota Bekasi.',
+    'Menggali semua potensi warga dan memberdayakan peran aktif warga untuk mendorong tercapainya kehidupan masyarakat yang TeGAR.',
+    'Membuat sistem administrasi yang tertib & modern dengan memanfaatkan teknologi informasi terkini.',
+    'Memberikan pelayanan terbaik kepada warga RW.011 dengan tulus dan ikhlas.',
+  ],
+  values: [
+    { title: 'Tertib', description: 'Setiap warga memiliki kesadaran tinggi terhadap aturan dan norma yang berlaku, baik tertulis maupun tidak tertulis — keteraturan adalah kunci kenyamanan bersama.' },
+    { title: 'Guyub', description: 'Akar budaya masyarakat Indonesia yang menjunjung tinggi kebersamaan, rasa kekeluargaan, dan saling peduli antar tetangga.' },
+    { title: 'Antusias', description: 'Energi positif warga — lingkungan yang hidup adalah lingkungan yang warganya proaktif dan bersemangat, bukan sekadar penonton.' },
+    { title: 'Rukun', description: 'Muara dari seluruh prinsip di atas: suasana harmonis, damai, dan minim konflik, dengan menghormati perbedaan dan mengutamakan musyawarah.' },
+  ],
+  rtListTitle: 'Rincian Informasi Wilayah per RT (RT 01 s/d RT 09)',
+  rtListDescription: 'RW 011 terdiri dari 9 RT (masa bakti 2022-2027). Data ketua dan kontak per-RT sedang dilengkapi oleh pengurus — silakan tambahkan melalui menu CMS.',
+  rts: [],
+  extraSectionTitle: 'Dokumen & Informasi Resmi RT/RW',
+  extraSectionDescription: 'Tata tertib warga dan struktur pengurus resmi RW 011 Bintara Jaya Permai.',
+  extraCards: [
+    {
+      id: 'card-txt-1',
+      type: 'text',
+      title: 'Tata Tertib Warga RW 011',
+      description: 'Ringkasan aturan bersama warga Bintara Jaya Permai.',
+      categoryBadge: 'Peraturan Warga',
+      textContent: '1. Warga wajib berperan aktif menjaga keamanan, kebersihan, ketertiban, dan kerukunan bersama.\n2. Mematuhi aturan lalu lintas kendaraan di pintu keluar-masuk komplek.\n3. Warga baru wajib lapor ke RT setempat; warga pindah wajib lapor sebelum keluar.\n4. Jam bertamu: hingga 22.00 WIB (hari kerja) dan 24.00 WIB (Sabtu-Minggu); tamu menginap wajib dilaporkan.\n5. Iuran kebersihan & keamanan dibayar paling lambat tanggal 5 setiap bulan.\n6. Kerja bakti wajib setiap Minggu pertama tiap bulan, pukul 08.00 WIB.\n7. Acara/hajatan wajib diberitahukan ke pengurus minimal 3 hari sebelumnya.\n8. Kegiatan di masjid memerlukan izin RW dan pengurus masjid.\n9. Dilarang keras: peredaran narkoba, penjualan minuman keras, perjudian, dan tindak asusila/kriminal di rumah.\n10. Warga wajib menjaga kerapian rumah; material bangunan tidak boleh menutup jalan umum; hewan peliharaan wajib diawasi; renovasi wajib lapor + identitas pekerja.\n11. Pelanggaran akan dikenakan teguran tertulis hingga penundaan pelayanan surat oleh RT.',
+      author: 'Pengurus RW 011 Bintara Jaya Permai',
+      enabled: true,
+      order: 0,
+    },
+    {
+      id: 'card-txt-2',
+      type: 'text',
+      title: 'Struktur Pengurus RW 011 (Periode 2022-2027)',
+      description: 'Susunan pengurus resmi RW 011 Bintara Jaya Permai.',
+      categoryBadge: 'Struktur Organisasi',
+      textContent: 'Ketua RW 11: H. Dadang Rachmat Hidayatulloh\nSekretaris: H. Hery Suadi\nBendahara: Ari Hartanto\n\nBidang Pembangunan & Infrastruktur: Sadikin Firdaus, H. Edy Efendy Siraz\nBidang Sosial & Budaya: H. Rusdi Rifai, H. Unang Juhana\nBidang Keamanan & Ketertiban Masyarakat: Use, Engkus Kusnadi, Bambang K.\nBidang Kebersihan & Lingkungan Hidup: H. Yusuf A, H. Suherman, Darlis Dahlan\nBidang Pemuda & Olahraga: H. Asep, Karang Taruna\n\nPembina: Zaenal Arifin, S.E. (Lurah Bintara Jaya)\nPenasehat: H. Bachri Marzuki, H. FR. Ghanty Sy., H. Nazir Syafrie, H. Sadikin Marpaung',
+      author: 'Sekretariat RW 011',
+      enabled: true,
+      order: 1,
+    },
+  ],
+};
+
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   logoUrl: BJP_LOGO_URL,
   siteTitle: 'BJP.hub Bintara Jaya Permai',
   siteDescription: 'Portal Resmi Ekosistem & Kegiatan Warga Komplek Bintara Jaya Permai (RW 11)',
   navbarTabs: [
     { id: 'entities', label: 'Komunitas Kegiatan', enabled: true, order: 0 },
-    { id: 'announcements', label: 'Pengumuman & Agenda', enabled: true, order: 1 },
+    { id: 'rtrw', label: 'Informasi RT/RW', enabled: true, order: 1 },
+    { id: 'announcements', label: 'Pengumuman & Agenda', enabled: true, order: 2 },
+    { id: 'document_service', label: 'Layanan Surat Online', enabled: true, order: 3 },
+    { id: 'polling', label: 'Polling & Aspirasi Warga', enabled: true, order: 4 },
   ],
   categoryConfigs: DEFAULT_CATEGORY_CONFIGS,
+  mediaPartners: [
+    {
+      id: 'mp-1',
+      name: 'Bintarajayapermai.ofc',
+      logoUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&auto=format&fit=crop&q=80',
+      instagramUrl: 'https://www.instagram.com/bintarajayapermai.ofc/',
+      instagramEnabled: true,
+      youtubeUrl: 'https://www.youtube.com/@bintarajayapermai',
+      youtubeEnabled: true,
+      enabled: true,
+      order: 0,
+    },
+    {
+      id: 'mp-2',
+      name: 'Masjid.alaqwam',
+      logoUrl: 'https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=200&auto=format&fit=crop&q=80',
+      instagramUrl: 'https://www.instagram.com/masjid.alaqwam/',
+      instagramEnabled: true,
+      youtubeUrl: 'https://www.youtube.com/@masjid.alaqwam',
+      youtubeEnabled: true,
+      enabled: true,
+      order: 1,
+    },
+    {
+      id: 'mp-3',
+      name: 'Kamu.sejahtera',
+      logoUrl: 'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=200&auto=format&fit=crop&q=80',
+      instagramUrl: 'https://www.instagram.com/kamu.sejahtera/',
+      instagramEnabled: true,
+      youtubeUrl: '',
+      youtubeEnabled: false,
+      enabled: true,
+      order: 2,
+    },
+    {
+      id: 'mp-4',
+      name: 'Rapermata.alaqwam',
+      logoUrl: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=200&auto=format&fit=crop&q=80',
+      instagramUrl: 'https://www.instagram.com/rapermata.alaqwam/',
+      instagramEnabled: true,
+      youtubeUrl: '',
+      youtubeEnabled: false,
+      enabled: true,
+      order: 3,
+    },
+    {
+      id: 'mp-5',
+      name: 'Bjpladiesclub',
+      logoUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&auto=format&fit=crop&q=80',
+      instagramUrl: 'https://www.instagram.com/bjpladiesclub/',
+      instagramEnabled: true,
+      youtubeUrl: '',
+      youtubeEnabled: false,
+      enabled: true,
+      order: 4,
+    },
+  ],
+  documentTemplates: [
+    {
+      id: 'tmpl-1',
+      title: 'Surat Pengantar RT / RW 11',
+      code: 'SURAT_PENGANTAR_RTRW',
+      category: 'Pemerintahan / Kependudukan',
+      description: 'Surat pengantar resmi warga untuk pengurusan KTP, Kartu Keluarga, atau Akta di Kantor Kelurahan Bintara Jaya.',
+      enabled: true,
+      templateBody: 'Bahwa nama tersebut di atas adalah benar-benar warga yang bertempat tinggal dan berdomisili di Komplek Bintara Jaya Permai RW 11. Surat pengantar ini diterbitkan untuk keperluan pengurusan administrasi kependudukan.',
+    },
+    {
+      id: 'tmpl-2',
+      title: 'Surat Keterangan Domisili Tempat Tinggal',
+      code: 'SURAT_KET_DOMISILI',
+      category: 'Kependudukan',
+      description: 'Surat keterangan domisili bagi warga menetap di Komplek Bintara Jaya Permai.',
+      enabled: true,
+      templateBody: 'Menerangkan dengan sebenarnya bahwa warga yang bersangkutan adalah penduduk yang menetap dan berdomisili di lingkungan RW 11 Bintara Jaya Permai.',
+    },
+    {
+      id: 'tmpl-3',
+      title: 'Surat Keterangan Kegiatan Usaha (SKU) Sentra UMKM',
+      code: 'SURAT_KET_USAHA',
+      category: 'Sentra Usaha / Ekonomi',
+      description: 'Surat keterangan resmi kegiatan usaha / UMKM warga Bintara Jaya Permai.',
+      enabled: true,
+      templateBody: 'Menerangkan bahwa nama tersebut memiliki dan menjalankan kegiatan usaha UMKM di wilayah Komplek Bintara Jaya Permai (RW 11) dan terdaftar aktif dalam Sentra Usaha BJP HUB.',
+    },
+  ],
+  pollingConfig: {
+    enabled: true,
+    pageTitle: 'Polling & Suara Aspirasi Warga RW 11',
+    pageDescription: 'Sampaikan suara dan aspirasi Anda untuk RW 11.',
+    section1: {
+      id: 'sec-1',
+      enabled: true,
+      title: 'Survei Evaluasi & Aspirasi Fasilitas Lingkungan',
+      description: 'Silakan isi formulir survei evaluasi kebersihan, keamanan, dan fasilitas bersama RW 11 Bintara Jaya Permai.',
+      formUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSc_sample1/viewform?embedded=true',
+    },
+    section2: {
+      id: 'sec-2',
+      enabled: true,
+      title: 'Polling Usulan Kegiatan Bazar & Fest Sentra UMKM',
+      description: 'Sampaikan ide, saran produk, dan voting jadwal kegiatan bazar/fest bulanan warga Bintara Jaya Permai.',
+      formUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSc_sample2/viewform?embedded=true',
+    },
+  },
+  rtRwConfig: DEFAULT_RTRW_CONFIG,
 };
 
 // ---------------------------------------------------------------------------
@@ -140,15 +311,43 @@ export function getSiteSettings(): SiteSettings {
         return def;
       });
 
+      // Ensure navbarTabs includes rtrw, document_service, and polling if missing
+      // (site settings saved before these features existed)
+      const loadedNavbarTabs = Array.isArray(parsed.navbarTabs) && parsed.navbarTabs.length > 0
+        ? [...parsed.navbarTabs]
+        : [...DEFAULT_SITE_SETTINGS.navbarTabs];
+
+      if (!loadedNavbarTabs.some((t: any) => t.id === 'rtrw')) {
+        loadedNavbarTabs.push({ id: 'rtrw', label: 'Informasi RT/RW', enabled: true, order: loadedNavbarTabs.length });
+      }
+      if (!loadedNavbarTabs.some((t: any) => t.id === 'document_service')) {
+        loadedNavbarTabs.push({ id: 'document_service', label: 'Layanan Surat Online', enabled: true, order: loadedNavbarTabs.length });
+      }
+      if (!loadedNavbarTabs.some((t: any) => t.id === 'polling')) {
+        loadedNavbarTabs.push({ id: 'polling', label: 'Polling & Aspirasi Warga', enabled: true, order: loadedNavbarTabs.length });
+      }
+
       return {
         logoUrl: parsed.logoUrl || BJP_LOGO_URL,
         siteTitle: parsed.siteTitle || DEFAULT_SITE_SETTINGS.siteTitle,
         siteDescription: parsed.siteDescription || DEFAULT_SITE_SETTINGS.siteDescription,
-        navbarTabs:
-          Array.isArray(parsed.navbarTabs) && parsed.navbarTabs.length > 0
-            ? parsed.navbarTabs
-            : DEFAULT_SITE_SETTINGS.navbarTabs,
+        navbarTabs: loadedNavbarTabs,
         categoryConfigs: mergedCategoryConfigs,
+        securitySchedules: Array.isArray(parsed.securitySchedules) ? parsed.securitySchedules : [],
+        mediaPartners: Array.isArray(parsed.mediaPartners) ? parsed.mediaPartners : DEFAULT_SITE_SETTINGS.mediaPartners,
+        documentTemplates: Array.isArray(parsed.documentTemplates)
+          ? parsed.documentTemplates
+          : DEFAULT_SITE_SETTINGS.documentTemplates,
+        pollingConfig: parsed.pollingConfig || DEFAULT_SITE_SETTINGS.pollingConfig,
+        rtRwConfig: parsed.rtRwConfig
+          ? {
+              ...DEFAULT_RTRW_CONFIG,
+              ...parsed.rtRwConfig,
+              extraCards: Array.isArray(parsed.rtRwConfig.extraCards)
+                ? parsed.rtRwConfig.extraCards
+                : DEFAULT_RTRW_CONFIG.extraCards,
+            }
+          : DEFAULT_RTRW_CONFIG,
       };
     }
   } catch (err) {

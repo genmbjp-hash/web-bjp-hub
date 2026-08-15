@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Shield, Menu, X, LayoutGrid, Megaphone, Home, Settings } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Menu, X, LayoutGrid, Megaphone, Home, Settings, Building, FileText, Vote, ChevronDown } from 'lucide-react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { BJP_LOGO_URL } from '../assets/logo';
 import { NavbarTabConfig } from '../types';
@@ -21,7 +21,19 @@ export const Header: React.FC<HeaderProps> = ({
   navbarTabs,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [moreMenuOpen, setMoreMenuOpen] = useState(false);
+  const moreMenuRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (moreMenuRef.current && !moreMenuRef.current.contains(e.target as Node)) {
+        setMoreMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const displayLogo = logoUrl ? formatImageUrl(logoUrl) : BJP_LOGO_URL;
 
@@ -30,19 +42,40 @@ export const Header: React.FC<HeaderProps> = ({
       ? [...navbarTabs].filter((t) => t.enabled).sort((a, b) => a.order - b.order)
       : [
           { id: 'entities', label: 'Komunitas Kegiatan', enabled: true, order: 0 },
-          { id: 'announcements', label: 'Pengumuman & Agenda', enabled: true, order: 1 },
+          { id: 'rtrw', label: 'Informasi RT/RW', enabled: true, order: 1 },
+          { id: 'announcements', label: 'Pengumuman & Agenda', enabled: true, order: 2 },
+          { id: 'document_service', label: 'Layanan Surat Online', enabled: true, order: 3 },
+          { id: 'polling', label: 'Polling & Aspirasi Warga', enabled: true, order: 4 },
         ]
   ) as NavbarTabConfig[];
 
-  const NAV_ITEMS = [
+  const TAB_ROUTE_MAP: Record<string, { path: string; icon: typeof LayoutGrid }> = {
+    entities: { path: '/komunitas', icon: LayoutGrid },
+    rtrw: { path: '/rt-rw', icon: Building },
+    announcements: { path: '/pengumuman', icon: Megaphone },
+    document_service: { path: '/layanan-surat', icon: FileText },
+    polling: { path: '/polling', icon: Vote },
+  };
+
+  // Only the most-used tabs sit directly in the bar; the rest collapse into "Lainnya"
+  // so the navbar doesn't get crowded as more menus are added.
+  const PRIMARY_TAB_IDS = ['entities', 'announcements'];
+
+  const allTabItems = activeNavbarTabs.map((tab) => {
+    const route = TAB_ROUTE_MAP[tab.id] || { path: '/pengumuman', icon: Megaphone };
+    return { id: tab.id, path: route.path, label: tab.label, icon: route.icon };
+  });
+
+  const primaryItems = [
     { id: 'home', path: '/', label: 'Beranda', icon: Home },
-    ...activeNavbarTabs.map((tab) => ({
-      id: tab.id,
-      path: tab.id === 'entities' ? '/komunitas' : '/pengumuman',
-      label: tab.label,
-      icon: tab.id === 'entities' ? LayoutGrid : Megaphone,
-    })),
+    ...allTabItems.filter((t) => PRIMARY_TAB_IDS.includes(t.id)),
   ];
+  const moreItems = allTabItems.filter((t) => !PRIMARY_TAB_IDS.includes(t.id));
+  const NAV_ITEMS = [...primaryItems, ...moreItems];
+
+  const isItemActive = (path: string) =>
+    path === '/' ? location.pathname === '/' : location.pathname.startsWith(path);
+  const isMoreActive = moreItems.some((t) => isItemActive(t.path));
 
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-stone-200 shadow-sm">
@@ -68,27 +101,63 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center justify-center gap-5 absolute left-1/2 -translate-x-1/2 h-full z-0">
-            {NAV_ITEMS.map(({ id, path, label, icon: Icon }) => {
-              const isActive = path === '/' ? location.pathname === '/' : location.pathname.startsWith(path);
+            {primaryItems.map(({ id, path, label, icon: Icon }) => {
+              const isActive = isItemActive(path);
               return (
                 <Link
                   key={id}
                   to={path}
                   className={`relative flex items-center gap-1.5 h-full text-xs font-bold transition-colors ${
-                    isActive
-                      ? 'text-emerald-700'
-                      : 'text-stone-700 hover:text-stone-900'
+                    isActive ? 'text-emerald-700' : 'text-stone-700 hover:text-stone-900'
                   }`}
                 >
                   <Icon className="w-4 h-4" />
                   <span>{label}</span>
-                  {/* Active Indicator Line */}
                   {isActive && (
                     <span className="absolute bottom-0 left-0 w-full h-1 bg-emerald-600 rounded-t-lg" />
                   )}
                 </Link>
               );
             })}
+
+            {/* "Lainnya" dropdown groups the less-frequent tabs to keep the bar tidy */}
+            {moreItems.length > 0 && (
+              <div className="relative h-full" ref={moreMenuRef}>
+                <button
+                  onClick={() => setMoreMenuOpen((v) => !v)}
+                  className={`relative flex items-center gap-1 h-full text-xs font-bold transition-colors cursor-pointer ${
+                    isMoreActive ? 'text-emerald-700' : 'text-stone-700 hover:text-stone-900'
+                  }`}
+                >
+                  <span>Lainnya</span>
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform ${moreMenuOpen ? 'rotate-180' : ''}`} />
+                  {isMoreActive && (
+                    <span className="absolute bottom-0 left-0 w-full h-1 bg-emerald-600 rounded-t-lg" />
+                  )}
+                </button>
+
+                {moreMenuOpen && (
+                  <div className="absolute top-full right-0 mt-2 w-56 bg-white rounded-xl border border-stone-200 shadow-lg py-1.5 z-50">
+                    {moreItems.map(({ id, path, label, icon: Icon }) => {
+                      const isActive = isItemActive(path);
+                      return (
+                        <Link
+                          key={id}
+                          to={path}
+                          onClick={() => setMoreMenuOpen(false)}
+                          className={`flex items-center gap-2.5 px-4 py-2 text-xs font-semibold transition-colors ${
+                            isActive ? 'text-emerald-700 bg-emerald-50' : 'text-stone-700 hover:bg-stone-50'
+                          }`}
+                        >
+                          <Icon className="w-4 h-4" />
+                          <span>{label}</span>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
           </nav>
 
           {/* Right: CMS + Mobile Toggle */}

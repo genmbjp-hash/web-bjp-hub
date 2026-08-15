@@ -1,5 +1,7 @@
 import React from 'react';
 import { ExternalLink, Share2, Instagram, Youtube } from 'lucide-react';
+import { MediaPartnerItem } from '../../types';
+import { MediaPartnersSection } from './MediaPartnersSection';
 
 const SOCIAL_LINKS = [
   {
@@ -24,7 +26,13 @@ const SOCIAL_LINKS = [
   },
 ];
 
-export const SocialMediaSection: React.FC = () => {
+interface SocialMediaSectionProps {
+  mediaPartners?: MediaPartnerItem[];
+}
+
+export const SocialMediaSection: React.FC<SocialMediaSectionProps> = ({ mediaPartners = [] }) => {
+  const hasPartners = mediaPartners.some((p) => p.enabled);
+
   return (
     <section className="bg-stone-50 py-12 border-t border-stone-200/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -38,7 +46,7 @@ export const SocialMediaSection: React.FC = () => {
           </p>
         </div>
 
-        {/* Social Cards */}
+        {/* Official Channel Cards */}
         <div className="flex flex-col sm:flex-row gap-5 justify-center max-w-2xl mx-auto">
           {SOCIAL_LINKS.map((social) => {
             const Icon = social.icon;
@@ -72,6 +80,13 @@ export const SocialMediaSection: React.FC = () => {
             );
           })}
         </div>
+
+        {/* Media Partner (merged into the same "follow us" section) */}
+        {hasPartners && (
+          <div className="mt-10 pt-10 border-t border-stone-200 max-w-4xl mx-auto">
+            <MediaPartnersSection partners={mediaPartners} />
+          </div>
+        )}
       </div>
     </section>
   );

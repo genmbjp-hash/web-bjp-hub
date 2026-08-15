@@ -49,22 +49,24 @@ export const INITIAL_ENTITIES: Entity[] = [
   },
   {
     id: 'ent-3',
-    name: 'DKM Al Aqwam',
+    name: 'DKM Masjid Ja\'mi Al Aqwam',
     category: 'Keagamaan',
-    description: `Dewan Kemakmuran Masjid (DKM) sebagai pusat kegiatan spiritual, keagamaan, dan sosial warga muslim. Mengurus ibadah rutin, kajian keagamaan, pendidikan agama anak (TPA), hingga pengelolaan ZISWAF (Zakat, Infaq, Shadaqah, dan Waqaf).
+    description: `Dewan Kemakmuran Masjid (DKM) sebagai pusat kegiatan spiritual, keagamaan, dan sosial warga muslim. Dirintis pembangunannya sejak 1987 dan diserahkan kepada RW 011 pada 1992, dikelola oleh Yayasan Al Aqwam. Mengurus ibadah rutin, kajian keagamaan, hingga penyaluran ZISWAF (Zakat, Infaq, Shadaqah, dan Waqaf).
 
 <p><strong>Program Utama:</strong></p>
 <ul>
   <li>Sholat Berjamaah 5 Waktu & Sholat Jumat</li>
-  <li>Kajian Rutin Mingguan & Bulanan</li>
-  <li>TPA & Rumah Tahfidz untuk Anak-Anak Komplek</li>
+  <li>Kajian Ba'da Subuh, Kajian Al Quran & Tausiah</li>
+  <li>Perayaan Hari Besar Islam</li>
   <li>Penyaluran Bantuan Sosial & ZISWAF Warga</li>
 </ul>`,
     image: 'https://images.unsplash.com/photo-1590076175571-4b5459efb08c?auto=format&fit=crop&w=600&q=80',
-    ctaUrl: 'https://www.instagram.com/masjid.alaqwam/',
-    ctaWording: 'Info Kegiatan Masjid Al Aqwam',
+    ctaUrl: 'https://alaqwam.mosque.id/',
+    ctaWording: 'Website Resmi Masjid Al Aqwam',
     instagram: 'https://www.instagram.com/masjid.alaqwam/',
+    mediaUrl: 'https://alaqwam.mosque.id/',
     contact: '0813-1122-3344 (Pengurus DKM)',
+    address: 'Komplek Bintara Jaya Permai, Bintara Jaya, Bekasi Barat, Bekasi Kota, Jawa Barat 17136',
     schedule: 'Buka Setiap Hari untuk Sholat & Kajian',
     isFeatured: true,
     createdAt: '2026-01-01T00:00:00Z',
@@ -105,36 +107,15 @@ export const INITIAL_ENTITIES: Entity[] = [
   },
   {
     id: 'ent-umkm-1',
-    name: 'Dapur Selera Nusantara (UMKM Kuliner BJP)',
+    name: 'Jajanan Bu Muncak',
     category: 'Sentra Usaha BJP',
-    description: `Usaha kuliner rumahan unggulan milik warga Bintara Jaya Permai (Blok B). Menyajikan aneka masakan tradisional khas Nusantara, tumpeng mini, catering harian, serta kudapan tradisional berkualitas tanpa bahan pengawet.
-
-<p><strong>Menu & Layanan Unggulan:</strong></p>
-<ul>
-  <li>Nasi Liwet & Nasi Kuning Tumpeng Mini</li>
-  <li>Catering Harian & Pesanan Acara Komplek</li>
-  <li>Aneka Jajanan Pasar & Kue Basah Tradisional</li>
-  <li>Pengiriman Bebas Ongkir Khusus Area Komplek BJP</li>
-</ul>`,
-    image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80',
-    ctaUrl: 'https://wa.me/6281234567890',
+    description: `Jajanan tradisional rumahan warga Blok C, Bintara Jaya Permai. Cocok untuk camilan sehari-hari maupun pesanan acara warga.`,
+    image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80',
+    ctaUrl: 'https://wa.me/6281213333292',
     ctaWording: 'Pesan via WhatsApp',
-    mediaUrl: 'https://bintarajayapermai.com',
-    contact: '0812-3456-7890 (Ibu Retno - Blok B3 No. 12)',
-    schedule: 'Buka Setiap Hari: 07.00 - 19.00 WIB',
+    contact: '0812-1333-3292 (Ibu Umi Rohmawati - Blok C74 RT08/11)',
+    schedule: 'Hubungi langsung via WhatsApp',
     isFeatured: true,
-    socials: {
-      instagram: { enabled: true, url: 'https://www.instagram.com/bintarajayapermai.ofc/' },
-      facebook: { enabled: true, url: 'https://facebook.com/bintarajayapermai' },
-      tiktok: { enabled: true, url: 'https://www.tiktok.com/@bintarajayapermai' },
-      whatsapp: { enabled: true, url: '081234567890' },
-    },
-    productPhotos: [
-      'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80',
-      'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80',
-      'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=800&q=80',
-      'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80',
-    ],
     createdAt: '2026-01-01T00:00:00Z',
     updatedAt: '2026-01-01T00:00:00Z'
   },
@@ -294,7 +275,7 @@ export const INITIAL_ENTITIES: Entity[] = [
     id: 'ent-12',
     name: 'Senam Sehat BJP',
     category: 'Olahraga',
-    description: `Komunitas kebugaran massal (didominasi ibu-ibu, terbuka untuk seluruh warga). Mengadakan senam pagi/sore secara berkala (aerobik, senam jantung sehat, senam poco-poco) sebagai sarana kebugaran, refreshing, dan silaturahmi.
+    description: `Setiap Sabtu pagi, ibu-ibu peserta senam sehat melaksanakan senam untuk menjaga kebugaran dan kesehatan pada usia senja. Terbuka untuk seluruh warga.
 
 <p><strong>Jadwal & Link Media:</strong></p>
 <ul>
@@ -306,7 +287,7 @@ export const INITIAL_ENTITIES: Entity[] = [
     ctaWording: 'Tonton Video Senam YouTube',
     mediaUrl: 'https://www.youtube.com/@respatidiah8070',
     contact: '0812-7766-5544 (Koordinator Senam)',
-    schedule: 'Setiap Hari Minggu Pagi (06.30 WIB di Lapangan Utama)',
+    schedule: 'Setiap Sabtu Pagi (06.30 WIB)',
     isFeatured: false,
     createdAt: '2026-01-01T00:00:00Z',
     updatedAt: '2026-01-01T00:00:00Z'
@@ -514,41 +495,143 @@ export const INITIAL_ENTITIES: Entity[] = [
   },
   {
     id: 'ent-umkm-2',
-    name: 'Kopi Seduh Permai (UMKM BJP)',
+    name: 'ATHAN Snack Corner',
     category: 'Sentra Usaha BJP',
-    description: `Kedai kopi rumahan kreasi warga BJP. Menyajikan racikan kopi susu gula aren segar, manual brew, serta cemilan kentang goreng & roti bakar hangat untuk teman bersantai.
-<p><strong>Menu Favorit:</strong></p>
-<ul>
-  <li>Kopi Susu Gula Aren Permai Signature</li>
-  <li>Manual Brew V60 Beans Lokal</li>
-  <li>Roti Bakar Keju Coklat & Snack Box</li>
-</ul>`,
-    image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=80',
-    ctaUrl: 'https://wa.me/6281399887766',
-    ctaWording: 'Pesan Kopi via WA',
-    contact: '0813-9988-7766 (Mas Bayu - Blok C1 No. 5)',
-    schedule: 'Selasa - Minggu (15.00 - 22.00 WIB)',
+    description: `Dimsum goreng, gyoza, gohyong, wonton, dan spring roll rumahan warga Blok A, Bintara Jaya Permai.`,
+    image: 'https://images.unsplash.com/photo-1541014741259-de529411b96a?auto=format&fit=crop&w=800&q=80',
+    ctaUrl: 'https://wa.me/6281383600389',
+    ctaWording: 'Pesan via WhatsApp',
+    contact: '0813-8360-0389 (Ibu Rani - Blok A102 RT02/11)',
+    schedule: 'Hubungi langsung via WhatsApp',
     isFeatured: false,
     createdAt: '2026-01-01T00:00:00Z',
     updatedAt: '2026-01-01T00:00:00Z'
   },
   {
     id: 'ent-umkm-3',
-    name: 'Batik & Craft Rumahan BJP',
+    name: 'Cemilan Rizca',
     category: 'Sentra Usaha BJP',
-    description: `Kerajinan kain batik tulis, ecoprint, souvenir hampers, dan tas rajut buatan tangan karya kelompok usaha wanita Bintara Jaya Permai.
-<p><strong>Produk Unggulan:</strong></p>
-<ul>
-  <li>Kain & Pakaian Ecoprint Motif Daun Alami</li>
-  <li>Tas Rajut Handmade & Dompet Etnik</li>
-  <li>Hampers Souvenir Acara & Pernikahan</li>
-</ul>`,
-    image: 'https://images.unsplash.com/photo-1606760227091-3dd850d492a6?auto=format&fit=crop&w=800&q=80',
-    ctaUrl: 'https://wa.me/6281277665544',
-    ctaWording: 'Katalog Batik & Craft',
-    contact: '0812-7766-5544 (Ibu Dewi - Blok D2)',
-    schedule: 'Setiap Hari (08.00 - 18.00 WIB)',
+    description: `Kue kering, cemilan, dan tape fermentasi rumahan warga Blok A, Bintara Jaya Permai.`,
+    image: 'https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=800&q=80',
+    ctaUrl: 'https://wa.me/6285691709221',
+    ctaWording: 'Pesan via WhatsApp',
+    contact: '0856-9170-9221 (Ibu Rizca Novita - Blok A77 RT02/11)',
+    schedule: 'Hubungi langsung via WhatsApp',
     isFeatured: false,
+    socials: {
+      instagram: { enabled: true, url: 'https://www.instagram.com/cemilanrizca' },
+    },
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z'
+  },
+  {
+    id: 'ent-umkm-4',
+    name: 'Kopi One Brew x Widya Brownies',
+    category: 'Sentra Usaha BJP',
+    description: `Brownies, bakery, cake, dan aneka kopi racikan warga Blok A, Bintara Jaya Permai.`,
+    image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=80',
+    ctaUrl: 'https://wa.me/620811469454',
+    ctaWording: 'Pesan via WhatsApp',
+    contact: '0811-469-454 (Ibu Ermaina Muharti - Blok A136 RT03/11)',
+    schedule: 'Hubungi langsung via WhatsApp',
+    isFeatured: false,
+    socials: {
+      instagram: { enabled: true, url: 'https://www.instagram.com/widyacakebakery' },
+      tiktok: { enabled: true, url: 'https://www.tiktok.com/@vannylaaa' },
+    },
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z'
+  },
+  {
+    id: 'ent-umkm-5',
+    name: 'Kebuli Madina',
+    category: 'Sentra Usaha BJP',
+    description: `Nasi Mandhi Ayam, Pempek Palembang, dan Soto Padang khas Timur Tengah & Minang, warga Blok C, Bintara Jaya Permai.`,
+    image: 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?auto=format&fit=crop&w=800&q=80',
+    ctaUrl: 'https://wa.me/6281210006212',
+    ctaWording: 'Pesan via WhatsApp',
+    contact: '0812-1000-6212 (Ibu Ike Rivia - Blok C307 RT09/11)',
+    schedule: 'Hubungi langsung via WhatsApp',
+    isFeatured: false,
+    socials: {
+      instagram: { enabled: true, url: 'https://www.instagram.com/kebuli_madina' },
+    },
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z'
+  },
+  {
+    id: 'ent-umkm-6',
+    name: 'Asinan Betawi Wulan',
+    category: 'Sentra Usaha BJP',
+    description: `Asinan Betawi khas rumahan warga Blok C, Bintara Jaya Permai.`,
+    image: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&w=800&q=80',
+    ctaUrl: 'https://wa.me/6285718245458',
+    ctaWording: 'Pesan via WhatsApp',
+    contact: '0857-1824-5458 (Mbak Wulandari - Blok C211 RT06/11)',
+    schedule: 'Hubungi langsung via WhatsApp',
+    isFeatured: false,
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z'
+  },
+  {
+    id: 'ent-umkm-7',
+    name: 'By. Arrasya',
+    category: 'Sentra Usaha BJP',
+    description: `Frozen food, kurma premium, dan jasa modest fashion muslim, warga Blok C, Bintara Jaya Permai.`,
+    image: 'https://images.unsplash.com/photo-1601000938259-9fd6f6607574?auto=format&fit=crop&w=800&q=80',
+    ctaUrl: 'https://wa.me/6289621066268',
+    ctaWording: 'Pesan via WhatsApp',
+    contact: '0896-2106-6268 (Ibu Dara - Blok C58 RT08/11)',
+    schedule: 'Hubungi langsung via WhatsApp',
+    isFeatured: false,
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z'
+  },
+  {
+    id: 'ent-umkm-8',
+    name: 'DM_Frutifood',
+    category: 'Sentra Usaha BJP',
+    description: `Puding buah premium dengan saus cream, warga Blok C, Bintara Jaya Permai.`,
+    image: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=800&q=80',
+    ctaUrl: 'https://wa.me/6285735731766',
+    ctaWording: 'Pesan via WhatsApp',
+    contact: '0857-3573-1766 (Ibu Dewi M. - Blok C278C RT09/11)',
+    schedule: 'Hubungi langsung via WhatsApp',
+    isFeatured: false,
+    socials: {
+      instagram: { enabled: true, url: 'https://www.instagram.com/Dm_Frutifood' },
+    },
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z'
+  },
+  {
+    id: 'ent-umkm-9',
+    name: 'Qianna.shop',
+    category: 'Sentra Usaha BJP',
+    description: `Macaroni, cireng, dan dimsum rumahan, warga Blok C, Bintara Jaya Permai.`,
+    image: 'https://images.unsplash.com/photo-1626804475297-411af0ea11e5?auto=format&fit=crop&w=800&q=80',
+    ctaUrl: 'https://wa.me/6281210828589',
+    ctaWording: 'Pesan via WhatsApp',
+    contact: '0812-1082-8589 (Detty - Blok C100 RT05/11)',
+    schedule: 'Hubungi langsung via WhatsApp',
+    isFeatured: false,
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z'
+  },
+  {
+    id: 'ent-umkm-10',
+    name: 'Warung Mbak Wiwik',
+    category: 'Sentra Usaha BJP',
+    description: `Sayur segar dan kebutuhan dapur harian dengan layanan antar, warga Bintara Jaya Permai.`,
+    image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80',
+    ctaUrl: 'https://wa.me/6281399242801',
+    ctaWording: 'Pesan via WhatsApp',
+    contact: '0813-9924-2801 (Mbak Wiwik)',
+    schedule: 'Hubungi langsung via WhatsApp',
+    isFeatured: false,
+    socials: {
+      tiktok: { enabled: true, url: 'https://www.tiktok.com/@sayur.wiwikmei354' },
+    },
     createdAt: '2026-01-01T00:00:00Z',
     updatedAt: '2026-01-01T00:00:00Z'
   },

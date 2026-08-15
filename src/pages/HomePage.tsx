@@ -91,7 +91,6 @@ export const HomePage: React.FC<HomePageProps> = ({
         </motion.div>
       </div>
 
-
       {/* 4. Pengumuman & Agenda */}
       <div className="bg-white">
         <motion.div
@@ -153,7 +152,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         viewport={{ once: true, margin: "-50px" }}
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
-        <SocialMediaSection />
+        <SocialMediaSection mediaPartners={siteSettings.mediaPartners} />
       </motion.div>
 
     </div>
