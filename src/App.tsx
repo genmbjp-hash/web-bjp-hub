@@ -47,6 +47,7 @@ import { setAnnouncementMetaTags } from './utils/meta';
 
 // Pages
 import { HomePage } from './pages/HomePage';
+import { KomunitasPage } from './pages/KomunitasPage';
 import { RunningTeks } from './components/home/RunningTeks';
 
 export default function App() {
@@ -254,138 +255,33 @@ export default function App() {
               siteSettings={siteSettings}
               onSelectEntity={setSelectedEntityForModal}
               onSelectCategory={(cat) => { setSelectedCategory(cat); }}
+              categoryConfigs={categoryConfigs}
             />
           } />
 
           <Route path="/komunitas" element={
-            <div>
-            <CategoryFilter
-              categories={categoryNames}
+            <KomunitasPage
+              entities={entities}
+              categoryNames={categoryNames}
               selectedCategory={selectedCategory}
-              onSelectCategory={setSelectedCategory}
+              onSelectCategory={(cat) => { setSelectedCategory(cat); }}
               searchTerm={searchTerm}
               onSearchChange={setSearchTerm}
+              categoryConfigs={categoryConfigs}
+              isCMSOpen={isCMSOpen}
+              onSelectEntity={setSelectedEntityForModal}
+              onShareEntity={(ent) => setShareModalItem({ item: ent, type: 'entity' })}
+              onEditEntity={handleEditEntityInCMS}
+              onOpenCMSWithAuth={handleOpenCMSWithAuth}
             />
-
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-              {(() => {
-                const currentConfig =
-                  selectedCategory === 'Semua'
-                    ? { id: 'Semua', name: 'Semua Komunitas', description: 'Seluruh unit kegiatan & komunitas warga BJP.hub', logoUrl: '' }
-                    : categoryConfigs.find((c) => c.name === selectedCategory || c.id === selectedCategory) || {
-                        id: selectedCategory,
-                        name: selectedCategory,
-                        description: `Daftar unit kegiatan dan komunitas dalam ${selectedCategory}`,
-                        logoUrl: '',
-                      };
-
-                const displayedEntities =
-                  selectedCategory === 'Semua'
-                    ? entities.filter((e) =>
-                        !searchTerm || e.name.toLowerCase().includes(searchTerm.toLowerCase())
-                      )
-                    : getEntitiesForSectionConfig(currentConfig);
-
-                // Category-level layout override (Halaman Konten Tunggal)
-                if ((currentConfig as CategoryHeaderConfig).layoutType === 'single_page') {
-                  return <SinglePageView categoryConfig={currentConfig as CategoryHeaderConfig} />;
-                }
-
-                const isPhotoAlbumLayout = (currentConfig as CategoryHeaderConfig).layoutType === 'photo_album';
-
-                return (
-                  <div className="space-y-5">
-                    {/* Page header row */}
-                    <div className="flex items-center justify-between flex-wrap gap-3">
-                      <div>
-                        <h2 className="text-lg font-black text-stone-900">{currentConfig.name}</h2>
-                        {currentConfig.description && (
-                          <p className="text-xs text-stone-500 mt-0.5">{currentConfig.description}</p>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {searchTerm && (
-                          <span className="text-xs text-stone-500 bg-white border border-stone-200 px-3 py-1.5 rounded-xl">
-                            "<strong>{searchTerm}</strong>" — {displayedEntities.length} hasil
-                            <button
-                              onClick={() => setSearchTerm('')}
-                              className="ml-2 text-stone-400 hover:text-stone-700 font-bold"
-                            >✕</button>
-                          </span>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Entity Grid or Empty State */}
-                    {displayedEntities.length === 0 ? (
-                      <div className="bg-white rounded-2xl p-12 text-center border border-stone-200 space-y-3 max-w-md mx-auto shadow-xs">
-                        <SearchX className="w-10 h-10 text-stone-300 mx-auto" />
-                        <h3 className="text-sm font-bold text-stone-800">
-                          {searchTerm ? 'Tidak Ditemukan Komunitas' : 'Belum Ada Komunitas'}
-                        </h3>
-                        <p className="text-xs text-stone-500">
-                          {searchTerm
-                            ? 'Coba kata kunci pencarian lain atau ganti filter kategori.'
-                            : `Belum ada unit kegiatan tercatat dalam kategori "${currentConfig.name}".`}
-                        </p>
-                        <div className="flex items-center gap-2 justify-center flex-wrap">
-                          {searchTerm && (
-                            <button
-                              onClick={() => setSearchTerm('')}
-                              className="text-xs bg-stone-100 hover:bg-stone-200 text-stone-800 font-bold px-4 py-2 rounded-xl cursor-pointer"
-                            >
-                              Hapus Pencarian
-                            </button>
-                          )}
-                          <button
-                            onClick={() => handleOpenCMSWithAuth(currentConfig.id !== 'Semua' ? currentConfig.name : undefined)}
-                            className="inline-flex items-center gap-1.5 bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold px-4 py-2 rounded-xl transition-colors cursor-pointer"
-                          >
-                            <Plus className="w-3.5 h-3.5 text-emerald-300" />
-                            <span>Tambah Komunitas</span>
-                          </button>
-                        </div>
-                      </div>
-                    ) : isPhotoAlbumLayout ? (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                        {displayedEntities.map((entity) => (
-                          <PhotoAlbumCard
-                            key={entity.id}
-                            entity={entity}
-                            onSelect={setSelectedEntityForModal}
-                            onShare={(ent) => setShareModalItem({ item: ent, type: 'entity' })}
-                            onEdit={handleEditEntityInCMS}
-                            isCMSAllowed={isCMSOpen}
-                          />
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
-                        {displayedEntities.map((entity) => (
-                          <EntityCard
-                            key={entity.id}
-                            entity={entity}
-                            onSelect={setSelectedEntityForModal}
-                            onShare={(ent) => setShareModalItem({ item: ent, type: 'entity' })}
-                            onEdit={handleEditEntityInCMS}
-                            isCMSActive={isCMSOpen}
-                          />
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                );
-              })()}
-            </div>
-            </div>
           } />
 
           <Route path="/pengumuman" element={
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-              <AnnouncementsList
+            <AnnouncementsList
                 announcements={announcements}
                 onOpenCMS={() => handleOpenCMSWithAuth()}
-                isCMSActive={true}
+                isCMSActive={isCMSOpen}
                 onShare={(ann) => setShareModalItem({ item: ann, type: 'announcement' })}
               />
             </div>

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Menu, X, LayoutGrid, Megaphone, Home, Settings, Building, FileText, Vote, ChevronDown } from 'lucide-react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { BJP_LOGO_URL } from '../assets/logo';
@@ -23,17 +23,39 @@ export const Header: React.FC<HeaderProps> = ({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [moreMenuOpen, setMoreMenuOpen] = useState(false);
   const moreMenuRef = useRef<HTMLDivElement>(null);
+  const mobileDrawerRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
 
+  // Close mobile drawer when navigating
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (moreMenuRef.current && !moreMenuRef.current.contains(e.target as Node)) {
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
+
+  // Close dropdowns on click-outside & Escape
+  const handleGlobalInteraction = useCallback((e: MouseEvent | KeyboardEvent) => {
+    if (e instanceof KeyboardEvent) {
+      if (e.key === 'Escape') {
         setMoreMenuOpen(false);
+        setMobileMenuOpen(false);
       }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+      return;
+    }
+    if (moreMenuRef.current && !moreMenuRef.current.contains(e.target as Node)) {
+      setMoreMenuOpen(false);
+    }
+    if (mobileDrawerRef.current && !mobileDrawerRef.current.contains(e.target as Node)) {
+      setMobileMenuOpen(false);
+    }
   }, []);
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleGlobalInteraction);
+    document.addEventListener('keydown', handleGlobalInteraction);
+    return () => {
+      document.removeEventListener('mousedown', handleGlobalInteraction);
+      document.removeEventListener('keydown', handleGlobalInteraction);
+    };
+  }, [handleGlobalInteraction]);
 
   const displayLogo = logoUrl ? formatImageUrl(logoUrl) : BJP_LOGO_URL;
 
@@ -189,7 +211,7 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-stone-100 bg-white py-3 px-4">
+        <div ref={mobileDrawerRef} className="md:hidden border-t border-stone-100 bg-white py-3 px-4">
           <div className="flex flex-col gap-1">
             {NAV_ITEMS.map(({ id, path, label, icon: Icon }) => {
               const isActive = path === '/' ? location.pathname === '/' : location.pathname.startsWith(path);

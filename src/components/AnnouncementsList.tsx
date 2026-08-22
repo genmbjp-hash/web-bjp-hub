@@ -111,9 +111,10 @@ export const AnnouncementsList: React.FC<AnnouncementsListProps> = ({
                 </h3>
 
                 {/* Content */}
-                <p className="text-stone-600 text-xs sm:text-sm leading-relaxed whitespace-pre-line">
-                  {ann.content}
-                </p>
+                <div
+                  className="text-stone-600 text-xs sm:text-sm leading-relaxed prose prose-stone prose-sm max-w-none"
+                  dangerouslySetInnerHTML={{ __html: ann.content }}
+                />
               </div>
 
               {/* Footer Meta & CTA */}

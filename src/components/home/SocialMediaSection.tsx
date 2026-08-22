@@ -18,7 +18,7 @@ const SOCIAL_LINKS = [
     id: 'youtube',
     label: 'YouTube BJP.hub',
     handle: '@BJP.hub RW 11',
-    url: 'https://youtube.com',
+    url: 'https://www.youtube.com/@bjphub',
     icon: Youtube,
     gradientClass: 'from-red-700 to-red-500',
     bgHover: 'hover:shadow-red-500/30',

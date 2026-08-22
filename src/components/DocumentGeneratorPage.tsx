@@ -5,12 +5,12 @@ import {
   Printer,
   Download,
   CheckCircle2,
-  QrCode,
   UserCheck,
   RefreshCw,
   Copy,
   Check,
   Home,
+  ArrowLeft,
 } from 'lucide-react';
 
 interface DocumentGeneratorPageProps {
@@ -137,6 +137,20 @@ Terverifikasi Sistem BJP HUB RW 11
 
   return (
     <div className="max-w-6xl mx-auto my-8 px-4 sm:px-6 space-y-8">
+      {/* Global Back Button */}
+      {onGoHome && (
+        <div className="flex justify-start">
+          <button
+            onClick={onGoHome}
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs border border-stone-200 shadow-sm transition-all cursor-pointer no-print"
+            title="Kembali ke Beranda"
+          >
+            <ArrowLeft className="w-4 h-4 text-stone-500" />
+            <span>Kembali ke Beranda</span>
+          </button>
+        </div>
+      )}
+
       {/* Header Banner */}
       <div className="bg-white p-6 sm:p-8 rounded-3xl border border-stone-200 shadow-xs flex items-center justify-between flex-wrap gap-4 no-print">
         <div className="space-y-2">
@@ -151,17 +165,6 @@ Terverifikasi Sistem BJP HUB RW 11
             Buat surat keterangan resmi secara mandiri — lengkap dengan nomor surat otomatis.
           </p>
         </div>
-
-        {onGoHome && (
-          <button
-            onClick={onGoHome}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-stone-100 hover:bg-emerald-50 hover:text-emerald-950 text-stone-700 font-bold text-xs border border-stone-200/80 transition-all cursor-pointer shrink-0"
-            title="Kembali ke Beranda"
-          >
-            <Home className="w-4 h-4 text-emerald-700" />
-            <span>Kembali ke Beranda</span>
-          </button>
-        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -405,11 +408,8 @@ Terverifikasi Sistem BJP HUB RW 11
                     <p>Bekasi, {generatedLetter.requestDate}</p>
                     <p className="font-semibold text-stone-700">Pengurus RW 11 BJP HUB</p>
 
-                    {/* Stamp Verification Badge */}
-                    <div className="my-2 p-2 bg-emerald-50 border border-emerald-300 rounded-xl inline-flex flex-col items-center gap-1 shadow-2xs">
-                      <QrCode className="w-8 h-8 text-emerald-800" />
-                      <span className="text-[9px] font-bold text-emerald-900">VERIFIKASI DIGITAL BJP HUB</span>
-                    </div>
+                    {/* Spacer for signature */}
+                    <div className="h-20" />
 
                     <p className="font-bold underline uppercase text-stone-950 pt-2">( Ketua RW 11 Bintara Jaya Permai )</p>
                   </div>

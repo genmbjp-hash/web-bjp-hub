@@ -6,12 +6,58 @@
     /* Scale up all rem-based sizes globally by increasing root font-size from 16px to 18px on mobile and 20px on desktop */
     font-size: 18px;
     font-family: 'Plus Jakarta Sans', sans-serif;
+    scroll-behavior: smooth;
   }
   
   @media (min-width: 768px) {
     html {
       font-size: 20px;
     }
+  }
+
+  /* Custom scrollbar — subtle, minimal */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #a8a29e;
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #78716c;
+  }
+
+  /* Hide scrollbar utility (used in horizontal sliders) */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+@layer utilities {
+  /* Fade-in animation used by modals and lightbox */
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  .animate-fade-in {
+    animation: fade-in 0.2s ease-out both;
+  }
+
+  /* Slow spin for CMS Settings icon */
+  @keyframes spin-slow {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+  .animate-spin-slow {
+    animation: spin-slow 3s linear infinite;
   }
 }
 

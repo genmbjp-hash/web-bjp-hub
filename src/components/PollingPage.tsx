@@ -1,6 +1,6 @@
 import React from 'react';
 import { PollingPageConfig } from '../types';
-import { Vote, ExternalLink, CheckCircle, HelpCircle, Home } from 'lucide-react';
+import { Vote, ExternalLink, CheckCircle, HelpCircle, ArrowLeft } from 'lucide-react';
 
 interface PollingPageProps {
   config?: PollingPageConfig;
@@ -34,6 +34,20 @@ export const PollingPage: React.FC<PollingPageProps> = ({ config, onGoHome }) =>
 
   return (
     <div className="max-w-6xl mx-auto my-8 px-4 sm:px-6 space-y-8">
+      {/* Global Back Button */}
+      {onGoHome && (
+        <div className="flex justify-start">
+          <button
+            onClick={onGoHome}
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs border border-stone-200 shadow-sm transition-all cursor-pointer"
+            title="Kembali ke Beranda"
+          >
+            <ArrowLeft className="w-4 h-4 text-stone-500" />
+            <span>Kembali ke Beranda</span>
+          </button>
+        </div>
+      )}
+
       {/* Header Banner */}
       <div className="bg-white p-6 sm:p-8 rounded-3xl border border-stone-200 shadow-xs flex items-center justify-between flex-wrap gap-4">
         <div className="space-y-2 max-w-3xl">
@@ -48,17 +62,6 @@ export const PollingPage: React.FC<PollingPageProps> = ({ config, onGoHome }) =>
             {config.pageDescription || 'Sampaikan suara dan aspirasi Anda untuk RW 11.'}
           </p>
         </div>
-
-        {onGoHome && (
-          <button
-            onClick={onGoHome}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-stone-100 hover:bg-emerald-50 hover:text-emerald-950 text-stone-700 font-bold text-xs border border-stone-200/80 transition-all cursor-pointer shrink-0"
-            title="Kembali ke Beranda"
-          >
-            <Home className="w-4 h-4 text-emerald-700" />
-            <span>Kembali ke Beranda</span>
-          </button>
-        )}
       </div>
 
       {/* Grid for 2 Google Form Sections */}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Entity, Announcement, SiteSettings } from '../types';
+import { Entity, Announcement, SiteSettings, CategoryHeaderConfig } from '../types';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 
@@ -19,6 +19,7 @@ interface HomePageProps {
   siteSettings: SiteSettings;
   onSelectEntity: (entity: Entity) => void;
   onSelectCategory: (category: string) => void;
+  categoryConfigs: CategoryHeaderConfig[];
 }
 
 export const HomePage: React.FC<HomePageProps> = ({
@@ -27,6 +28,7 @@ export const HomePage: React.FC<HomePageProps> = ({
   siteSettings,
   onSelectEntity,
   onSelectCategory,
+  categoryConfigs,
 }) => {
   const navigate = useNavigate();
 
@@ -50,6 +52,8 @@ export const HomePage: React.FC<HomePageProps> = ({
         <HeroBanner
           siteTitle={siteSettings.siteTitle}
           siteDescription={siteSettings.siteDescription}
+          totalEntities={entities.length}
+          totalAnnouncements={announcements.length}
           onExplore={handleExplore}
         />
       </motion.div>
@@ -67,6 +71,7 @@ export const HomePage: React.FC<HomePageProps> = ({
           transition={{ duration: 0.6, ease: "easeOut" }}
         >
           <KanalSlider
+            categoryConfigs={categoryConfigs}
             onSelectCategory={onSelectCategory}
             onSwitchToEntities={handleSwitchToEntities}
           />

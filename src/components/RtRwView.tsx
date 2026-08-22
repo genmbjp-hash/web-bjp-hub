@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { RtRwPageConfig } from '../types';
 import {
   MapPin, Phone, Calendar, Sparkles, Building, MessageCircle,
-  ShieldCheck, FileText, Download, Image as ImageIcon, FileCode, Info, Maximize2, X, Home
+  ShieldCheck, FileText, Download, Image as ImageIcon, FileCode, Info, Maximize2, X, Home, ArrowLeft
 } from 'lucide-react';
 import { formatImageUrl } from '../utils/imageUrl';
 import { getDrivePreviewUrl, getDriveViewUrl } from '../utils/driveUrl';
+import rtrwLogo from '../assets/images/logo_rw_011.png';
 
 interface RtRwViewProps {
   config: RtRwPageConfig;
@@ -40,19 +41,23 @@ export const RtRwView: React.FC<RtRwViewProps> = ({ config, onBack }) => {
 
   return (
     <div className="space-y-8 pb-12">
+      {/* Global Back Button */}
+      {onBack && (
+        <div className="flex justify-start">
+          <button
+            onClick={onBack}
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs border border-stone-200 shadow-sm transition-all cursor-pointer"
+            title="Kembali ke Beranda"
+          >
+            <ArrowLeft className="w-4 h-4 text-stone-500" />
+            <span>Kembali ke Beranda</span>
+          </button>
+        </div>
+      )}
+
       {/* Page Header */}
       <div className="bg-white p-5 sm:p-8 rounded-3xl border border-stone-200 shadow-xs space-y-4">
         <div className="flex items-center justify-between flex-wrap gap-3 border-b border-stone-100 pb-3">
-          {onBack && (
-            <button
-              onClick={onBack}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-stone-100 hover:bg-emerald-50 hover:text-emerald-950 text-stone-700 font-bold text-xs border border-stone-200/80 transition-all cursor-pointer"
-              title="Kembali ke Beranda"
-            >
-              <Home className="w-4 h-4 text-emerald-700" />
-              <span>Kembali ke Beranda</span>
-            </button>
-          )}
           <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200/80">
             Pemerintahan & Kewilayahan RW 11
           </span>
@@ -60,9 +65,9 @@ export const RtRwView: React.FC<RtRwViewProps> = ({ config, onBack }) => {
 
         <div className="flex items-start gap-4 sm:gap-6">
           <img
-            src={formatImageUrl(config.heroImage) || 'https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=1200&q=80'}
+            src={rtrwLogo}
             alt={config.pageTitle}
-            className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover border border-stone-200 shadow-2xs shrink-0"
+            className="w-20 h-20 sm:w-24 sm:h-24 object-contain shrink-0"
           />
           <div className="space-y-1 flex-1">
             <h1 className="text-xl sm:text-3xl font-black text-stone-900 tracking-tight leading-tight">

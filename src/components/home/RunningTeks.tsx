@@ -8,7 +8,7 @@ interface RunningTeksProps {
 }
 
 export const RunningTeks: React.FC<RunningTeksProps> = ({ announcements, siteSettings }) => {
-  
+
   // Check for today's security schedule
   const today = new Date();
   const yyyy = today.getFullYear();
@@ -24,37 +24,60 @@ export const RunningTeks: React.FC<RunningTeksProps> = ({ announcements, siteSet
     }
   }
 
-  // If there's a security schedule for today, we prioritize it (or combine it)
-  // Let's just show the security message if it exists, otherwise fall back to announcements
-  let texts: string[] = [];
-  let isSecurity = false;
+  // Combine security message with announcements — security first, then latest announcements
+  const announcementTexts = announcements.slice(0, 5).map((a) => `📢 ${a.title}`);
 
-  if (securityMessage) {
-    texts = [securityMessage, securityMessage, securityMessage]; // Repeat to fill space
-    isSecurity = true;
-  } else {
-    texts = announcements.slice(0, 5).map((a) => `📢 ${a.title}`);
-  }
+  const allTexts: string[] = [];
+  if (securityMessage) allTexts.push(securityMessage);
+  allTexts.push(...announcementTexts);
 
-  if (texts.length === 0) return null;
+  if (allTexts.length === 0) return null;
 
-  const marqueeText = texts.join('   •   ') + '   •   ' + texts.join('   •   ');
+  // Determine primary label to show
+  const isSecurity = Boolean(securityMessage) && announcementTexts.length === 0;
+  const isMixed = Boolean(securityMessage) && announcementTexts.length > 0;
+
+  // Duplicate for seamless loop
+  const marqueeText = allTexts.join('   •   ') + '   •   ' + allTexts.join('   •   ');
 
   return (
-    <div className="bg-stone-50 border-b border-stone-200 text-stone-700 flex items-center overflow-hidden" style={{ height: '48px' }}>
+    <div
+      className={`border-b text-stone-700 flex items-center overflow-hidden ${
+        isSecurity
+          ? 'bg-blue-50 border-blue-200'
+          : isMixed
+          ? 'bg-stone-50 border-stone-200'
+          : 'bg-stone-50 border-stone-200'
+      }`}
+      style={{ height: '44px' }}
+    >
       {/* Label */}
-      <div className={`flex-shrink-0 flex items-center gap-2 h-full px-5 font-bold text-sm tracking-wide border-r border-stone-200/60 ${isSecurity ? 'bg-blue-50 text-blue-800' : 'bg-emerald-50 text-emerald-800'}`}>
-        {isSecurity ? <ShieldCheck className="w-4 h-4" /> : <Megaphone className="w-4 h-4" />}
-        <span>{isSecurity ? 'SECURITY' : 'INFO'}</span>
+      <div
+        className={`flex-shrink-0 flex items-center gap-2 h-full px-4 font-bold text-xs tracking-wide border-r ${
+          isSecurity
+            ? 'bg-blue-100 text-blue-800 border-blue-200'
+            : isMixed
+            ? 'bg-gradient-to-r from-blue-50 to-emerald-50 text-emerald-800 border-stone-200'
+            : 'bg-emerald-50 text-emerald-800 border-stone-200'
+        }`}
+      >
+        {isSecurity ? (
+          <ShieldCheck className="w-3.5 h-3.5" />
+        ) : (
+          <Megaphone className="w-3.5 h-3.5" />
+        )}
+        <span className="hidden sm:inline">
+          {isSecurity ? 'SECURITY' : isMixed ? 'INFO' : 'INFO'}
+        </span>
       </div>
 
       {/* Marquee container */}
       <div className="flex-1 overflow-hidden relative h-full flex items-center">
         <div
-          className="whitespace-nowrap text-sm sm:text-base font-medium text-stone-600"
+          className="whitespace-nowrap text-xs sm:text-sm font-medium text-stone-600"
           style={{
             display: 'inline-block',
-            animation: 'marquee 40s linear infinite',
+            animation: 'marquee 45s linear infinite',
             paddingLeft: '100%',
           }}
         >
