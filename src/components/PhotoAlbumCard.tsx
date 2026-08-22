@@ -12,6 +12,7 @@ import {
   Trash2,
   Share2,
 } from 'lucide-react';
+import { useDragScroll } from '../hooks/useDragScroll';
 
 interface PhotoAlbumCardProps {
   entity: Entity;
@@ -48,6 +49,7 @@ export const PhotoAlbumCard: React.FC<PhotoAlbumCardProps> = ({
   const [lightboxOpen, setLightboxOpen] = useState<boolean>(false);
   const [lightboxIndex, setLightboxIndex] = useState<number>(0);
   const autoSlideTimerRef = useRef<any>(null);
+  const thumbStripRef = useDragScroll<HTMLDivElement>();
 
   // Auto-slide every 3 seconds (3000ms)
   useEffect(() => {
@@ -108,11 +110,11 @@ export const PhotoAlbumCard: React.FC<PhotoAlbumCardProps> = ({
         {/* Top Badges */}
         <div className="absolute top-3 left-3 right-3 flex items-center justify-between z-10 pointer-events-none">
           <span className="inline-flex items-center gap-1 px-3 py-1 bg-emerald-900/80 backdrop-blur-md text-emerald-100 rounded-full text-xs font-bold shadow-xs border border-emerald-700/50">
-            <Images className="w-3.5 h-3.5 text-amber-300" />
+            <Images className="w-3.5 h-3.5 text-emerald-300" />
             <span>Album Foto ({photos.length})</span>
           </span>
 
-          <span className="px-2.5 py-1 bg-stone-900/80 backdrop-blur-md text-amber-300 rounded-full text-[11px] font-extrabold border border-amber-400/30">
+          <span className="px-2.5 py-1 bg-stone-900/80 backdrop-blur-md text-stone-200 rounded-full text-[11px] font-extrabold border border-stone-600/40">
             {entity.category}
           </span>
         </div>
@@ -152,7 +154,7 @@ export const PhotoAlbumCard: React.FC<PhotoAlbumCardProps> = ({
         {/* Caption Bar Overlay */}
         {activePhoto?.caption && (
           <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-3 pt-6 text-white text-xs z-10">
-            <p className="line-clamp-1 font-medium italic text-amber-200">
+            <p className="line-clamp-1 font-medium italic text-stone-100">
               "{activePhoto.caption}"
             </p>
           </div>
@@ -169,7 +171,7 @@ export const PhotoAlbumCard: React.FC<PhotoAlbumCardProps> = ({
                   setCurrentIndex(idx);
                 }}
                 className={`h-1.5 rounded-full transition-all cursor-pointer ${
-                  currentIndex === idx ? 'w-5 bg-amber-400' : 'w-1.5 bg-white/60 hover:bg-white'
+                  currentIndex === idx ? 'w-5 bg-emerald-400' : 'w-1.5 bg-white/60 hover:bg-white'
                 }`}
                 aria-label={`Go to photo ${idx + 1}`}
               />
@@ -194,7 +196,7 @@ export const PhotoAlbumCard: React.FC<PhotoAlbumCardProps> = ({
 
         {/* Thumbnail Preview Strip */}
         {photos.length > 1 && (
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 border-t border-b border-stone-100">
+          <div ref={thumbStripRef} className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 border-t border-b border-stone-100 cursor-grab select-none">
             {photos.map((p, idx) => (
               <img
                 key={p.id || idx}
@@ -205,7 +207,7 @@ export const PhotoAlbumCard: React.FC<PhotoAlbumCardProps> = ({
                 onClick={() => setCurrentIndex(idx)}
                 className={`w-10 h-10 object-cover rounded-lg cursor-pointer border transition-all shrink-0 ${
                   currentIndex === idx
-                    ? 'border-amber-500 ring-2 ring-amber-400/40 scale-105'
+                    ? 'border-emerald-600 ring-2 ring-emerald-400/40 scale-105'
                     : 'border-stone-200 opacity-70 hover:opacity-100'
                 }`}
               />
@@ -327,13 +329,13 @@ export const PhotoAlbumCard: React.FC<PhotoAlbumCardProps> = ({
                   onClick={() =>
                     setLightboxIndex((prev) => (prev - 1 + photos.length) % photos.length)
                   }
-                  className="absolute left-2 top-1/2 -translate-y-1/2 p-3 rounded-full bg-stone-900/80 hover:bg-amber-500 text-white hover:text-stone-950 transition-colors cursor-pointer"
+                  className="absolute left-2 top-1/2 -translate-y-1/2 p-3 rounded-full bg-stone-900/80 hover:bg-emerald-700 text-white transition-colors cursor-pointer"
                 >
                   <ChevronLeft className="w-6 h-6" />
                 </button>
                 <button
                   onClick={() => setLightboxIndex((prev) => (prev + 1) % photos.length)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-3 rounded-full bg-stone-900/80 hover:bg-amber-500 text-white hover:text-stone-950 transition-colors cursor-pointer"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-3 rounded-full bg-stone-900/80 hover:bg-emerald-700 text-white transition-colors cursor-pointer"
                 >
                   <ChevronRight className="w-6 h-6" />
                 </button>
@@ -344,7 +346,7 @@ export const PhotoAlbumCard: React.FC<PhotoAlbumCardProps> = ({
           {/* Lightbox Caption Footer */}
           <div className="w-full max-w-3xl text-center text-white pb-4">
             {photos[lightboxIndex]?.caption && (
-              <p className="text-sm font-semibold text-amber-300 bg-stone-900/90 px-4 py-2 rounded-xl inline-block border border-stone-800 shadow-md">
+              <p className="text-sm font-semibold text-stone-100 bg-stone-900/90 px-4 py-2 rounded-xl inline-block border border-stone-800 shadow-md">
                 "{photos[lightboxIndex]?.caption}"
               </p>
             )}

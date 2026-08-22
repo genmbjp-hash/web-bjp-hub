@@ -2,6 +2,7 @@ import React from 'react';
 import { CategoryHeaderConfig } from '../types';
 import { formatImageUrl } from '../utils/imageUrl';
 import { ShieldCheck } from 'lucide-react';
+import { Card } from './ui/Card';
 
 interface SinglePageViewProps {
   categoryConfig?: CategoryHeaderConfig;
@@ -46,7 +47,7 @@ export const SinglePageView: React.FC<SinglePageViewProps> = ({
 `;
 
   return (
-    <div className="bg-white rounded-3xl border border-stone-200/90 shadow-md overflow-hidden max-w-5xl mx-auto my-8">
+    <Card radius="3xl" padding="none" className="shadow-md overflow-hidden max-w-5xl mx-auto my-8">
       {/* Hero Image Section */}
       <div className="relative h-64 sm:h-80 md:h-96 w-full bg-stone-900 overflow-hidden">
         <img
@@ -59,7 +60,7 @@ export const SinglePageView: React.FC<SinglePageViewProps> = ({
         />
         <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/40 to-transparent flex flex-col justify-end p-6 sm:p-10 text-white">
           <div className="flex items-center gap-2 mb-2">
-            <span className="px-3 py-1 bg-amber-400 text-stone-950 text-xs font-black rounded-full uppercase tracking-wider shadow-xs">
+            <span className="px-3 py-1 bg-emerald-600 text-white text-xs font-black rounded-full uppercase tracking-wider shadow-xs">
               Halaman Konten Tunggal
             </span>
             <span className="text-xs text-stone-300 font-medium">BJP.hub RW 11</span>
@@ -84,6 +85,6 @@ export const SinglePageView: React.FC<SinglePageViewProps> = ({
           dangerouslySetInnerHTML={{ __html: content }}
         />
       </div>
-    </div>
+    </Card>
   );
 };

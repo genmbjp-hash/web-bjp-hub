@@ -17,6 +17,7 @@ import {
   PasswordModal,
   Footer,
   ShareModal,
+  Container,
 } from './components';
 
 // CMSModal is large (admin-only panel) and rarely used by regular visitors,
@@ -277,24 +278,24 @@ export default function App() {
           } />
 
           <Route path="/pengumuman" element={
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <Container className="py-8">
             <AnnouncementsList
                 announcements={announcements}
                 onOpenCMS={() => handleOpenCMSWithAuth()}
                 isCMSActive={isCMSOpen}
                 onShare={(ann) => setShareModalItem({ item: ann, type: 'announcement' })}
               />
-            </div>
+            </Container>
           } />
 
           <Route path="/rt-rw" element={
             <Suspense fallback={null}>
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+              <Container className="py-8">
                 <RtRwView
                   config={siteSettings.rtRwConfig || DEFAULT_RTRW_CONFIG}
                   onBack={() => navigate('/')}
                 />
-              </div>
+              </Container>
             </Suspense>
           } />
 

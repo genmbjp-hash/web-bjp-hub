@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Share2, Check, Sparkles, ExternalLink, Copy } from 'lucide-react';
+import { Share2, Check, Sparkles, Copy } from 'lucide-react';
 import { BJP_LOGO_URL } from '../assets/logo';
 import { formatImageUrl } from '../utils/imageUrl';
 
@@ -41,11 +41,7 @@ export const HomePageHeader: React.FC<HomePageHeaderProps> = ({
   };
 
   return (
-    <div className="bg-gradient-to-br from-stone-900 via-stone-800 to-emerald-950 text-white rounded-3xl p-6 sm:p-8 lg:p-10 shadow-xl border border-stone-800 relative overflow-hidden mb-8">
-      {/* Background Subtle Grid Effect */}
-      <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none" />
-      <div className="absolute -right-20 -bottom-20 w-80 h-80 bg-emerald-600/15 rounded-full blur-3xl pointer-events-none" />
-
+    <div className="bg-stone-900 text-white rounded-3xl p-6 sm:p-8 lg:p-10 shadow-sm border border-stone-800 relative overflow-hidden mb-8">
       <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 sm:gap-8">
         
         {/* Left Info Column */}
@@ -71,7 +67,7 @@ export const HomePageHeader: React.FC<HomePageHeaderProps> = ({
           <div className="pt-2 flex flex-wrap items-center gap-3">
             <button
               onClick={handleShareHomepage}
-              className={`inline-flex items-center gap-2.5 px-5 py-2.5 rounded-2xl font-bold text-xs sm:text-sm shadow-lg transition-all transform cursor-pointer active:scale-95 ${
+              className={`inline-flex items-center gap-2.5 px-5 py-2.5 rounded-2xl font-bold text-xs sm:text-sm shadow-lg transition-all transform cursor-pointer active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
                 copied
                   ? 'bg-emerald-500 text-stone-950 border border-emerald-400 font-extrabold shadow-emerald-500/20'
                   : 'bg-white hover:bg-emerald-50 text-stone-900 hover:text-emerald-950 border border-white/80 shadow-stone-950/40'
@@ -105,7 +101,7 @@ export const HomePageHeader: React.FC<HomePageHeaderProps> = ({
           <img
             src={displayLogo}
             alt={siteTitle}
-            className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 rounded-2xl sm:rounded-3xl object-contain bg-white border-2 border-amber-400 p-2 shadow-xl shrink-0"
+            className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 rounded-2xl sm:rounded-3xl object-contain bg-white border-2 border-white/70 p-2 shadow-xl shrink-0"
             onError={(e) => {
               (e.target as HTMLImageElement).src = BJP_LOGO_URL;
             }}

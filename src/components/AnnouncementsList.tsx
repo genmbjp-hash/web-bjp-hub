@@ -1,7 +1,9 @@
 import React from 'react';
 import { Announcement } from '../types';
 import { formatImageUrl } from '../utils/imageUrl';
-import { Megaphone, Calendar, User, ExternalLink, Shield, PlusCircle, AlertCircle, Maximize2, X, Share2 } from 'lucide-react';
+import { Megaphone, Calendar, User, ExternalLink, AlertCircle, Maximize2, X, Share2 } from 'lucide-react';
+import { Card } from './ui/Card';
+import { Badge } from './ui/Badge';
 
 interface AnnouncementsListProps {
   announcements: Announcement[];
@@ -21,7 +23,7 @@ export const AnnouncementsList: React.FC<AnnouncementsListProps> = ({
   return (
     <div className="space-y-6">
       {/* Top Section Header */}
-      <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <Card padding="md" className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <div className="p-2 bg-emerald-100 text-emerald-800 rounded-xl">
@@ -33,26 +35,27 @@ export const AnnouncementsList: React.FC<AnnouncementsListProps> = ({
             Informasi penting, jadwal kegiatan, dan acara terkini di Komplek Bintara Jaya Permai (RW 11).
           </p>
         </div>
-      </div>
+      </Card>
 
       {/* Announcements List Grid */}
       {announcements.length === 0 ? (
-        <div className="bg-white p-12 text-center rounded-2xl border border-stone-200 space-y-3">
+        <Card padding="none" className="p-12 text-center space-y-3">
           <AlertCircle className="w-10 h-10 text-stone-300 mx-auto" />
           <h3 className="font-bold text-stone-700">Belum Ada Pengumuman Baru</h3>
           <p className="text-stone-500 text-xs max-w-sm mx-auto">
             Pengurus RW atau pengurus komunitas dapat menambahkan pengumuman baru melalui menu CMS Pengurus.
           </p>
-        </div>
+        </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {announcements.map((ann) => (
-            <div
+            <Card
               key={ann.id}
-              className={`bg-white rounded-2xl p-5 border transition-all duration-200 space-y-3 flex flex-col justify-between ${
+              padding="sm"
+              className={`transition-all duration-200 space-y-3 flex flex-col justify-between ${
                 ann.isImportant
                   ? 'border-amber-300/80 bg-amber-50/30 shadow-xs'
-                  : 'border-stone-200 hover:border-stone-300 shadow-2xs'
+                  : 'hover:border-stone-300'
               }`}
             >
               <div className="space-y-3">
@@ -82,20 +85,18 @@ export const AnnouncementsList: React.FC<AnnouncementsListProps> = ({
 
                 {/* Meta Badges */}
                 <div className="flex items-center justify-between gap-2">
-                  <span className="bg-stone-100 text-stone-700 text-[11px] font-semibold px-2.5 py-0.5 rounded-lg border border-stone-200">
-                    {ann.category}
-                  </span>
+                  <Badge variant="neutral" className="rounded-lg">{ann.category}</Badge>
                   <div className="flex items-center gap-2">
                     {ann.isImportant && (
-                      <span className="bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded-full border border-amber-300 flex items-center gap-1">
+                      <Badge variant="warning" className="items-center gap-1">
                         <span className="w-1.5 h-1.5 rounded-full bg-amber-600 animate-pulse"></span>
                         Penting
-                      </span>
+                      </Badge>
                     )}
                     {onShare && (
                       <button
                         onClick={() => onShare(ann)}
-                        className="flex items-center gap-1 bg-stone-100 hover:bg-emerald-100 hover:text-emerald-800 text-stone-600 text-xs font-bold px-2.5 py-1 rounded-lg border border-stone-200 transition-colors"
+                        className="flex items-center gap-1 bg-stone-100 hover:bg-emerald-100 hover:text-emerald-800 text-stone-600 text-xs font-bold px-2.5 py-1 rounded-lg border border-stone-200 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40"
                         title="Bagikan Pengumuman ini"
                       >
                         <Share2 className="w-3.5 h-3.5" />
@@ -134,7 +135,7 @@ export const AnnouncementsList: React.FC<AnnouncementsListProps> = ({
                   {onShare && (
                     <button
                       onClick={() => onShare(ann)}
-                      className="p-1.5 text-stone-500 hover:text-emerald-800 hover:bg-emerald-50 rounded-lg transition-colors"
+                      className="p-1.5 text-stone-500 hover:text-emerald-800 hover:bg-emerald-50 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40"
                       title="Bagikan Ke WhatsApp"
                     >
                       <Share2 className="w-3.5 h-3.5" />
@@ -146,7 +147,7 @@ export const AnnouncementsList: React.FC<AnnouncementsListProps> = ({
                       href={ann.ctaUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center gap-1 text-emerald-800 hover:text-emerald-900 font-bold bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg border border-emerald-200 transition-colors"
+                      className="inline-flex items-center gap-1 text-emerald-800 hover:text-emerald-900 font-bold bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg border border-emerald-200 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40"
                     >
                       <span>{ann.ctaWording || 'Info Selengkapnya'}</span>
                       <ExternalLink className="w-3 h-3" />
@@ -154,7 +155,7 @@ export const AnnouncementsList: React.FC<AnnouncementsListProps> = ({
                   )}
                 </div>
               </div>
-            </div>
+            </Card>
           ))}
         </div>
       )}

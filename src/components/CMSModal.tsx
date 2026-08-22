@@ -6,9 +6,10 @@ import {
   Bold, Italic, List, Heading, ExternalLink, ShieldAlert, ArrowLeft,
   GripVertical, ArrowUp, ArrowDown, MapPin, Info, Globe, Sliders, Palette, Eye, EyeOff,
   Users, UserPlus, ShieldCheck, Shield, Lock, LogOut, CheckSquare, Square, Search, User as UserIcon,
-  Database, Server, CheckCircle2, XCircle, Terminal, Code, FileText, Vote, Youtube, Instagram, Save
+  Database, Server, CheckCircle2, XCircle, Terminal, Code, FileText, Vote, Instagram, Save, Youtube
 } from 'lucide-react';
 import { exportDataAsJSON, importDataFromJSON, resetToDefaults, DEFAULT_CATEGORY_CONFIGS } from '../utils/storage';
+import { useDragScroll } from '../hooks/useDragScroll';
 import { formatImageUrl } from '../utils/imageUrl';
 import { BJP_LOGO_URL } from '../assets/logo';
 import { CARD_TITLE_MAX_LENGTH, CARD_DESCRIPTION_MAX_LENGTH } from '../constants/defaults';
@@ -19,6 +20,7 @@ import { RtRwCMS } from './RtRwCMS';
 import { DocumentTemplatesCMS } from './DocumentTemplatesCMS';
 import { PollingCMS } from './PollingCMS';
 import { MediaPartnersCMS } from './MediaPartnersCMS';
+import { VideoCMS } from './VideoCMS';
 import {
   isSupabaseConfigured,
   testSupabaseConnection,
@@ -105,8 +107,9 @@ export const CMSModal: React.FC<CMSModalProps> = ({
   editingEntityInit,
   initialCategoryForNewEntity,
 }) => {
-const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'settings' | 'security' | 'rtrw' | 'documents' | 'polling' | 'users' | 'supabase' | 'backup'>('entities');
-  
+const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'settings' | 'security' | 'rtrw' | 'documents' | 'polling' | 'videos' | 'users' | 'supabase' | 'backup'>('entities');
+  const navTabsRef = useDragScroll<HTMLDivElement>();
+
   // Supabase State & Handlers
   const [supabaseTesting, setSupabaseTesting] = useState<boolean>(false);
   const [supabaseTestResult, setSupabaseTestResult] = useState<{ success: boolean; message: string } | null>(null);
@@ -872,7 +875,7 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
         </div>
 
         {/* Navigation Tabs */}
-        <div className="bg-white border-b border-stone-200 px-4 pt-3 flex items-center gap-2 overflow-x-auto no-scrollbar">
+        <div ref={navTabsRef} className="bg-white border-b border-stone-200 px-4 pt-3 flex items-center gap-2 overflow-x-auto no-scrollbar cursor-grab select-none">
           <button
             onClick={() => {
               setActiveTab('entities');
@@ -975,6 +978,20 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
           >
             <Vote className="w-4 h-4 text-emerald-700" />
             <span>Polling & Aspirasi</span>
+          </button>
+
+          <button
+            onClick={() => {
+              setActiveTab('videos');
+            }}
+            className={`flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-semibold border-b-2 transition-all whitespace-nowrap ${
+              activeTab === 'videos'
+                ? 'border-emerald-700 text-emerald-900 bg-emerald-50/50 rounded-t-lg'
+                : 'border-transparent text-stone-600 hover:text-stone-900'
+            }`}
+          >
+            <Youtube className="w-4 h-4 text-red-600" />
+            <span>Video Kegiatan</span>
           </button>
 
           <button
@@ -2823,6 +2840,11 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
             <div className="max-w-5xl mx-auto pb-6">
               <PollingCMS siteSettings={siteSettings} onSaveSiteSettings={onSaveSiteSettings} />
             </div>
+          )}
+
+          {/* TAB: VIDEO KEGIATAN */}
+          {activeTab === 'videos' && (
+            <VideoCMS siteSettings={siteSettings} onSaveSiteSettings={onSaveSiteSettings} />
           )}
 
           {/* TAB: USER MANAGEMENT */}

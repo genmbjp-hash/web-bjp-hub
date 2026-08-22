@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Entity } from '../../types';
+import { FeaturedVideoItem } from '../../types';
 import { Play, Youtube } from 'lucide-react';
+import { Container } from '../ui/Container';
 
 interface AlbumVideoProps {
-  entities: Entity[];
+  videos: FeaturedVideoItem[];
 }
 
 // Extract YouTube video ID from various URL formats
@@ -22,41 +23,21 @@ function extractYouTubeId(url: string): string | null {
   return null;
 }
 
-const PLACEHOLDER_VIDEOS = [
-  { title: 'Profil BJP HUB RW 11', entityName: 'BJP HUB', youtubeId: 'dQw4w9WgXcQ' },
-  { title: 'Kegiatan Senam Pagi', entityName: 'Olahraga', youtubeId: 'jNQXAC9IVRw' },
-  { title: 'Peresmian Balai Warga', entityName: 'Lingkungan', youtubeId: 'M7lc1UVf-VE' },
-  { title: 'Bazar UMKM Warga', entityName: 'Sentra Usaha', youtubeId: 'kJQP7kiw5Fk' },
-];
-
-export const AlbumVideo: React.FC<AlbumVideoProps> = ({ entities }) => {
+export const AlbumVideo: React.FC<AlbumVideoProps> = ({ videos }) => {
   const [playingId, setPlayingId] = useState<string | null>(null);
 
-  // Collect YouTube videos from entities' mediaUrl
-  const videos: { title: string; entityName: string; youtubeId: string }[] = [];
-  entities.forEach((e) => {
-    if (e.mediaUrl) {
-      const youtubeId = extractYouTubeId(e.mediaUrl);
-      if (youtubeId) {
-        videos.push({ title: e.name, entityName: e.name, youtubeId });
-      }
-    }
-  });
+  // Only videos the admin has enabled, in the order set in the CMS
+  const displayVideos = videos
+    .filter((v) => v.enabled)
+    .sort((a, b) => a.order - b.order)
+    .map((v) => ({ title: v.title, youtubeId: extractYouTubeId(v.youtubeUrl) }))
+    .filter((v): v is { title: string; youtubeId: string } => Boolean(v.youtubeId));
 
-  // Use placeholder if no real videos found, and slice to exactly 4 videos
-  let allVideos = videos.length > 0 ? videos : PLACEHOLDER_VIDEOS;
-  
-  // If we have real videos but less than 4, fill the rest with placeholders
-  if (allVideos.length > 0 && allVideos.length < 4) {
-    const needed = 4 - allVideos.length;
-    allVideos = [...allVideos, ...PLACEHOLDER_VIDEOS.slice(0, needed)];
-  }
-  
-  const displayVideos = allVideos.slice(0, 4);
+  if (displayVideos.length === 0) return null;
 
   return (
-    <section className="py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-12 bg-stone-950 border-t border-stone-800">
+      <Container>
         {/* Header */}
         <div className="mb-7">
           <h2 className="text-xl font-black text-white flex items-center gap-2">
@@ -94,14 +75,14 @@ export const AlbumVideo: React.FC<AlbumVideoProps> = ({ entities }) => {
                     <div className="flex justify-center mt-6">
                       <button
                         onClick={() => setPlayingId(video.youtubeId)}
-                        className="w-12 h-12 bg-red-600 hover:bg-red-500 rounded-full flex items-center justify-center shadow-lg transition-transform hover:scale-110"
+                        aria-label={`Putar video ${video.title}`}
+                        className="w-12 h-12 bg-red-600 hover:bg-red-500 rounded-full flex items-center justify-center shadow-lg transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60"
                       >
                         <Play className="w-5 h-5 text-white fill-white ml-0.5" />
                       </button>
                     </div>
                     <div className="mt-auto">
                       <p className="text-white font-bold text-xs line-clamp-2 leading-tight">{video.title}</p>
-                      <p className="text-stone-300 text-[10px] mt-0.5">{video.entityName}</p>
                     </div>
                   </div>
                 </div>
@@ -109,7 +90,7 @@ export const AlbumVideo: React.FC<AlbumVideoProps> = ({ entities }) => {
             </div>
           ))}
         </div>
-      </div>
+      </Container>
     </section>
   );
 };

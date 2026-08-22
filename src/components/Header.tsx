@@ -4,6 +4,7 @@ import { Link, NavLink, useLocation } from 'react-router-dom';
 import { BJP_LOGO_URL } from '../assets/logo';
 import { NavbarTabConfig } from '../types';
 import { formatImageUrl } from '../utils/imageUrl';
+import { Container } from './ui/Container';
 
 interface HeaderProps {
   onOpenCMS: () => void;
@@ -101,7 +102,7 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-stone-200 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <Container>
         <div className="flex items-center justify-between h-16 gap-4 relative">
 
           {/* Logo */}
@@ -129,7 +130,7 @@ export const Header: React.FC<HeaderProps> = ({
                 <Link
                   key={id}
                   to={path}
-                  className={`relative flex items-center gap-1.5 h-full text-xs font-bold transition-colors ${
+                  className={`relative flex items-center gap-1.5 h-full text-xs font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40 rounded ${
                     isActive ? 'text-emerald-700' : 'text-stone-700 hover:text-stone-900'
                   }`}
                 >
@@ -147,7 +148,7 @@ export const Header: React.FC<HeaderProps> = ({
               <div className="relative h-full" ref={moreMenuRef}>
                 <button
                   onClick={() => setMoreMenuOpen((v) => !v)}
-                  className={`relative flex items-center gap-1 h-full text-xs font-bold transition-colors cursor-pointer ${
+                  className={`relative flex items-center gap-1 h-full text-xs font-bold transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40 rounded ${
                     isMoreActive ? 'text-emerald-700' : 'text-stone-700 hover:text-stone-900'
                   }`}
                 >
@@ -186,7 +187,7 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="flex items-center gap-2 sm:gap-4 z-10">
             <button
               onClick={onOpenCMS}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-xs ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40 ${
                 isCMSActive
                   ? 'bg-stone-800 text-amber-400 hover:bg-stone-900 ring-1 ring-amber-400/50'
                   : 'bg-white text-stone-700 hover:bg-stone-50 border border-stone-200'
@@ -200,14 +201,14 @@ export const Header: React.FC<HeaderProps> = ({
             {/* Mobile Hamburger */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2.5 text-stone-600 hover:text-stone-900 hover:bg-stone-100 rounded-lg"
+              className="md:hidden p-2.5 text-stone-600 hover:text-stone-900 hover:bg-stone-100 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40"
               aria-label="Toggle menu"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
-      </div>
+      </Container>
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
@@ -220,7 +221,7 @@ export const Header: React.FC<HeaderProps> = ({
                   key={id}
                   to={path}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold text-left transition-all ${
+                  className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40 ${
                     isActive
                       ? 'bg-emerald-700 text-white'
                       : 'text-stone-700 hover:bg-stone-100'

@@ -19,3 +19,8 @@ export { ShareModal } from './ShareModal';
 export { SinglePageView } from './SinglePageView';
 export { SocialBadges, InstagramIcon, FacebookIcon, TikTokIcon, WhatsAppIcon } from './SocialIcons';
 export { Button } from './Button';
+export { Container } from './ui/Container';
+export { Card } from './ui/Card';
+export { Badge } from './ui/Badge';
+export { ScrollNavButton } from './ui/ScrollNavButton';
+export { Section } from './ui/Section';

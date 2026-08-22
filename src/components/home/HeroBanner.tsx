@@ -31,12 +31,8 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
         style={{ backgroundImage: `url(${HERO_BG})` }}
       />
 
-      {/* Gradient Overlays */}
-      <div className="absolute inset-0 bg-gradient-to-b from-stone-950/85 via-stone-900/55 to-stone-950/90" />
-      <div className="absolute inset-0 bg-emerald-950/25 mix-blend-multiply" />
-
-      {/* Animated shimmer overlay */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(16,185,129,0.08)_0%,_transparent_70%)]" />
+      {/* Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-stone-950/85 via-stone-900/60 to-stone-950/90" />
 
       {/* Content */}
       <div className="relative z-10 px-4 max-w-5xl mx-auto flex flex-col items-center gap-8 text-center">
@@ -60,27 +56,19 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
 
         {/* Stats Row */}
         {(totalEntities > 0 || totalAnnouncements > 0) && (
-          <div className="flex items-center gap-3 sm:gap-6 flex-wrap justify-center">
+          <div className="flex items-center gap-6 sm:gap-10 flex-wrap justify-center">
             {totalEntities > 0 && (
-              <div className="flex items-center gap-2.5 bg-white/10 backdrop-blur-md border border-white/15 px-4 py-2.5 rounded-2xl">
-                <div className="p-1.5 bg-emerald-500/30 rounded-lg">
-                  <Users className="w-4 h-4 text-emerald-300" />
-                </div>
-                <div className="text-left">
-                  <p className="text-white font-black text-lg leading-none">{totalEntities}</p>
-                  <p className="text-stone-400 text-[11px] font-medium">Komunitas Aktif</p>
-                </div>
+              <div className="flex items-center gap-2 text-white/90">
+                <Users className="w-4 h-4 text-emerald-400" />
+                <p className="font-black text-lg leading-none">{totalEntities}</p>
+                <p className="text-stone-400 text-xs font-medium">Komunitas Aktif</p>
               </div>
             )}
             {totalAnnouncements > 0 && (
-              <div className="flex items-center gap-2.5 bg-white/10 backdrop-blur-md border border-white/15 px-4 py-2.5 rounded-2xl">
-                <div className="p-1.5 bg-amber-500/30 rounded-lg">
-                  <Megaphone className="w-4 h-4 text-amber-300" />
-                </div>
-                <div className="text-left">
-                  <p className="text-white font-black text-lg leading-none">{totalAnnouncements}</p>
-                  <p className="text-stone-400 text-[11px] font-medium">Pengumuman</p>
-                </div>
+              <div className="flex items-center gap-2 text-white/90">
+                <Megaphone className="w-4 h-4 text-emerald-400" />
+                <p className="font-black text-lg leading-none">{totalAnnouncements}</p>
+                <p className="text-stone-400 text-xs font-medium">Pengumuman</p>
               </div>
             )}
           </div>
@@ -89,7 +77,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
         {/* CTA Button */}
         <button
           onClick={onExplore}
-          className="group inline-flex items-center gap-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-8 py-3.5 rounded-2xl shadow-lg shadow-emerald-900/40 hover:shadow-emerald-700/40 transition-all duration-300 hover:scale-105 text-sm sm:text-base"
+          className="group inline-flex items-center gap-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-8 py-3.5 rounded-2xl shadow-lg shadow-emerald-900/40 hover:shadow-emerald-700/40 transition-all duration-300 hover:scale-105 text-sm sm:text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60"
         >
           <span>Jelajahi Sekarang</span>
           <ChevronDown className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" />

@@ -1,8 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Entity, CategoryHeaderConfig } from '../types';
 import { EntityCard } from './EntityCard';
-import { ChevronLeft, ChevronRight, ExternalLink, ArrowRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 import { formatImageUrl } from '../utils/imageUrl';
+import { Card } from './ui/Card';
+import { Badge } from './ui/Badge';
+import { ScrollNavButton } from './ui/ScrollNavButton';
+import { useDragScroll } from '../hooks/useDragScroll';
 
 interface CategoryCarouselProps {
   catConfig: CategoryHeaderConfig;
@@ -23,7 +27,7 @@ export const CategoryCarousel: React.FC<CategoryCarouselProps> = ({
   onEditEntity,
   isCMSActive = true,
 }) => {
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useDragScroll<HTMLDivElement>();
   const [isHovered, setIsHovered] = useState(false);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
@@ -84,8 +88,9 @@ export const CategoryCarousel: React.FC<CategoryCarouselProps> = ({
   const categoryLogo = rawLogo ? formatImageUrl(rawLogo) : null;
 
   return (
-    <div
-      className="bg-white p-5 sm:p-6 rounded-2xl border border-stone-200/90 shadow-2xs space-y-4"
+    <Card
+      padding="md"
+      className="space-y-4"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -120,9 +125,7 @@ export const CategoryCarousel: React.FC<CategoryCarouselProps> = ({
               <h3 className="text-base sm:text-xl font-bold text-stone-900 tracking-tight leading-snug">
                 {catConfig.name}
               </h3>
-              <span className="bg-emerald-100 text-emerald-800 text-[11px] font-bold px-2 py-0.5 rounded-full border border-emerald-200/70">
-                {entities.length} Card
-              </span>
+              <Badge variant="accent">{entities.length} Card</Badge>
             </div>
             <p className="text-xs text-stone-500 mt-0.5 max-w-2xl line-clamp-1">
               {catConfig.description || `Unit komunitas & kegiatan warga dalam kategori ${catConfig.name}`}
@@ -134,7 +137,7 @@ export const CategoryCarousel: React.FC<CategoryCarouselProps> = ({
         <div className="flex items-center gap-2 self-start sm:self-center shrink-0">
           <button
             onClick={() => onVisitCategory(catConfig.name)}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 hover:text-emerald-900 border border-emerald-200/80 text-xs font-bold rounded-xl transition-all shadow-2xs cursor-pointer group"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 hover:text-emerald-900 border border-emerald-200/80 text-xs font-bold rounded-xl transition-all shadow-2xs cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40"
           >
             <span>Kunjungi {catConfig.name}</span>
             <ArrowRight className="w-3.5 h-3.5 text-emerald-600 group-hover:translate-x-0.5 transition-transform" />
@@ -143,30 +146,8 @@ export const CategoryCarousel: React.FC<CategoryCarouselProps> = ({
           {/* Nav Controls */}
           {entities.length > 2 && (
             <div className="hidden sm:flex items-center gap-1 pl-2 border-l border-stone-200">
-              <button
-                onClick={handleScrollLeft}
-                disabled={!canScrollLeft}
-                aria-label="Previous Slide"
-                className={`p-1.5 rounded-lg border text-stone-600 transition-all cursor-pointer ${
-                  canScrollLeft
-                    ? 'bg-white hover:bg-stone-100 border-stone-300 text-stone-800 shadow-2xs'
-                    : 'bg-stone-50 border-stone-200 text-stone-300 cursor-not-allowed'
-                }`}
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              <button
-                onClick={handleScrollRight}
-                disabled={!canScrollRight}
-                aria-label="Next Slide"
-                className={`p-1.5 rounded-lg border text-stone-600 transition-all cursor-pointer ${
-                  canScrollRight
-                    ? 'bg-white hover:bg-stone-100 border-stone-300 text-stone-800 shadow-2xs'
-                    : 'bg-stone-50 border-stone-200 text-stone-300 cursor-not-allowed'
-                }`}
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
+              <ScrollNavButton direction="left" onClick={handleScrollLeft} disabled={!canScrollLeft} aria-label="Previous Slide" />
+              <ScrollNavButton direction="right" onClick={handleScrollRight} disabled={!canScrollRight} aria-label="Next Slide" />
             </div>
           )}
         </div>
@@ -176,7 +157,7 @@ export const CategoryCarousel: React.FC<CategoryCarouselProps> = ({
       <div className="relative group">
         <div
           ref={scrollRef}
-          className="flex gap-4 sm:gap-6 overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory py-1 px-0.5"
+          className="flex gap-4 sm:gap-6 overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory py-1 px-0.5 cursor-grab select-none"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
           {entities.map((entity) => (
@@ -201,7 +182,7 @@ export const CategoryCarousel: React.FC<CategoryCarouselProps> = ({
             {canScrollLeft && (
               <button
                 onClick={handleScrollLeft}
-                className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/95 text-stone-800 shadow-lg border border-stone-200 flex items-center justify-center hover:bg-white hover:scale-105 transition-all cursor-pointer sm:hidden"
+                className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/95 text-stone-800 shadow-lg border border-stone-200 flex items-center justify-center hover:bg-white hover:scale-105 transition-all cursor-pointer sm:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40"
                 aria-label="Scroll Left"
               >
                 <ChevronLeft className="w-5 h-5 text-stone-700" />
@@ -210,7 +191,7 @@ export const CategoryCarousel: React.FC<CategoryCarouselProps> = ({
             {canScrollRight && (
               <button
                 onClick={handleScrollRight}
-                className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/95 text-stone-800 shadow-lg border border-stone-200 flex items-center justify-center hover:bg-white hover:scale-105 transition-all cursor-pointer sm:hidden"
+                className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/95 text-stone-800 shadow-lg border border-stone-200 flex items-center justify-center hover:bg-white hover:scale-105 transition-all cursor-pointer sm:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40"
                 aria-label="Scroll Right"
               >
                 <ChevronRight className="w-5 h-5 text-stone-700" />
@@ -219,6 +200,6 @@ export const CategoryCarousel: React.FC<CategoryCarouselProps> = ({
           </>
         )}
       </div>
-    </div>
+    </Card>
   );
 };

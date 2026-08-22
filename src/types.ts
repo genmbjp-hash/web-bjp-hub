@@ -42,7 +42,7 @@ export interface Entity {
   cardType?: CardType; // 'standard' | 'photo_album'
   albumPhotos?: PhotoAlbumItem[]; // Max 10 photos
   instagram?: string;
-  mediaUrl?: string;
+  mediaUrl?: string; // Shown as the "Portal Website" link on the entity detail page
   contact?: string;
   schedule?: string;
   address?: string;
@@ -98,6 +98,14 @@ export interface MediaPartnerItem {
   instagramEnabled?: boolean;
   youtubeUrl?: string;
   youtubeEnabled?: boolean;
+  enabled: boolean;
+  order: number;
+}
+
+export interface FeaturedVideoItem {
+  id: string;
+  title: string;
+  youtubeUrl: string;
   enabled: boolean;
   order: number;
 }
@@ -184,6 +192,7 @@ export interface SiteSettings {
   categoryConfigs?: CategoryHeaderConfig[];
   securitySchedules?: SecuritySchedule[];
   mediaPartners?: MediaPartnerItem[];
+  featuredVideos?: FeaturedVideoItem[];
   documentTemplates?: DocumentTemplate[];
   pollingConfig?: PollingPageConfig;
   rtRwConfig?: RtRwPageConfig;

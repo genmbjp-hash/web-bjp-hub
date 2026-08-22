@@ -9,9 +9,9 @@ import {
   RefreshCw,
   Copy,
   Check,
-  Home,
   ArrowLeft,
 } from 'lucide-react';
+import { Card } from './ui/Card';
 
 interface DocumentGeneratorPageProps {
   templates?: DocumentTemplate[];
@@ -142,7 +142,7 @@ Terverifikasi Sistem BJP HUB RW 11
         <div className="flex justify-start">
           <button
             onClick={onGoHome}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs border border-stone-200 shadow-sm transition-all cursor-pointer no-print"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs border border-stone-200 shadow-sm transition-all cursor-pointer no-print focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40"
             title="Kembali ke Beranda"
           >
             <ArrowLeft className="w-4 h-4 text-stone-500" />
@@ -152,7 +152,7 @@ Terverifikasi Sistem BJP HUB RW 11
       )}
 
       {/* Header Banner */}
-      <div className="bg-white p-6 sm:p-8 rounded-3xl border border-stone-200 shadow-xs flex items-center justify-between flex-wrap gap-4 no-print">
+      <Card radius="3xl" padding="none" className="p-6 sm:p-8 flex items-center justify-between flex-wrap gap-4 no-print">
         <div className="space-y-2">
           <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200/80">
             Layanan Warga Mandiri
@@ -165,11 +165,11 @@ Terverifikasi Sistem BJP HUB RW 11
             Buat surat keterangan resmi secara mandiri — lengkap dengan nomor surat otomatis.
           </p>
         </div>
-      </div>
+      </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Form Column */}
-        <div className="lg:col-span-5 bg-white p-6 rounded-3xl border border-stone-200/90 shadow-md space-y-5 no-print">
+        <Card radius="3xl" padding="none" className="lg:col-span-5 p-6 shadow-md space-y-5 no-print">
           <div className="border-b border-stone-100 pb-3">
             <h2 className="font-extrabold text-stone-900 text-base sm:text-lg flex items-center gap-2">
               <UserCheck className="w-5 h-5 text-emerald-700" />
@@ -213,7 +213,7 @@ Terverifikasi Sistem BJP HUB RW 11
                   <a
                     href={currentTemplate.fileUrl}
                     download={currentTemplate.fileName || `Template_${currentTemplate.code}.docx`}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-800 hover:bg-emerald-900 text-white rounded-lg text-xs font-bold transition-colors shrink-0 shadow-xs"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-800 hover:bg-emerald-900 text-white rounded-lg text-xs font-bold transition-colors shrink-0 shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40"
                   >
                     <Download className="w-3.5 h-3.5" />
                     <span>Unduh File</span>
@@ -297,20 +297,20 @@ Terverifikasi Sistem BJP HUB RW 11
 
             <button
               type="submit"
-              className="w-full py-3 bg-emerald-800 hover:bg-emerald-900 text-white font-extrabold rounded-xl transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer text-sm"
+              className="w-full py-3 bg-emerald-800 hover:bg-emerald-900 text-white font-extrabold rounded-xl transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40"
             >
-              <RefreshCw className="w-4 h-4 text-amber-300" />
+              <RefreshCw className="w-4 h-4 text-emerald-300" />
               <span>Generate Surat & Nomor Resmi</span>
             </button>
           </form>
-        </div>
+        </Card>
 
         {/* Letter Preview & Document Container */}
         <div className="lg:col-span-7 space-y-4">
           {generatedLetter ? (
             <div className="space-y-4">
               {/* Action Toolbar */}
-              <div className="bg-white p-4 rounded-2xl border border-stone-200/90 shadow-xs flex items-center justify-between flex-wrap gap-2 no-print">
+              <Card padding="none" className="p-4 flex items-center justify-between flex-wrap gap-2 no-print">
                 <span className="text-xs font-bold text-emerald-800 flex items-center gap-1.5">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                   <span>Surat Siap Diunduh / Dicetak</span>
@@ -319,7 +319,7 @@ Terverifikasi Sistem BJP HUB RW 11
                 <div className="flex items-center gap-2">
                   <button
                     onClick={handleCopyText}
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-900 text-xs font-bold rounded-lg transition-colors cursor-pointer"
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-900 text-xs font-bold rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40"
                   >
                     {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4 text-stone-600" />}
                     <span>{copied ? 'Tersalin' : 'Salin Teks'}</span>
@@ -327,13 +327,13 @@ Terverifikasi Sistem BJP HUB RW 11
 
                   <button
                     onClick={handlePrint}
-                    className="flex items-center gap-1.5 px-4 py-1.5 bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold rounded-lg transition-colors shadow-xs cursor-pointer"
+                    className="flex items-center gap-1.5 px-4 py-1.5 bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold rounded-lg transition-colors shadow-xs cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40"
                   >
-                    <Printer className="w-4 h-4 text-amber-300" />
+                    <Printer className="w-4 h-4 text-emerald-300" />
                     <span>Cetak / Download PDF</span>
                   </button>
                 </div>
-              </div>
+              </Card>
 
               {/* Formal Letter Paper Design */}
               <div className="bg-white p-8 sm:p-12 rounded-2xl border border-stone-300 shadow-xl space-y-6 text-stone-900 text-xs sm:text-sm font-serif relative">
@@ -417,7 +417,7 @@ Terverifikasi Sistem BJP HUB RW 11
               </div>
             </div>
           ) : (
-            <div className="bg-white p-12 rounded-3xl border border-stone-200 text-center space-y-4">
+            <Card radius="3xl" padding="none" className="p-12 text-center space-y-4">
               <div className="w-16 h-16 bg-emerald-50 text-emerald-700 rounded-2xl flex items-center justify-center mx-auto">
                 <FileText className="w-8 h-8" />
               </div>
@@ -427,7 +427,7 @@ Terverifikasi Sistem BJP HUB RW 11
                   Lengkapi formulir di sebelah kiri dan klik "Generate Surat & Nomor Resmi" untuk menerbitkan dokumen formal secara langsung.
                 </p>
               </div>
-            </div>
+            </Card>
           )}
         </div>
       </div>

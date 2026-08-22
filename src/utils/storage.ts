@@ -241,6 +241,7 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
       order: 4,
     },
   ],
+  featuredVideos: [],
   documentTemplates: [
     {
       id: 'tmpl-1',
@@ -347,6 +348,7 @@ export function getSiteSettings(): SiteSettings {
         categoryConfigs: mergedCategoryConfigs,
         securitySchedules: Array.isArray(parsed.securitySchedules) ? parsed.securitySchedules : [],
         mediaPartners: Array.isArray(parsed.mediaPartners) ? parsed.mediaPartners : DEFAULT_SITE_SETTINGS.mediaPartners,
+        featuredVideos: Array.isArray(parsed.featuredVideos) ? parsed.featuredVideos : DEFAULT_SITE_SETTINGS.featuredVideos,
         documentTemplates: Array.isArray(parsed.documentTemplates)
           ? parsed.documentTemplates
           : DEFAULT_SITE_SETTINGS.documentTemplates,

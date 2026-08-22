@@ -5,6 +5,8 @@ import { CategoryFilter } from '../components/CategoryFilter';
 import { EntityCard } from '../components/EntityCard';
 import { PhotoAlbumCard } from '../components/PhotoAlbumCard';
 import { SinglePageView } from '../components/SinglePageView';
+import { Container } from '../components/ui/Container';
+import { Card } from '../components/ui/Card';
 
 interface KomunitasPageProps {
   entities: Entity[];
@@ -78,9 +80,9 @@ export const KomunitasPage: React.FC<KomunitasPageProps> = ({
           searchTerm={searchTerm}
           onSearchChange={onSearchChange}
         />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <Container className="py-6">
           <SinglePageView categoryConfig={currentConfig as CategoryHeaderConfig} />
-        </div>
+        </Container>
       </div>
     );
   }
@@ -97,7 +99,7 @@ export const KomunitasPage: React.FC<KomunitasPageProps> = ({
         onSearchChange={onSearchChange}
       />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <Container className="py-6">
         <div className="space-y-5">
           {/* Page header row */}
           <div className="flex items-center justify-between flex-wrap gap-3">
@@ -122,7 +124,7 @@ export const KomunitasPage: React.FC<KomunitasPageProps> = ({
 
           {/* Entity Grid or Empty State */}
           {displayedEntities.length === 0 ? (
-            <div className="bg-white rounded-2xl p-12 text-center border border-stone-200 space-y-3 max-w-md mx-auto shadow-xs">
+            <Card padding="none" className="p-12 text-center space-y-3 max-w-md mx-auto">
               <SearchX className="w-10 h-10 text-stone-300 mx-auto" />
               <h3 className="text-sm font-bold text-stone-800">
                 {searchTerm ? 'Tidak Ditemukan Komunitas' : 'Belum Ada Komunitas'}
@@ -136,7 +138,7 @@ export const KomunitasPage: React.FC<KomunitasPageProps> = ({
                 {searchTerm && (
                   <button
                     onClick={() => onSearchChange('')}
-                    className="text-xs bg-stone-100 hover:bg-stone-200 text-stone-800 font-bold px-4 py-2 rounded-xl cursor-pointer"
+                    className="text-xs bg-stone-100 hover:bg-stone-200 text-stone-800 font-bold px-4 py-2 rounded-xl cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40"
                   >
                     Hapus Pencarian
                   </button>
@@ -145,13 +147,13 @@ export const KomunitasPage: React.FC<KomunitasPageProps> = ({
                   onClick={() =>
                     onOpenCMSWithAuth(currentConfig.id !== 'Semua' ? currentConfig.name : undefined)
                   }
-                  className="inline-flex items-center gap-1.5 bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold px-4 py-2 rounded-xl transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-1.5 bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold px-4 py-2 rounded-xl transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40"
                 >
                   <Plus className="w-3.5 h-3.5 text-emerald-300" />
                   <span>Tambah Komunitas</span>
                 </button>
               </div>
-            </div>
+            </Card>
           ) : isPhotoAlbumLayout ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {displayedEntities.map((entity) => (
@@ -180,7 +182,7 @@ export const KomunitasPage: React.FC<KomunitasPageProps> = ({
             </div>
           )}
         </div>
-      </div>
+      </Container>
     </div>
   );
 };

@@ -3,6 +3,7 @@ import { Heart, MapPin, Phone, Mail, Home, LayoutGrid, Megaphone, Building, File
 import { Link } from 'react-router-dom';
 import { BJP_LOGO_URL } from '../assets/logo';
 import { formatImageUrl } from '../utils/imageUrl';
+import { Container } from './ui/Container';
 
 interface FooterProps {
   onOpenCMS?: () => void;
@@ -24,7 +25,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenCMS, isCMSActive, logoUrl 
 
   return (
     <footer className="bg-stone-950 text-stone-400 border-t border-stone-800">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <Container className="py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
 
           {/* Brand Column */}
@@ -65,7 +66,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenCMS, isCMSActive, logoUrl 
                 <li key={path}>
                   <Link
                     to={path}
-                    className="flex items-center gap-2 text-sm text-stone-400 hover:text-emerald-400 transition-colors group"
+                    className="flex items-center gap-2 text-sm text-stone-400 hover:text-emerald-400 transition-colors group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40 rounded"
                   >
                     <Icon className="w-3.5 h-3.5 text-stone-600 group-hover:text-emerald-500 transition-colors shrink-0" />
                     <span>{label}</span>
@@ -91,7 +92,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenCMS, isCMSActive, logoUrl 
             {onOpenCMS && (
               <button
                 onClick={onOpenCMS}
-                className={`inline-flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-xl border transition-all mt-2 ${
+                className={`inline-flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-xl border transition-all mt-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40 ${
                   isCMSActive
                     ? 'bg-amber-900/30 border-amber-700/50 text-amber-400 hover:bg-amber-900/50'
                     : 'bg-stone-800 border-stone-700 text-stone-400 hover:bg-stone-700 hover:text-white'
@@ -112,7 +113,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenCMS, isCMSActive, logoUrl 
             <span>untuk Seluruh Warga BJP</span>
           </div>
         </div>
-      </div>
+      </Container>
     </footer>
   );
 };

@@ -1,6 +1,7 @@
 import React from 'react';
 import { PollingPageConfig } from '../types';
 import { Vote, ExternalLink, CheckCircle, HelpCircle, ArrowLeft } from 'lucide-react';
+import { Card } from './ui/Card';
 
 interface PollingPageProps {
   config?: PollingPageConfig;
@@ -10,13 +11,13 @@ interface PollingPageProps {
 export const PollingPage: React.FC<PollingPageProps> = ({ config, onGoHome }) => {
   if (!config || !config.enabled) {
     return (
-      <div className="max-w-4xl mx-auto my-12 p-8 bg-white rounded-3xl border border-stone-200 text-center space-y-4">
+      <Card radius="3xl" padding="none" className="max-w-4xl mx-auto my-12 p-8 text-center space-y-4">
         <Vote className="w-12 h-12 text-stone-300 mx-auto" />
         <h2 className="text-xl font-extrabold text-stone-800">Layanan Polling Sedang Tidak Aktif</h2>
         <p className="text-stone-500 text-sm max-w-md mx-auto">
           Fitur Polling & Suara Warga saat ini sedang dinonaktifkan oleh Pengurus RW 11.
         </p>
-      </div>
+      </Card>
     );
   }
 
@@ -39,7 +40,7 @@ export const PollingPage: React.FC<PollingPageProps> = ({ config, onGoHome }) =>
         <div className="flex justify-start">
           <button
             onClick={onGoHome}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs border border-stone-200 shadow-sm transition-all cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs border border-stone-200 shadow-sm transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40"
             title="Kembali ke Beranda"
           >
             <ArrowLeft className="w-4 h-4 text-stone-500" />
@@ -49,7 +50,7 @@ export const PollingPage: React.FC<PollingPageProps> = ({ config, onGoHome }) =>
       )}
 
       {/* Header Banner */}
-      <div className="bg-white p-6 sm:p-8 rounded-3xl border border-stone-200 shadow-xs flex items-center justify-between flex-wrap gap-4">
+      <Card radius="3xl" padding="none" className="p-6 sm:p-8 flex items-center justify-between flex-wrap gap-4">
         <div className="space-y-2 max-w-3xl">
           <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200/80">
             Suara & Aspirasi Warga
@@ -62,13 +63,13 @@ export const PollingPage: React.FC<PollingPageProps> = ({ config, onGoHome }) =>
             {config.pageDescription || 'Sampaikan suara dan aspirasi Anda untuk RW 11.'}
           </p>
         </div>
-      </div>
+      </Card>
 
       {/* Grid for 2 Google Form Sections */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
         {/* Section 1 */}
         {section1 && section1.enabled ? (
-          <div className="bg-white rounded-3xl border border-stone-200/90 shadow-md overflow-hidden flex flex-col justify-between">
+          <Card radius="3xl" padding="none" className="shadow-md overflow-hidden flex flex-col justify-between">
             {/* Card Header */}
             <div className="p-6 bg-gradient-to-b from-stone-50 to-white border-b border-stone-100 space-y-2">
               <div className="flex items-center justify-between gap-2">
@@ -80,7 +81,7 @@ export const PollingPage: React.FC<PollingPageProps> = ({ config, onGoHome }) =>
                     href={section1.formUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-1 text-xs font-bold text-emerald-800 hover:text-emerald-900 hover:underline"
+                    className="inline-flex items-center gap-1 text-xs font-bold text-emerald-800 hover:text-emerald-900 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40 rounded"
                   >
                     <span>Buka Layar Penuh</span>
                     <ExternalLink className="w-3.5 h-3.5" />
@@ -117,7 +118,7 @@ export const PollingPage: React.FC<PollingPageProps> = ({ config, onGoHome }) =>
               <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
               <span>Respon tersimpan langsung pada database panitia RW 11.</span>
             </div>
-          </div>
+          </Card>
         ) : (
           <div className="bg-stone-50 rounded-3xl border border-dashed border-stone-300 p-8 text-center text-stone-400 space-y-2">
             <Vote className="w-8 h-8 mx-auto opacity-40" />
@@ -127,11 +128,11 @@ export const PollingPage: React.FC<PollingPageProps> = ({ config, onGoHome }) =>
 
         {/* Section 2 */}
         {section2 && section2.enabled ? (
-          <div className="bg-white rounded-3xl border border-stone-200/90 shadow-md overflow-hidden flex flex-col justify-between">
+          <Card radius="3xl" padding="none" className="shadow-md overflow-hidden flex flex-col justify-between">
             {/* Card Header */}
             <div className="p-6 bg-gradient-to-b from-stone-50 to-white border-b border-stone-100 space-y-2">
               <div className="flex items-center justify-between gap-2">
-                <span className="px-3 py-1 bg-amber-100 text-amber-900 font-bold rounded-full text-xs">
+                <span className="px-3 py-1 bg-emerald-100 text-emerald-900 font-bold rounded-full text-xs">
                   Polling Section 02
                 </span>
                 {section2.formUrl && (
@@ -139,7 +140,7 @@ export const PollingPage: React.FC<PollingPageProps> = ({ config, onGoHome }) =>
                     href={section2.formUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-1 text-xs font-bold text-amber-800 hover:text-amber-900 hover:underline"
+                    className="inline-flex items-center gap-1 text-xs font-bold text-emerald-800 hover:text-emerald-900 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40 rounded"
                   >
                     <span>Buka Layar Penuh</span>
                     <ExternalLink className="w-3.5 h-3.5" />
@@ -176,7 +177,7 @@ export const PollingPage: React.FC<PollingPageProps> = ({ config, onGoHome }) =>
               <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
               <span>Respon tersimpan langsung pada database panitia RW 11.</span>
             </div>
-          </div>
+          </Card>
         ) : (
           <div className="bg-stone-50 rounded-3xl border border-dashed border-stone-300 p-8 text-center text-stone-400 space-y-2">
             <Vote className="w-8 h-8 mx-auto opacity-40" />

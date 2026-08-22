@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { CategoryHeaderConfig, Entity } from '../types';
 import { Share2, Check, ArrowLeft, Copy } from 'lucide-react';
 import { formatImageUrl } from '../utils/imageUrl';
+import { Card } from './ui/Card';
+import { Badge } from './ui/Badge';
 
 interface CategoryPageHeaderProps {
   catConfig: CategoryHeaderConfig;
@@ -50,21 +52,19 @@ export const CategoryPageHeader: React.FC<CategoryPageHeaderProps> = ({
   };
 
   return (
-    <div className="bg-white p-5 sm:p-8 rounded-3xl border border-stone-200 shadow-xs space-y-4 mb-8">
+    <Card radius="3xl" padding="lg" className="space-y-4 mb-8">
       {/* Top Bar: Re-positioned Back Button */}
       <div className="flex items-center justify-between border-b border-stone-100 pb-3">
         <button
           onClick={onBackToHome}
-          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-stone-100 hover:bg-emerald-50 hover:text-emerald-950 text-stone-700 font-bold text-xs border border-stone-200/80 transition-all cursor-pointer active:scale-95 shadow-2xs"
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-stone-100 hover:bg-emerald-50 hover:text-emerald-950 text-stone-700 font-bold text-xs border border-stone-200/80 transition-all cursor-pointer active:scale-95 shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40"
           title="Kembali ke Home Page"
         >
           <ArrowLeft className="w-4 h-4 text-emerald-800" />
           <span>Kembali ke Home Page</span>
         </button>
 
-        <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200/80">
-          Halaman Komunitas Resmi
-        </span>
+        <Badge variant="accent">Halaman Komunitas Resmi</Badge>
       </div>
 
       {/* Main Content: HD Logo & Title */}
@@ -108,7 +108,7 @@ export const CategoryPageHeader: React.FC<CategoryPageHeaderProps> = ({
         <div className="w-full sm:w-auto flex items-center gap-2 shrink-0 border-t sm:border-t-0 border-stone-100 pt-3 sm:pt-0">
           <button
             onClick={handleShareCategory}
-            className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl font-bold text-xs sm:text-sm shadow-2xs transition-all cursor-pointer ${
+            className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl font-bold text-xs sm:text-sm shadow-2xs transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40 ${
               copied
                 ? 'bg-emerald-800 text-white border border-emerald-900 font-bold'
                 : 'bg-stone-100 hover:bg-stone-200 text-stone-800 border border-stone-300'
@@ -130,6 +130,6 @@ export const CategoryPageHeader: React.FC<CategoryPageHeaderProps> = ({
         </div>
 
       </div>
-    </div>
+    </Card>
   );
 };

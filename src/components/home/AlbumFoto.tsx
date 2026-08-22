@@ -90,10 +90,10 @@ export const AlbumFoto: React.FC<AlbumFotoProps> = ({ entities }) => {
             <p className="text-xs text-stone-400 mt-0.5">Galeri kegiatan warga Bintara Jaya Permai</p>
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={() => scroll('left')} className="p-2 text-stone-400 hover:text-white transition-colors">
+            <button onClick={() => scroll('left')} aria-label="Sebelumnya" className="p-2 text-stone-400 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60 rounded-lg">
               <ChevronLeft className="w-6 h-6" />
             </button>
-            <button onClick={() => scroll('right')} className="p-2 text-stone-400 hover:text-white transition-colors">
+            <button onClick={() => scroll('right')} aria-label="Selanjutnya" className="p-2 text-stone-400 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60 rounded-lg">
               <ChevronRight className="w-6 h-6" />
             </button>
           </div>
@@ -113,7 +113,7 @@ export const AlbumFoto: React.FC<AlbumFotoProps> = ({ entities }) => {
             <button
               key={idx}
               onClick={() => openLightbox(idx)}
-              className="flex-shrink-0 w-56 sm:w-64 md:w-72 lg:w-80 group relative aspect-square rounded-2xl overflow-hidden bg-stone-800 border-2 border-transparent hover:border-amber-400 transition-all snap-start shadow-xl"
+              className="flex-shrink-0 w-56 sm:w-64 md:w-72 lg:w-80 group relative aspect-square rounded-2xl overflow-hidden bg-stone-800 border-2 border-transparent hover:border-emerald-500 transition-all snap-start shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60"
             >
               <img
                 src={photo.src}

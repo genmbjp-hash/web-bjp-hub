@@ -7,6 +7,7 @@ import {
 import { formatImageUrl } from '../utils/imageUrl';
 import { getDrivePreviewUrl, getDriveViewUrl } from '../utils/driveUrl';
 import rtrwLogo from '../assets/images/logo_rw_011.png';
+import { Card } from './ui/Card';
 
 interface RtRwViewProps {
   config: RtRwPageConfig;
@@ -25,7 +26,7 @@ export const RtRwView: React.FC<RtRwViewProps> = ({ config, onBack }) => {
         {onBack && (
           <button
             onClick={onBack}
-            className="px-4 py-2 bg-emerald-800 text-white rounded-xl text-xs font-bold hover:bg-emerald-900 transition-colors cursor-pointer"
+            className="px-4 py-2 bg-emerald-800 text-white rounded-xl text-xs font-bold hover:bg-emerald-900 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40"
           >
             Kembali ke Beranda
           </button>
@@ -46,7 +47,7 @@ export const RtRwView: React.FC<RtRwViewProps> = ({ config, onBack }) => {
         <div className="flex justify-start">
           <button
             onClick={onBack}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs border border-stone-200 shadow-sm transition-all cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs border border-stone-200 shadow-sm transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40"
             title="Kembali ke Beranda"
           >
             <ArrowLeft className="w-4 h-4 text-stone-500" />
@@ -56,7 +57,7 @@ export const RtRwView: React.FC<RtRwViewProps> = ({ config, onBack }) => {
       )}
 
       {/* Page Header */}
-      <div className="bg-white p-5 sm:p-8 rounded-3xl border border-stone-200 shadow-xs space-y-4">
+      <Card radius="3xl" padding="none" className="p-5 sm:p-8 space-y-4">
         <div className="flex items-center justify-between flex-wrap gap-3 border-b border-stone-100 pb-3">
           <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200/80">
             Pemerintahan & Kewilayahan RW 11
@@ -78,10 +79,10 @@ export const RtRwView: React.FC<RtRwViewProps> = ({ config, onBack }) => {
             </p>
           </div>
         </div>
-      </div>
+      </Card>
 
       {/* Visi & Misi Card */}
-      <div className="bg-white p-6 sm:p-8 rounded-3xl border border-stone-200 shadow-xs space-y-6">
+      <Card radius="3xl" padding="lg" className="space-y-6">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200/80">
             {config.visionTitle || 'Visi & Misi Resmi RW 11'}
@@ -140,7 +141,7 @@ export const RtRwView: React.FC<RtRwViewProps> = ({ config, onBack }) => {
             </ul>
           </div>
         </div>
-      </div>
+      </Card>
 
       {/* Rincian Wilayah RT Section */}
       {activeRts.length > 0 && (
@@ -167,9 +168,11 @@ export const RtRwView: React.FC<RtRwViewProps> = ({ config, onBack }) => {
             const waPhone = cleanPhone.startsWith('0') ? '62' + cleanPhone.slice(1) : cleanPhone;
 
             return (
-              <div
+              <Card
                 key={rt.id}
-                className="bg-white p-5 rounded-2xl border border-stone-200/90 shadow-2xs hover:shadow-md transition-all space-y-3.5 flex flex-col justify-between"
+                padding="none"
+                interactive
+                className="p-5 space-y-3.5 flex flex-col justify-between"
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
@@ -220,14 +223,14 @@ export const RtRwView: React.FC<RtRwViewProps> = ({ config, onBack }) => {
                       href={`https://wa.me/${waPhone}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-2xs shrink-0"
+                      className="inline-flex items-center gap-1 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-2xs shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40"
                     >
                       <MessageCircle className="w-3.5 h-3.5 text-emerald-200" />
                       <span>Hubungi RT</span>
                     </a>
                   </div>
                 )}
-              </div>
+              </Card>
             );
           })}
         </div>
@@ -259,9 +262,11 @@ export const RtRwView: React.FC<RtRwViewProps> = ({ config, onBack }) => {
                 const driveViewUrl = getDriveViewUrl(card.fileUrl);
 
                 return (
-                  <div
+                  <Card
                     key={card.id}
-                    className="bg-white rounded-2xl border border-stone-200/90 shadow-2xs hover:shadow-md transition-all p-5 flex flex-col justify-between space-y-4 md:col-span-2 lg:col-span-1"
+                    padding="none"
+                    interactive
+                    className="p-5 flex flex-col justify-between space-y-4 md:col-span-2 lg:col-span-1"
                   >
                     <div className="space-y-3">
                       <div className="flex items-center justify-between gap-2">
@@ -310,7 +315,7 @@ export const RtRwView: React.FC<RtRwViewProps> = ({ config, onBack }) => {
                           href={driveViewUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold rounded-xl transition-all shadow-2xs"
+                          className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold rounded-xl transition-all shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40"
                         >
                           <Download className="w-4 h-4 text-emerald-300" />
                           <span>{card.ctaText || 'Buka Dokumen Lengkap'}</span>
@@ -321,7 +326,7 @@ export const RtRwView: React.FC<RtRwViewProps> = ({ config, onBack }) => {
                           target="_blank"
                           rel="noopener noreferrer"
                           download={card.fileName || 'dokumen.pdf'}
-                          className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold rounded-xl transition-all shadow-2xs"
+                          className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold rounded-xl transition-all shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40"
                         >
                           <Download className="w-4 h-4 text-emerald-300" />
                           <span>{card.ctaText || 'Unduh Dokumen PDF'}</span>
@@ -330,16 +335,18 @@ export const RtRwView: React.FC<RtRwViewProps> = ({ config, onBack }) => {
                         <div className="text-xs text-stone-400 italic text-center py-1">File PDF belum diunggah</div>
                       )}
                     </div>
-                  </div>
+                  </Card>
                 );
               }
 
               if (card.type === 'image') {
                 const displayImg = card.imageUrl ? formatImageUrl(card.imageUrl) : 'https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&w=1000&q=80';
                 return (
-                  <div
+                  <Card
                     key={card.id}
-                    className="bg-white rounded-2xl border border-stone-200/90 shadow-2xs hover:shadow-md transition-all overflow-hidden flex flex-col justify-between"
+                    padding="none"
+                    interactive
+                    className="overflow-hidden flex flex-col justify-between"
                   >
                     <div>
                       <div className="relative h-48 bg-stone-900 overflow-hidden group">
@@ -359,7 +366,7 @@ export const RtRwView: React.FC<RtRwViewProps> = ({ config, onBack }) => {
 
                         <button
                           onClick={() => setActiveImageModal({ url: displayImg, title: card.title, caption: card.imageCaption || card.description })}
-                          className="absolute bottom-3 right-3 p-2 bg-black/60 hover:bg-black/90 text-white rounded-xl backdrop-blur-md border border-white/20 transition-all cursor-pointer"
+                          className="absolute bottom-3 right-3 p-2 bg-black/60 hover:bg-black/90 text-white rounded-xl backdrop-blur-md border border-white/20 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60"
                           title="Perbesar Foto Full Screen"
                         >
                           <Maximize2 className="w-4 h-4 text-emerald-300" />
@@ -386,21 +393,23 @@ export const RtRwView: React.FC<RtRwViewProps> = ({ config, onBack }) => {
                     <div className="p-5 pt-0">
                       <button
                         onClick={() => setActiveImageModal({ url: displayImg, title: card.title, caption: card.imageCaption || card.description })}
-                        className="w-full inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-stone-100 hover:bg-stone-200 text-stone-800 text-xs font-bold rounded-xl transition-all border border-stone-200 cursor-pointer"
+                        className="w-full inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-stone-100 hover:bg-stone-200 text-stone-800 text-xs font-bold rounded-xl transition-all border border-stone-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40"
                       >
                         <Maximize2 className="w-3.5 h-3.5 text-stone-600" />
                         <span>Lihat Gambar Lengkap</span>
                       </button>
                     </div>
-                  </div>
+                  </Card>
                 );
               }
 
               // Text type card
               return (
-                <div
+                <Card
                   key={card.id}
-                  className="bg-white rounded-2xl border border-stone-200/90 shadow-2xs hover:shadow-md transition-all p-5 flex flex-col justify-between space-y-4"
+                  padding="none"
+                  interactive
+                  className="p-5 flex flex-col justify-between space-y-4"
                 >
                   <div className="space-y-3">
                     <div className="flex items-center justify-between gap-2">
@@ -439,7 +448,7 @@ export const RtRwView: React.FC<RtRwViewProps> = ({ config, onBack }) => {
                       <Building className="w-3.5 h-3.5 text-emerald-700" />
                     </div>
                   )}
-                </div>
+                </Card>
               );
             })}
           </div>
@@ -462,7 +471,7 @@ export const RtRwView: React.FC<RtRwViewProps> = ({ config, onBack }) => {
               </h3>
               <button
                 onClick={() => setActiveImageModal(null)}
-                className="p-1.5 bg-stone-800 hover:bg-stone-700 text-stone-300 hover:text-white rounded-full transition-colors cursor-pointer"
+                className="p-1.5 bg-stone-800 hover:bg-stone-700 text-stone-300 hover:text-white rounded-full transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60"
               >
                 <X className="w-5 h-5" />
               </button>

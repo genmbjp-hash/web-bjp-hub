@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { CategoryHeaderConfig } from '../../types';
+import { Container } from '../ui/Container';
 
 interface KanalSliderProps {
   categoryConfigs: CategoryHeaderConfig[];
@@ -8,17 +9,9 @@ interface KanalSliderProps {
   onSwitchToEntities: () => void;
 }
 
-const PALETTES = [
-  { color: 'text-blue-700', bgColor: 'bg-blue-50 border-blue-200 hover:bg-blue-100', activeColor: 'bg-blue-600 border-blue-700 text-white' },
-  { color: 'text-purple-700', bgColor: 'bg-purple-50 border-purple-200 hover:bg-purple-100', activeColor: 'bg-purple-600 border-purple-700 text-white' },
-  { color: 'text-amber-700', bgColor: 'bg-amber-50 border-amber-200 hover:bg-amber-100', activeColor: 'bg-amber-600 border-amber-700 text-white' },
-  { color: 'text-pink-700', bgColor: 'bg-pink-50 border-pink-200 hover:bg-pink-100', activeColor: 'bg-pink-600 border-pink-700 text-white' },
-  { color: 'text-emerald-700', bgColor: 'bg-emerald-50 border-emerald-200 hover:bg-emerald-100', activeColor: 'bg-emerald-600 border-emerald-700 text-white' },
-  { color: 'text-orange-700', bgColor: 'bg-orange-50 border-orange-200 hover:bg-orange-100', activeColor: 'bg-orange-500 border-orange-600 text-white' },
-  { color: 'text-sky-700', bgColor: 'bg-sky-50 border-sky-200 hover:bg-sky-100', activeColor: 'bg-sky-600 border-sky-700 text-white' },
-  { color: 'text-stone-700', bgColor: 'bg-stone-50 border-stone-200 hover:bg-stone-100', activeColor: 'bg-stone-700 border-stone-800 text-white' },
-];
-
+// Single neutral card style for every kanal — categories are told apart by
+// their icon/label, not by a different color per item, to keep emerald as
+// the site's one accent color.
 const EMOJIS = ['🏛️', '🕌', '🛍️', '💗', '🌿', '⚡', '⚽', '☕', '🌟', '🎯', '🎨', '📚'];
 
 export const KanalSlider: React.FC<KanalSliderProps> = ({
@@ -37,8 +30,6 @@ export const KanalSlider: React.FC<KanalSliderProps> = ({
   };
 
   const kanals = categoryConfigs.map((config, index) => {
-    const palette = PALETTES[index % PALETTES.length];
-    
     // Attempt to map some predefined known categories to specific emojis for better UX, fallback to sequential
     let emoji = EMOJIS[index % EMOJIS.length];
     const nameLower = config.name.toLowerCase();
@@ -55,7 +46,6 @@ export const KanalSlider: React.FC<KanalSliderProps> = ({
       id: config.id,
       label: config.name,
       emoji: emoji,
-      ...palette,
     };
   });
 
@@ -63,7 +53,7 @@ export const KanalSlider: React.FC<KanalSliderProps> = ({
 
   return (
     <section className="bg-white border-b border-stone-100 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <Container>
         {/* Header */}
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-base font-bold text-stone-700 uppercase tracking-widest flex items-center gap-2">
@@ -85,10 +75,10 @@ export const KanalSlider: React.FC<KanalSliderProps> = ({
                 transition={{ duration: 0.3, delay: index * 0.05 }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.97 }}
-                className={`flex flex-col items-center justify-center gap-2 px-3 py-4 rounded-2xl border text-sm font-semibold transition-all cursor-pointer shadow-sm min-h-[100px] ${
+                className={`flex flex-col items-center justify-center gap-2 px-3 py-4 rounded-2xl border text-sm font-semibold transition-all cursor-pointer shadow-sm min-h-[100px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40 ${
                   isActive
-                    ? kanal.activeColor + ' shadow-md ring-2 ring-offset-1 ring-emerald-400'
-                    : kanal.bgColor + ' ' + kanal.color
+                    ? 'bg-emerald-700 border-emerald-800 text-white shadow-md'
+                    : 'bg-stone-50 border-stone-200 text-stone-700 hover:bg-emerald-50 hover:border-emerald-200 hover:text-emerald-800'
                 }`}
               >
                 <span className="text-2xl">{kanal.emoji}</span>
@@ -97,7 +87,7 @@ export const KanalSlider: React.FC<KanalSliderProps> = ({
             );
           })}
         </div>
-      </div>
+      </Container>
     </section>
   );
 };

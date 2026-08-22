@@ -1,7 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Entity } from '../../types';
-import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { EntityCard } from '../EntityCard';
+import { Container } from '../ui/Container';
+import { ScrollNavButton } from '../ui/ScrollNavButton';
+import { useDragScroll } from '../../hooks/useDragScroll';
 
 interface EntitySliderProps {
   entities: Entity[];
@@ -14,7 +17,7 @@ export const EntitySlider: React.FC<EntitySliderProps> = ({
   onSelectEntity,
   onSwitchToEntities,
 }) => {
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useDragScroll<HTMLDivElement>();
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
 
@@ -50,7 +53,7 @@ export const EntitySlider: React.FC<EntitySliderProps> = ({
 
   return (
     <section className="bg-stone-50 py-10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <Container>
         {/* Section Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
@@ -63,35 +66,13 @@ export const EntitySlider: React.FC<EntitySliderProps> = ({
           <div className="flex items-center gap-2 self-end sm:self-center">
             {featured.length > 2 && (
               <div className="hidden sm:flex items-center gap-1">
-                <button
-                  onClick={handleScrollLeft}
-                  disabled={!canScrollLeft}
-                  aria-label="Sebelumnya"
-                  className={`p-1.5 rounded-lg border transition-all cursor-pointer ${
-                    canScrollLeft
-                      ? 'bg-white hover:bg-stone-100 border-stone-300 text-stone-800 shadow-2xs'
-                      : 'bg-stone-50 border-stone-200 text-stone-300 cursor-not-allowed'
-                  }`}
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={handleScrollRight}
-                  disabled={!canScrollRight}
-                  aria-label="Selanjutnya"
-                  className={`p-1.5 rounded-lg border transition-all cursor-pointer ${
-                    canScrollRight
-                      ? 'bg-white hover:bg-stone-100 border-stone-300 text-stone-800 shadow-2xs'
-                      : 'bg-stone-50 border-stone-200 text-stone-300 cursor-not-allowed'
-                  }`}
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
+                <ScrollNavButton direction="left" onClick={handleScrollLeft} disabled={!canScrollLeft} aria-label="Sebelumnya" />
+                <ScrollNavButton direction="right" onClick={handleScrollRight} disabled={!canScrollRight} aria-label="Selanjutnya" />
               </div>
             )}
             <button
               onClick={onSwitchToEntities}
-              className="flex items-center gap-1.5 text-xs font-semibold text-emerald-700 hover:text-white hover:bg-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-300 transition-all"
+              className="flex items-center gap-1.5 text-xs font-semibold text-emerald-700 hover:text-white hover:bg-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-300 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40"
             >
               Lihat Semua <ArrowRight className="w-3.5 h-3.5" />
             </button>
@@ -101,7 +82,7 @@ export const EntitySlider: React.FC<EntitySliderProps> = ({
         {/* Single-row Horizontal Scroll — exactly N cards visible per breakpoint */}
         <div
           ref={scrollRef}
-          className="flex gap-5 overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory py-1"
+          className="flex gap-5 overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory py-1 cursor-grab select-none"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
           {featured.map((entity) => (
@@ -113,7 +94,7 @@ export const EntitySlider: React.FC<EntitySliderProps> = ({
             </div>
           ))}
         </div>
-      </div>
+      </Container>
     </section>
   );
 };

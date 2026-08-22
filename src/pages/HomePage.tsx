@@ -2,6 +2,7 @@ import React from 'react';
 import { Entity, Announcement, SiteSettings, CategoryHeaderConfig } from '../types';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
+import { Section } from '../components/ui/Section';
 
 import { HeroBanner } from '../components/home/HeroBanner';
 import { KanalSlider } from '../components/home/KanalSlider';
@@ -62,53 +63,35 @@ export const HomePage: React.FC<HomePageProps> = ({
       <div className="bg-white relative border-b border-stone-200/50">
 
         {/* 2. Kanal Slider */}
-        <motion.div
-          id="kanal-section"
-          className="pt-10"
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-50px" }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-        >
+        <Section id="kanal-section" className="pt-10">
           <KanalSlider
             categoryConfigs={categoryConfigs}
             onSelectCategory={onSelectCategory}
             onSwitchToEntities={handleSwitchToEntities}
           />
-        </motion.div>
+        </Section>
 
         {/* 2.5 Community Logos */}
         <CommunityLogos />
 
         {/* 3. Entity Slider (Featured) */}
-        <motion.div
-          className="mt-8"
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-50px" }}
-          transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
-        >
+        <Section className="mt-8" delay={0.1}>
           <EntitySlider
             entities={entities}
             onSelectEntity={onSelectEntity}
             onSwitchToEntities={handleSwitchToEntities}
           />
-        </motion.div>
+        </Section>
       </div>
 
       {/* 4. Pengumuman & Agenda */}
       <div className="bg-white">
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-50px" }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-        >
+        <Section>
           <PengumumanSection
             announcements={announcements}
             onViewAll={handleSwitchToAnnouncements}
           />
-        </motion.div>
+        </Section>
       </div>
 
       {/* Divider */}
@@ -116,49 +99,27 @@ export const HomePage: React.FC<HomePageProps> = ({
 
       {/* 5. Album Foto */}
       <div className="bg-stone-950">
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-50px" }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-        >
+        <Section>
           <AlbumFoto entities={entities} />
-        </motion.div>
+        </Section>
       </div>
 
-      {/* 6. Album Video */}
-      <div className="bg-stone-950 border-t border-stone-800">
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-50px" }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-        >
-          <AlbumVideo entities={entities} />
-        </motion.div>
-      </div>
+      {/* 6. Album Video (renders nothing if no video is enabled in CMS > Video Kegiatan) */}
+      <Section>
+        <AlbumVideo videos={siteSettings.featuredVideos || []} />
+      </Section>
 
       {/* 7. Google Map */}
       <div className="bg-white">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true, margin: "-50px" }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-        >
+        <Section>
           <GoogleMapSection />
-        </motion.div>
+        </Section>
       </div>
 
       {/* 8. Media Sosial */}
-      <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-50px" }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-      >
+      <Section>
         <SocialMediaSection mediaPartners={siteSettings.mediaPartners} />
-      </motion.div>
+      </Section>
 
     </div>
   );

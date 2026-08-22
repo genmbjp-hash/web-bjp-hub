@@ -2,9 +2,10 @@ import React from 'react';
 import { Entity } from '../types';
 import { formatImageUrl } from '../utils/imageUrl';
 import { stripHtml } from '../utils/meta';
-import { Calendar, Phone, ArrowRight, Share2, MapPin, Info, Edit } from 'lucide-react';
+import { Calendar, Phone, ArrowRight, MapPin, Info, Edit } from 'lucide-react';
 import { SocialBadges } from './SocialIcons';
 import { PhotoAlbumCard } from './PhotoAlbumCard';
+import { Card } from './ui/Card';
 
 interface EntityCardProps {
   entity: Entity;
@@ -36,7 +37,7 @@ export const EntityCard: React.FC<EntityCardProps> = ({
   const cleanDescription = stripHtml(entity.description);
 
   return (
-    <div className="h-full group bg-white rounded-2xl border border-stone-200/90 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col overflow-hidden">
+    <Card padding="none" interactive className="h-full group flex flex-col overflow-hidden">
       {/* Image Header */}
       <div
         className="relative h-40 bg-stone-100 overflow-hidden cursor-pointer shrink-0"
@@ -130,13 +131,13 @@ export const EntityCard: React.FC<EntityCardProps> = ({
         <div className="mt-auto pt-2 border-t border-stone-100">
           <button
             onClick={() => onSelect(entity)}
-            className="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold rounded-lg transition-all hover:shadow-md"
+            className="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold rounded-lg transition-all hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40"
           >
             Lihat Detail
             <ArrowRight className="w-3.5 h-3.5 shrink-0" />
           </button>
         </div>
       </div>
-    </div>
+    </Card>
   );
 };
