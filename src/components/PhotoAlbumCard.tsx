@@ -185,7 +185,7 @@ export const PhotoAlbumCard: React.FC<PhotoAlbumCardProps> = ({
         <div>
           <h3
             onClick={() => onSelect?.(entity)}
-            className={`font-extrabold text-stone-900 text-base sm:text-lg leading-snug group-hover:text-emerald-800 transition-colors ${onSelect ? 'cursor-pointer' : ''}`}
+            className={`font-extrabold text-stone-900 text-base sm:text-lg leading-snug ${onSelect ? 'cursor-pointer' : ''}`}
           >
             {entity.name}
           </h3>

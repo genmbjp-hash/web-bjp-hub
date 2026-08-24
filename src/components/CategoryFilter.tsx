@@ -22,31 +22,8 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
 
   return (
     <div className="bg-stone-50 border-b border-stone-200 py-3 sticky top-16 z-30 shadow-2xs">
-      <Container className="space-y-2.5">
-        {/* Search Bar */}
-        {onSearchChange && (
-          <div className="relative max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => onSearchChange(e.target.value)}
-              placeholder="Cari komunitas"
-              className="w-full pl-9 pr-8 py-2 bg-white border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
-            />
-            {searchTerm && (
-              <button
-                onClick={() => onSearchChange('')}
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-stone-400 hover:text-stone-700 hover:bg-stone-100 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40"
-                aria-label="Hapus pencarian"
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            )}
-          </div>
-        )}
-
-        <div ref={scrollRef} className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1 text-xs sm:text-sm cursor-grab select-none">
+      <Container className="flex flex-col sm:flex-row sm:items-center gap-2.5">
+        <div ref={scrollRef} className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1 sm:pb-0 text-xs sm:text-sm cursor-grab select-none min-w-0 flex-1">
           {categories.map((cat) => {
             const isSemua = cat === 'Semua';
             const displayLabel = isSemua ? 'Semua Kategori' : cat;
@@ -67,6 +44,29 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
             );
           })}
         </div>
+
+        {/* Search Bar */}
+        {onSearchChange && (
+          <div className="relative sm:w-64 shrink-0">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => onSearchChange(e.target.value)}
+              placeholder="Cari komunitas"
+              className="w-full pl-9 pr-8 py-2 bg-white border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
+            />
+            {searchTerm && (
+              <button
+                onClick={() => onSearchChange('')}
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-stone-400 hover:text-stone-700 hover:bg-stone-100 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40"
+                aria-label="Hapus pencarian"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+        )}
       </Container>
     </div>
   );

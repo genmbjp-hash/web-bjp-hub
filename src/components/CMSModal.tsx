@@ -6,7 +6,7 @@ import {
   Bold, Italic, List, Heading, ExternalLink, ShieldAlert, ArrowLeft,
   GripVertical, ArrowUp, ArrowDown, MapPin, Info, Globe, Sliders, Palette, Eye, EyeOff,
   Users, UserPlus, ShieldCheck, Shield, Lock, LogOut, CheckSquare, Square, Search, User as UserIcon,
-  Database, Server, CheckCircle2, XCircle, Terminal, Code, FileText, Vote, Instagram, Save, Youtube
+  Database, Server, CheckCircle2, XCircle, Terminal, Code, FileText, Vote, Instagram, Save, Youtube, Recycle
 } from 'lucide-react';
 import { exportDataAsJSON, importDataFromJSON, resetToDefaults, DEFAULT_CATEGORY_CONFIGS } from '../utils/storage';
 import { useDragScroll } from '../hooks/useDragScroll';
@@ -21,6 +21,7 @@ import { DocumentTemplatesCMS } from './DocumentTemplatesCMS';
 import { PollingCMS } from './PollingCMS';
 import { MediaPartnersCMS } from './MediaPartnersCMS';
 import { VideoCMS } from './VideoCMS';
+import { BankSampahCMS } from './BankSampahCMS';
 import {
   isSupabaseConfigured,
   testSupabaseConnection,
@@ -107,7 +108,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
   editingEntityInit,
   initialCategoryForNewEntity,
 }) => {
-const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'settings' | 'security' | 'rtrw' | 'documents' | 'polling' | 'videos' | 'users' | 'supabase' | 'backup'>('entities');
+const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'settings' | 'security' | 'rtrw' | 'documents' | 'polling' | 'videos' | 'banksampah' | 'users' | 'supabase' | 'backup'>('entities');
   const navTabsRef = useDragScroll<HTMLDivElement>();
 
   // Supabase State & Handlers
@@ -314,6 +315,13 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
   const [photoCaption4, setPhotoCaption4] = useState<string>('');
   const [photoCaption5, setPhotoCaption5] = useState<string>('');
 
+  // Product Photo Years 5 slots state (used to group photos by year on the Dokumentasi page)
+  const [photoYear1, setPhotoYear1] = useState<string>('');
+  const [photoYear2, setPhotoYear2] = useState<string>('');
+  const [photoYear3, setPhotoYear3] = useState<string>('');
+  const [photoYear4, setPhotoYear4] = useState<string>('');
+  const [photoYear5, setPhotoYear5] = useState<string>('');
+
   const [photoError, setPhotoError] = useState<string | null>(null);
 
   // Drag & drop sorting for announcements
@@ -386,11 +394,11 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
       },
     });
     setIsProductPhotosEnabled(false);
-    setPhotoSlot1(''); setPhotoCaption1('');
-    setPhotoSlot2(''); setPhotoCaption2('');
-    setPhotoSlot3(''); setPhotoCaption3('');
-    setPhotoSlot4(''); setPhotoCaption4('');
-    setPhotoSlot5(''); setPhotoCaption5('');
+    setPhotoSlot1(''); setPhotoCaption1(''); setPhotoYear1('');
+    setPhotoSlot2(''); setPhotoCaption2(''); setPhotoYear2('');
+    setPhotoSlot3(''); setPhotoCaption3(''); setPhotoYear3('');
+    setPhotoSlot4(''); setPhotoCaption4(''); setPhotoYear4('');
+    setPhotoSlot5(''); setPhotoCaption5(''); setPhotoYear5('');
     setPhotoError(null);
   };
 
@@ -408,12 +416,13 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
 
       const photos = editingEntityInit.productPhotos || [];
       const captions = editingEntityInit.productPhotoCaptions || [];
+      const years = editingEntityInit.productPhotoYears || [];
       setIsProductPhotosEnabled(photos.length > 0);
-      setPhotoSlot1(photos[0] || ''); setPhotoCaption1(captions[0] || '');
-      setPhotoSlot2(photos[1] || ''); setPhotoCaption2(captions[1] || '');
-      setPhotoSlot3(photos[2] || ''); setPhotoCaption3(captions[2] || '');
-      setPhotoSlot4(photos[3] || ''); setPhotoCaption4(captions[3] || '');
-      setPhotoSlot5(photos[4] || ''); setPhotoCaption5(captions[4] || '');
+      setPhotoSlot1(photos[0] || ''); setPhotoCaption1(captions[0] || ''); setPhotoYear1(years[0] || '');
+      setPhotoSlot2(photos[1] || ''); setPhotoCaption2(captions[1] || ''); setPhotoYear2(years[1] || '');
+      setPhotoSlot3(photos[2] || ''); setPhotoCaption3(captions[2] || ''); setPhotoYear3(years[2] || '');
+      setPhotoSlot4(photos[3] || ''); setPhotoCaption4(captions[3] || ''); setPhotoYear4(years[3] || '');
+      setPhotoSlot5(photos[4] || ''); setPhotoCaption5(captions[4] || ''); setPhotoYear5(years[4] || '');
       setPhotoError(null);
 
       setIsCreatingNewEntity(false);
@@ -444,12 +453,13 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
 
     const photos = ent.productPhotos || [];
     const captions = ent.productPhotoCaptions || [];
+    const years = ent.productPhotoYears || [];
     setIsProductPhotosEnabled(photos.length > 0);
-    setPhotoSlot1(photos[0] || ''); setPhotoCaption1(captions[0] || '');
-    setPhotoSlot2(photos[1] || ''); setPhotoCaption2(captions[1] || '');
-    setPhotoSlot3(photos[2] || ''); setPhotoCaption3(captions[2] || '');
-    setPhotoSlot4(photos[3] || ''); setPhotoCaption4(captions[3] || '');
-    setPhotoSlot5(photos[4] || ''); setPhotoCaption5(captions[4] || '');
+    setPhotoSlot1(photos[0] || ''); setPhotoCaption1(captions[0] || ''); setPhotoYear1(years[0] || '');
+    setPhotoSlot2(photos[1] || ''); setPhotoCaption2(captions[1] || ''); setPhotoYear2(years[1] || '');
+    setPhotoSlot3(photos[2] || ''); setPhotoCaption3(captions[2] || ''); setPhotoYear3(years[2] || '');
+    setPhotoSlot4(photos[3] || ''); setPhotoCaption4(captions[3] || ''); setPhotoYear4(years[3] || '');
+    setPhotoSlot5(photos[4] || ''); setPhotoCaption5(captions[4] || ''); setPhotoYear5(years[4] || '');
     setPhotoError(null);
   };
 
@@ -463,21 +473,23 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
     // Validate Product Photos if Toggle is ON
     let finalPhotos: string[] = [];
     let finalCaptions: string[] = [];
+    let finalYears: string[] = [];
     if (isProductPhotosEnabled) {
       if (!photoSlot1.trim()) {
         setPhotoError('Mohon isi minimal Gambar 1 (URL Gambar / Google Drive) karena fitur Foto Produk diaktifkan!');
         return;
       }
       const rawPairs = [
-        { url: photoSlot1.trim(), caption: photoCaption1.trim() },
-        { url: photoSlot2.trim(), caption: photoCaption2.trim() },
-        { url: photoSlot3.trim(), caption: photoCaption3.trim() },
-        { url: photoSlot4.trim(), caption: photoCaption4.trim() },
-        { url: photoSlot5.trim(), caption: photoCaption5.trim() },
+        { url: photoSlot1.trim(), caption: photoCaption1.trim(), year: photoYear1.trim() },
+        { url: photoSlot2.trim(), caption: photoCaption2.trim(), year: photoYear2.trim() },
+        { url: photoSlot3.trim(), caption: photoCaption3.trim(), year: photoYear3.trim() },
+        { url: photoSlot4.trim(), caption: photoCaption4.trim(), year: photoYear4.trim() },
+        { url: photoSlot5.trim(), caption: photoCaption5.trim(), year: photoYear5.trim() },
       ].filter((p) => Boolean(p.url));
 
       finalPhotos = rawPairs.map((p) => p.url);
       finalCaptions = rawPairs.map((p) => p.caption);
+      finalYears = rawPairs.map((p) => p.year);
     }
     setPhotoError(null);
 
@@ -486,6 +498,7 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
       ...formEntity,
       productPhotos: finalPhotos,
       productPhotoCaptions: finalCaptions,
+      productPhotoYears: finalYears,
     };
 
     if (editingEntity) {
@@ -521,6 +534,7 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
         cardType: formEntity.cardType || 'standard',
         productPhotos: finalPhotos,
         productPhotoCaptions: finalCaptions,
+        productPhotoYears: finalYears,
         createdAt: now,
         updatedAt: now,
       };
@@ -992,6 +1006,20 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
           >
             <Youtube className="w-4 h-4 text-red-600" />
             <span>Video Kegiatan</span>
+          </button>
+
+          <button
+            onClick={() => {
+              setActiveTab('banksampah');
+            }}
+            className={`flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-semibold border-b-2 transition-all whitespace-nowrap ${
+              activeTab === 'banksampah'
+                ? 'border-emerald-700 text-emerald-900 bg-emerald-50/50 rounded-t-lg'
+                : 'border-transparent text-stone-600 hover:text-stone-900'
+            }`}
+          >
+            <Recycle className="w-4 h-4 text-emerald-700" />
+            <span>Bank Sampah KMS</span>
           </button>
 
           <button
@@ -1576,13 +1604,13 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
                                 </span>
                               </p>
 
-                              {/* 5 Photo Input Slots with Captions */}
+                              {/* 5 Photo Input Slots with Captions & Year */}
                               {[
-                                { label: 'Gambar 1', value: photoSlot1, onChange: setPhotoSlot1, caption: photoCaption1, onCaptionChange: setPhotoCaption1, isRequired: true },
-                                { label: 'Gambar 2', value: photoSlot2, onChange: setPhotoSlot2, caption: photoCaption2, onCaptionChange: setPhotoCaption2, isRequired: false },
-                                { label: 'Gambar 3', value: photoSlot3, onChange: setPhotoSlot3, caption: photoCaption3, onCaptionChange: setPhotoCaption3, isRequired: false },
-                                { label: 'Gambar 4', value: photoSlot4, onChange: setPhotoSlot4, caption: photoCaption4, onCaptionChange: setPhotoCaption4, isRequired: false },
-                                { label: 'Gambar 5', value: photoSlot5, onChange: setPhotoSlot5, caption: photoCaption5, onCaptionChange: setPhotoCaption5, isRequired: false },
+                                { label: 'Gambar 1', value: photoSlot1, onChange: setPhotoSlot1, caption: photoCaption1, onCaptionChange: setPhotoCaption1, year: photoYear1, onYearChange: setPhotoYear1, isRequired: true },
+                                { label: 'Gambar 2', value: photoSlot2, onChange: setPhotoSlot2, caption: photoCaption2, onCaptionChange: setPhotoCaption2, year: photoYear2, onYearChange: setPhotoYear2, isRequired: false },
+                                { label: 'Gambar 3', value: photoSlot3, onChange: setPhotoSlot3, caption: photoCaption3, onCaptionChange: setPhotoCaption3, year: photoYear3, onYearChange: setPhotoYear3, isRequired: false },
+                                { label: 'Gambar 4', value: photoSlot4, onChange: setPhotoSlot4, caption: photoCaption4, onCaptionChange: setPhotoCaption4, year: photoYear4, onYearChange: setPhotoYear4, isRequired: false },
+                                { label: 'Gambar 5', value: photoSlot5, onChange: setPhotoSlot5, caption: photoCaption5, onCaptionChange: setPhotoCaption5, year: photoYear5, onYearChange: setPhotoYear5, isRequired: false },
                               ].map((slot, idx) => (
                                 <div key={idx} className="bg-white p-3 rounded-xl border border-stone-200 space-y-2">
                                   <div className="flex items-center justify-between text-xs font-bold text-stone-700">
@@ -1626,14 +1654,23 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
                                     )}
                                   </div>
 
-                                  {/* Optional Caption Text Field */}
-                                  <div className="pt-1">
+                                  {/* Optional Caption & Year Fields */}
+                                  <div className="pt-1 flex items-center gap-2">
                                     <input
                                       type="text"
                                       value={slot.caption}
                                       onChange={(e) => slot.onCaptionChange(e.target.value)}
                                       placeholder={`Keterangan / Deskripsi ${slot.label} (Opsional, contoh: Paket Hemat Nasi Kebuli Spesial)`}
-                                      className="w-full px-3 py-1.5 bg-stone-50 border border-stone-200 rounded-lg text-xs text-stone-700 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                                      className="flex-1 px-3 py-1.5 bg-stone-50 border border-stone-200 rounded-lg text-xs text-stone-700 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                                    />
+                                    <input
+                                      type="number"
+                                      value={slot.year}
+                                      onChange={(e) => slot.onYearChange(e.target.value)}
+                                      placeholder="Tahun"
+                                      min={2000}
+                                      max={2100}
+                                      className="w-20 shrink-0 px-2.5 py-1.5 bg-stone-50 border border-stone-200 rounded-lg text-xs text-stone-700 focus:outline-none focus:ring-2 focus:ring-emerald-600"
                                     />
                                   </div>
                                 </div>
@@ -2845,6 +2882,11 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
           {/* TAB: VIDEO KEGIATAN */}
           {activeTab === 'videos' && (
             <VideoCMS siteSettings={siteSettings} onSaveSiteSettings={onSaveSiteSettings} />
+          )}
+
+          {/* TAB: BANK SAMPAH KMS */}
+          {activeTab === 'banksampah' && (
+            <BankSampahCMS siteSettings={siteSettings} onSaveSiteSettings={onSaveSiteSettings} />
           )}
 
           {/* TAB: USER MANAGEMENT */}

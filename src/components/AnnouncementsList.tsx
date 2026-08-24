@@ -1,7 +1,7 @@
 import React from 'react';
 import { Announcement } from '../types';
 import { formatImageUrl } from '../utils/imageUrl';
-import { Megaphone, Calendar, User, ExternalLink, AlertCircle, Maximize2, X, Share2 } from 'lucide-react';
+import { Megaphone, Calendar, User, ExternalLink, AlertCircle, Maximize2, X, Share2, ArrowLeft } from 'lucide-react';
 import { Card } from './ui/Card';
 import { Badge } from './ui/Badge';
 
@@ -10,6 +10,7 @@ interface AnnouncementsListProps {
   onOpenCMS: () => void;
   isCMSActive: boolean;
   onShare?: (ann: Announcement) => void;
+  onBack?: () => void;
 }
 
 export const AnnouncementsList: React.FC<AnnouncementsListProps> = ({
@@ -17,24 +18,40 @@ export const AnnouncementsList: React.FC<AnnouncementsListProps> = ({
   onOpenCMS,
   isCMSActive,
   onShare,
+  onBack,
 }) => {
   const [selectedLightboxImage, setSelectedLightboxImage] = React.useState<{ url: string; title: string } | null>(null);
 
   return (
     <div className="space-y-6">
-      {/* Top Section Header */}
-      <Card padding="md" className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <div className="p-2 bg-emerald-100 text-emerald-800 rounded-xl">
-              <Megaphone className="w-5 h-5" />
-            </div>
-            <h2 className="text-xl font-bold text-stone-900">Pengumuman & Agenda Warga</h2>
-          </div>
-          <p className="text-stone-600 text-xs sm:text-sm">
-            Informasi penting, jadwal kegiatan, dan acara terkini di Komplek Bintara Jaya Permai (RW 11).
-          </p>
+      {/* Global Back Button */}
+      {onBack && (
+        <div className="flex justify-start">
+          <button
+            onClick={onBack}
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs border border-stone-200 shadow-sm transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40"
+            title="Kembali ke Beranda"
+          >
+            <ArrowLeft className="w-4 h-4 text-stone-500" />
+            <span>Kembali ke Beranda</span>
+          </button>
         </div>
+      )}
+
+      {/* Page Header */}
+      <Card radius="3xl" padding="none" className="p-6 sm:p-8 space-y-3">
+        <span className="inline-block text-[11px] font-bold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200/80">
+          Informasi Warga RW 11
+        </span>
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 bg-emerald-100 text-emerald-800 rounded-2xl shrink-0">
+            <Megaphone className="w-6 h-6" />
+          </div>
+          <h1 className="text-xl sm:text-2xl font-black text-stone-900 tracking-tight">Pengumuman & Agenda Warga</h1>
+        </div>
+        <p className="text-stone-600 text-xs sm:text-sm leading-relaxed">
+          Informasi penting, jadwal kegiatan, dan acara terkini di Komplek Bintara Jaya Permai (RW 11).
+        </p>
       </Card>
 
       {/* Announcements List Grid */}

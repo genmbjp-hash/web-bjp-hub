@@ -1,12 +1,13 @@
 import React from 'react';
 import { motion } from 'motion/react';
+import { Link } from 'react-router-dom';
 
 const LOGOS = [
   { name: 'PKK RW 11', src: '/images/pkk_rw11.png' },
   { name: 'Posyandu', src: '/images/posyandu.png' },
   { name: 'DKM Masjid', src: '/images/dkm_masjid.png' },
   { name: 'GenM BJP', src: '/images/genm_bjp.png' },
-  { name: 'Bank Sampah', src: '/images/bank%20sampah.png' },
+  { name: 'Bank Sampah', src: '/images/bank%20sampah.png', path: '/bank-sampah' },
   { name: 'PTM Permai', src: '/images/ptm_permai.png' },
   { name: 'Badminton Club', src: '/images/badminton_club.png' },
   { name: 'Senam Sehat', src: '/images/senam_sehat.png' },
@@ -46,21 +47,37 @@ export const CommunityLogos: React.FC = () => {
           transition={{ delay: 0.2, duration: 0.8 }}
           className="flex flex-wrap justify-center items-center gap-10 sm:gap-14 md:gap-16"
         >
-          {LOGOS.map((logo, idx) => (
-            <div key={idx} className="group flex flex-col items-center justify-center">
-              <img
-                src={logo.src}
-                alt={logo.name}
-                loading="lazy"
-                decoding="async"
-                className="h-16 sm:h-20 md:h-24 object-contain drop-shadow-sm group-hover:scale-110 transition-transform duration-300"
-                title={logo.name}
-              />
-              <span className="mt-3 text-[10px] sm:text-xs font-semibold text-stone-600 group-hover:text-emerald-700 transition-colors">
-                {logo.name}
-              </span>
-            </div>
-          ))}
+          {LOGOS.map((logo, idx) => {
+            const content = (
+              <>
+                <img
+                  src={logo.src}
+                  alt={logo.name}
+                  loading="lazy"
+                  decoding="async"
+                  className="h-16 sm:h-20 md:h-24 object-contain drop-shadow-sm group-hover:scale-110 transition-transform duration-300"
+                  title={logo.name}
+                />
+                <span className="mt-3 text-[10px] sm:text-xs font-semibold text-stone-600 group-hover:text-emerald-700 transition-colors">
+                  {logo.name}
+                </span>
+              </>
+            );
+
+            return logo.path ? (
+              <Link
+                key={idx}
+                to={logo.path}
+                className="group flex flex-col items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40 rounded-lg"
+              >
+                {content}
+              </Link>
+            ) : (
+              <div key={idx} className="group flex flex-col items-center justify-center">
+                {content}
+              </div>
+            );
+          })}
         </motion.div>
       </div>
     </section>

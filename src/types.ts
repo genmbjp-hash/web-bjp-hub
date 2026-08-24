@@ -51,6 +51,7 @@ export interface Entity {
   socials?: EntitySocials;
   productPhotos?: string[];
   productPhotoCaptions?: string[];
+  productPhotoYears?: string[]; // Tahun pengambilan tiap foto, dipakai untuk pemisah tahun di halaman Dokumentasi
   createdAt: string;
   updatedAt: string;
 }
@@ -184,6 +185,22 @@ export interface SecuritySchedule {
   guards: string; // Nama petugas
 }
 
+export interface BankSampahChartItem {
+  id: string;
+  title: string;
+  imageUrl: string; // Link gambar chart (mis. export gambar Google Sheets/Excel)
+  enabled: boolean;
+  order: number;
+}
+
+export interface BankSampahConfig {
+  enabled: boolean;
+  logoUrl?: string; // Logo/badge bulat Bank Sampah, fallback ke foto entitas jika kosong
+  dashboardTitle: string;
+  dashboardDescription?: string;
+  charts: BankSampahChartItem[];
+}
+
 export interface SiteSettings {
   logoUrl: string;
   siteTitle?: string;
@@ -196,6 +213,7 @@ export interface SiteSettings {
   documentTemplates?: DocumentTemplate[];
   pollingConfig?: PollingPageConfig;
   rtRwConfig?: RtRwPageConfig;
+  bankSampahConfig?: BankSampahConfig;
 }
 
 export interface Announcement {

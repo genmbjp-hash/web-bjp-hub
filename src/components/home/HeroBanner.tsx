@@ -1,12 +1,11 @@
 import React from 'react';
-import { Users, Megaphone, ChevronDown, Sparkles } from 'lucide-react';
+import { Users, Megaphone, Sparkles } from 'lucide-react';
 
 interface HeroBannerProps {
   siteTitle?: string;
   siteDescription?: string;
   totalEntities?: number;
   totalAnnouncements?: number;
-  onExplore: () => void;
 }
 
 const HERO_BG = '/images/hero-beranda.jpg';
@@ -16,7 +15,6 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
   siteDescription,
   totalEntities = 0,
   totalAnnouncements = 0,
-  onExplore,
 }) => {
   const title = siteTitle || 'BJP.hub';
   const description =
@@ -31,8 +29,8 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
         style={{ backgroundImage: `url(${HERO_BG})` }}
       />
 
-      {/* Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-stone-950/85 via-stone-900/60 to-stone-950/90" />
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-stone-950/75" />
 
       {/* Content */}
       <div className="relative z-10 px-4 max-w-5xl mx-auto flex flex-col items-center gap-8 text-center">
@@ -73,19 +71,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
             )}
           </div>
         )}
-
-        {/* CTA Button */}
-        <button
-          onClick={onExplore}
-          className="group inline-flex items-center gap-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-8 py-3.5 rounded-2xl shadow-lg shadow-emerald-900/40 hover:shadow-emerald-700/40 transition-all duration-300 hover:scale-105 text-sm sm:text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60"
-        >
-          <span>Jelajahi Sekarang</span>
-          <ChevronDown className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" />
-        </button>
       </div>
-
-      {/* Bottom fade */}
-      <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-stone-100 to-transparent" />
     </section>
   );
 };

@@ -33,11 +33,6 @@ export const HomePage: React.FC<HomePageProps> = ({
 }) => {
   const navigate = useNavigate();
 
-  const handleExplore = () => {
-    // Scroll down to kanal slider when CTA is clicked
-    document.getElementById('kanal-section')?.scrollIntoView({ behavior: 'smooth' });
-  };
-
   const handleSwitchToEntities = () => navigate('/komunitas');
   const handleSwitchToAnnouncements = () => navigate('/pengumuman');
 
@@ -55,7 +50,6 @@ export const HomePage: React.FC<HomePageProps> = ({
           siteDescription={siteSettings.siteDescription}
           totalEntities={entities.length}
           totalAnnouncements={announcements.length}
-          onExplore={handleExplore}
         />
       </motion.div>
 

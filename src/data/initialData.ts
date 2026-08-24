@@ -108,7 +108,7 @@ export const INITIAL_ENTITIES: Entity[] = [
   {
     id: 'ent-umkm-1',
     name: 'Jajanan Bu Muncak',
-    category: 'Sentra Usaha BJP',
+    category: 'Kuliner (Food & Beverage)',
     description: `Jajanan tradisional rumahan warga Blok C, Bintara Jaya Permai. Cocok untuk camilan sehari-hari maupun pesanan acara warga.`,
     image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80',
     ctaUrl: 'https://wa.me/6281213333292',
@@ -123,7 +123,7 @@ export const INITIAL_ENTITIES: Entity[] = [
     id: 'ent-5',
     name: 'Bank Sampah KMS (Karya Muda Sejahtera)',
     category: 'Lingkungan',
-    description: `Pusat kepedulian lingkungan warga BJP. Mengedukasi dan memfasilitasi pemilahan sampah dari rumah tangga. Mengonversi sampah anorganik menjadi tabungan bernilai ekonomis dan aktif mengurangi volume sampah komplek ke TPA.
+    description: `Bank Sampah Unit Karya Muda Sejahtera (KaMu Sejahtera) adalah Bank Sampah yang mengelola sistem pengelolaan sampah kering di tingkat RW11 Bintara Jaya, Bekasi Barat. KaMu Sejahtera mendorong dan menfasilitasi warga BJP untuk menghibahkan sampah dan menabung sampah bernilai ekonomi, sampah disetorkan, ditimbang, dicatat, dan bisa diuangkan. BSU bertugas mengumpulkan, memilah, dan menyalurkan sampah tersebut ke Bank Sampah Induk (BSI) atau pengepul untuk mengurangi volume sampah, menciptakan kesejahteraan masyarakat, serta menumbuhkan kesadaran akan pentingnya menjaga lingkungan.
 
 <p><strong>Layanan Bank Sampah:</strong></p>
 <ul>

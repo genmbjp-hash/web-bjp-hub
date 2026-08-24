@@ -77,7 +77,7 @@ export const EntityCard: React.FC<EntityCardProps> = ({
 
         {/* Title overlay */}
         <div className="absolute bottom-2.5 left-2.5 right-2.5 text-white">
-          <h3 className="font-bold text-base leading-snug drop-shadow-sm group-hover:text-emerald-300 transition-colors line-clamp-2">
+          <h3 className="font-bold text-base leading-snug drop-shadow-sm line-clamp-2">
             {entity.name}
           </h3>
         </div>

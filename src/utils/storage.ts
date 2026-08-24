@@ -1,4 +1,4 @@
-import { Entity, Announcement, SiteSettings, CategoryHeaderConfig, User, RtRwPageConfig } from '../types';
+import { Entity, Announcement, SiteSettings, CategoryHeaderConfig, User, RtRwPageConfig, BankSampahConfig } from '../types';
 import { INITIAL_ENTITIES, INITIAL_ANNOUNCEMENTS } from '../data/initialData';
 import { BJP_LOGO_URL } from '../assets/logo';
 import { updateSiteFaviconAndOgImage } from './meta';
@@ -57,6 +57,18 @@ export const DEFAULT_CATEGORY_CONFIGS: CategoryHeaderConfig[] = [
     name: 'Sentra Usaha BJP',
     description: 'Unit komunitas, UMKM, dan kegiatan usaha warga Bintara Jaya Permai (RW 11)',
     logoUrl: '/images/sentra_usaha_logo.jpg',
+  },
+  {
+    id: 'Kuliner (Food & Beverage)',
+    name: 'Kuliner (Food & Beverage)',
+    description: 'UMKM makanan, minuman, dan jajanan rumahan warga Sentra Usaha BJP',
+    logoUrl: '',
+  },
+  {
+    id: 'Kebutuhan Pokok Harian',
+    name: 'Kebutuhan Pokok Harian',
+    description: 'UMKM sembako, kebutuhan rumah tangga, dan belanja harian warga Sentra Usaha BJP',
+    logoUrl: '',
   },
   {
     id: 'Pusat Hub',
@@ -168,6 +180,154 @@ export const DEFAULT_RTRW_CONFIG: RtRwPageConfig = {
       ctaText: 'Buka Dokumen Lengkap',
       enabled: true,
       order: 2,
+    },
+    // Pengurus & Layanan
+    {
+      id: 'card-txt-gov-1',
+      type: 'text',
+      title: 'Tupoksi RW 011',
+      description: 'Tugas pokok dan fungsi pengurus RW 011.',
+      categoryBadge: 'Pengurus & Layanan',
+      textContent: 'RW 011 bertugas menjalankan koordinasi pemerintahan terkecil: menjembatani program pemerintah Kota Bekasi dengan warga, menjaga ketertiban & keamanan lingkungan, memfasilitasi administrasi kependudukan, serta mengoordinasikan seluruh RT dan lembaga warga (PKK, Karang Taruna, DKM, dsb) agar berjalan selaras.',
+      enabled: true,
+      order: 3,
+    },
+    {
+      id: 'card-txt-gov-2',
+      type: 'text',
+      title: 'Pengurus RW & RT',
+      description: 'Susunan pengurus RW 011 dan RT 01-09.',
+      categoryBadge: 'Pengurus & Layanan',
+      textContent: 'Susunan lengkap pengurus RW 011 dapat dilihat pada kartu "Struktur Pengurus RW 011" di atas. Data ketua dan kontak masing-masing RT tersedia pada bagian "Rincian Informasi Wilayah per RT".',
+      enabled: true,
+      order: 4,
+    },
+    {
+      id: 'card-txt-gov-3',
+      type: 'text',
+      title: 'PKK & Posyandu',
+      description: 'Pemberdayaan keluarga dan layanan kesehatan dasar warga.',
+      categoryBadge: 'Pengurus & Layanan',
+      textContent: 'PKK RW 11 dan Posyandu & Posbindu terdaftar sebagai komunitas aktif dengan program dan jadwal rutin masing-masing. Lihat detail lengkap di halaman Komunitas Kegiatan kategori "Kesejahteraan Keluarga" dan "Kesehatan".',
+      enabled: true,
+      order: 5,
+    },
+    {
+      id: 'card-txt-gov-4',
+      type: 'text',
+      title: 'Karang Taruna & Lingkungan',
+      description: 'Wadah kepemudaan dan kepedulian lingkungan warga.',
+      categoryBadge: 'Pengurus & Layanan',
+      textContent: 'GenM BJP mewadahi kegiatan Karang Taruna, sementara Bank Sampah KMS mengelola program kepedulian lingkungan warga. Lihat detail lengkap di halaman Komunitas Kegiatan kategori "Kepemudaan" dan "Lingkungan".',
+      enabled: true,
+      order: 6,
+    },
+    {
+      id: 'card-txt-gov-5',
+      type: 'text',
+      title: 'Pelayanan Warga',
+      description: 'Layanan administrasi & surat-menyurat warga RW 011.',
+      categoryBadge: 'Pengurus & Layanan',
+      textContent: 'Pengurusan surat pengantar, keterangan domisili, dan surat keterangan usaha dapat dibuat mandiri secara online melalui menu "Layanan Surat Online" pada navigasi utama situs ini.',
+      enabled: true,
+      order: 7,
+    },
+    {
+      id: 'card-txt-gov-6',
+      type: 'text',
+      title: 'e-Open Disdukcapil',
+      description: 'Layanan kependudukan online Dinas Kependudukan & Catatan Sipil.',
+      categoryBadge: 'Pengurus & Layanan',
+      textContent: 'Untuk pengurusan KTP, KK, akta, dan dokumen kependudukan resmi lainnya, warga dapat menghubungi Sekretariat RW 011 untuk mendapatkan tautan resmi layanan e-Open Disdukcapil Kota Bekasi terbaru.',
+      enabled: true,
+      order: 8,
+    },
+    // Fasilitas Lingkungan
+    {
+      id: 'card-txt-fac-1',
+      type: 'text',
+      title: 'Tempat Ibadah',
+      description: 'Masjid Ja\'mi Al Aqwam sebagai pusat ibadah warga.',
+      categoryBadge: 'Fasilitas Lingkungan',
+      textContent: 'Masjid Ja\'mi Al Aqwam melayani sholat berjamaah 5 waktu, sholat Jumat, kajian rutin, dan perayaan hari besar Islam. Detail lengkap tersedia di halaman Komunitas Kegiatan kategori "Keagamaan".',
+      enabled: true,
+      order: 9,
+    },
+    {
+      id: 'card-txt-fac-2',
+      type: 'text',
+      title: 'Gedung Sekretariat RW',
+      description: 'Kantor administrasi dan koordinasi harian pengurus RW 011.',
+      categoryBadge: 'Fasilitas Lingkungan',
+      textContent: 'Ruang pelayanan administrasi warga, rapat koordinasi pengurus, dan penampungan aspirasi. Buka Senin-Sabtu (09.00-16.00 WIB).',
+      enabled: true,
+      order: 10,
+    },
+    {
+      id: 'card-txt-fac-3',
+      type: 'text',
+      title: 'Gedung PKK',
+      description: 'Sekretariat dan tempat kegiatan rutin PKK RW 011.',
+      categoryBadge: 'Fasilitas Lingkungan',
+      textContent: 'Digunakan untuk pertemuan rutin, pelatihan keterampilan, dan kegiatan POKJA PKK ibu-ibu warga komplek.',
+      enabled: true,
+      order: 11,
+    },
+    {
+      id: 'card-txt-fac-4',
+      type: 'text',
+      title: 'Gedung Olah Raga',
+      description: 'GOR BJP untuk badminton, padel, dan aktivitas indoor lainnya.',
+      categoryBadge: 'Fasilitas Lingkungan',
+      textContent: 'Fasilitas olahraga warga yang digunakan komunitas Badminton Club, Padel Club, dan PTM Permai. Booking lapangan dikoordinasikan oleh GenM BJP.',
+      enabled: true,
+      order: 12,
+    },
+    {
+      id: 'card-txt-fac-5',
+      type: 'text',
+      title: 'Fasilitas Umum',
+      description: 'Taman, jalan, dan saluran air lingkungan komplek.',
+      categoryBadge: 'Fasilitas Lingkungan',
+      textContent: 'Perawatan taman, kebersihan jalan lingkungan, dan saluran air komplek dikoordinasikan oleh Bidang Pembangunan & Infrastruktur RW 011 bersama kerja bakti rutin warga.',
+      enabled: true,
+      order: 13,
+    },
+    {
+      id: 'card-txt-fac-6',
+      type: 'text',
+      title: 'PG & TK',
+      description: 'Pendidikan anak usia dini di lingkungan komplek.',
+      categoryBadge: 'Fasilitas Lingkungan',
+      textContent: 'Layanan Playgroup dan Taman Kanak-Kanak yang melayani anak-anak warga Komplek Bintara Jaya Permai dan sekitarnya.',
+      enabled: true,
+      order: 14,
+    },
+    {
+      id: 'card-txt-fac-7',
+      type: 'text',
+      title: 'Sistem Keamanan Lingkungan',
+      description: 'Pos satpam & siskamling 24 jam Komplek BJP.',
+      categoryBadge: 'Fasilitas Lingkungan',
+      textContent: 'Patroli 24 jam keliling blok A-F, pemeriksaan tamu di portal malam, dan tanggap darurat keamanan lingkungan. Lihat detail di halaman Komunitas Kegiatan kategori "Administratif / Pemerintahan".',
+      enabled: true,
+      order: 15,
+    },
+  ],
+};
+
+export const DEFAULT_BANK_SAMPAH_CONFIG: BankSampahConfig = {
+  enabled: true,
+  logoUrl: '/images/bank%20sampah.png',
+  dashboardTitle: 'Data Setoran Nasabah',
+  dashboardDescription: 'Statistik dan data nasabah Bank Sampah KMS RW 011, diperbarui berkala oleh pengurus.',
+  charts: [
+    {
+      id: 'chart-1',
+      title: 'Total Nasabah Terdaftar & Potensi',
+      imageUrl: 'https://docs.google.com/spreadsheets/d/1dhGmlQOr7AC-IB6q-NhOfKGlm3FjserguiPiB7MOAK8/pubchart?oid=857108362&format=image',
+      enabled: true,
+      order: 0,
     },
   ],
 };
@@ -291,6 +451,7 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
     },
   },
   rtRwConfig: DEFAULT_RTRW_CONFIG,
+  bankSampahConfig: DEFAULT_BANK_SAMPAH_CONFIG,
 };
 
 // ---------------------------------------------------------------------------
@@ -362,6 +523,15 @@ export function getSiteSettings(): SiteSettings {
                 : DEFAULT_RTRW_CONFIG.extraCards,
             }
           : DEFAULT_RTRW_CONFIG,
+        bankSampahConfig: parsed.bankSampahConfig
+          ? {
+              ...DEFAULT_BANK_SAMPAH_CONFIG,
+              ...parsed.bankSampahConfig,
+              charts: Array.isArray(parsed.bankSampahConfig.charts)
+                ? parsed.bankSampahConfig.charts
+                : DEFAULT_BANK_SAMPAH_CONFIG.charts,
+            }
+          : DEFAULT_BANK_SAMPAH_CONFIG,
       };
     }
   } catch (err) {

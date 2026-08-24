@@ -13,11 +13,9 @@ import {
   PhotoAlbumCard,
   SinglePageView,
   EntityDetailModal,
-  AnnouncementsList,
   PasswordModal,
   Footer,
   ShareModal,
-  Container,
 } from './components';
 
 // CMSModal is large (admin-only panel) and rarely used by regular visitors,
@@ -26,16 +24,16 @@ const CMSModal = lazy(() =>
   import('./components/CMSModal').then((m) => ({ default: m.CMSModal }))
 );
 
-// RtRwView / DocumentGeneratorPage / PollingPage are secondary routes most
+// RtRwPage / LayananSuratPage / PollingPage are secondary routes most
 // visitors never open in a given session, so they're code-split per-route.
-const RtRwView = lazy(() =>
-  import('./components/RtRwView').then((m) => ({ default: m.RtRwView }))
+const RtRwPage = lazy(() =>
+  import('./pages/RtRwPage').then((m) => ({ default: m.RtRwPage }))
 );
-const DocumentGeneratorPage = lazy(() =>
-  import('./components/DocumentGeneratorPage').then((m) => ({ default: m.DocumentGeneratorPage }))
+const LayananSuratPage = lazy(() =>
+  import('./pages/LayananSuratPage').then((m) => ({ default: m.LayananSuratPage }))
 );
 const PollingPage = lazy(() =>
-  import('./components/PollingPage').then((m) => ({ default: m.PollingPage }))
+  import('./pages/PollingPage').then((m) => ({ default: m.PollingPage }))
 );
 
 // Custom Hooks
@@ -49,6 +47,11 @@ import { setAnnouncementMetaTags } from './utils/meta';
 // Pages
 import { HomePage } from './pages/HomePage';
 import { KomunitasPage } from './pages/KomunitasPage';
+import { PengumumanPage } from './pages/PengumumanPage';
+import { BankSampahPage } from './pages/BankSampahPage';
+import { PodjokSantaiPage } from './pages/PodjokSantaiPage';
+import { DokumentasiPage } from './pages/DokumentasiPage';
+import { PendaftaranSentraUsahaPage } from './pages/PendaftaranSentraUsahaPage';
 import { RunningTeks } from './components/home/RunningTeks';
 
 export default function App() {
@@ -278,30 +281,27 @@ export default function App() {
           } />
 
           <Route path="/pengumuman" element={
-            <Container className="py-8">
-            <AnnouncementsList
-                announcements={announcements}
-                onOpenCMS={() => handleOpenCMSWithAuth()}
-                isCMSActive={isCMSOpen}
-                onShare={(ann) => setShareModalItem({ item: ann, type: 'announcement' })}
-              />
-            </Container>
+            <PengumumanPage
+              announcements={announcements}
+              onOpenCMS={() => handleOpenCMSWithAuth()}
+              isCMSActive={isCMSOpen}
+              onShare={(ann) => setShareModalItem({ item: ann, type: 'announcement' })}
+              onBack={() => navigate('/')}
+            />
           } />
 
           <Route path="/rt-rw" element={
             <Suspense fallback={null}>
-              <Container className="py-8">
-                <RtRwView
-                  config={siteSettings.rtRwConfig || DEFAULT_RTRW_CONFIG}
-                  onBack={() => navigate('/')}
-                />
-              </Container>
+              <RtRwPage
+                config={siteSettings.rtRwConfig || DEFAULT_RTRW_CONFIG}
+                onBack={() => navigate('/')}
+              />
             </Suspense>
           } />
 
           <Route path="/layanan-surat" element={
             <Suspense fallback={null}>
-              <DocumentGeneratorPage
+              <LayananSuratPage
                 templates={siteSettings.documentTemplates}
                 onGoHome={() => navigate('/')}
               />
@@ -315,6 +315,30 @@ export default function App() {
                 onGoHome={() => navigate('/')}
               />
             </Suspense>
+          } />
+
+          <Route path="/podjok-santai" element={
+            <PodjokSantaiPage onBack={() => navigate('/')} />
+          } />
+
+          <Route path="/dokumentasi" element={
+            <DokumentasiPage
+              entities={entities}
+              featuredVideos={siteSettings.featuredVideos || []}
+              onBack={() => navigate('/')}
+            />
+          } />
+
+          <Route path="/bank-sampah" element={
+            <BankSampahPage
+              entity={entities.find((e) => e.id === 'ent-5') || entities.find((e) => e.name.toLowerCase().includes('bank sampah'))}
+              config={siteSettings.bankSampahConfig}
+              onBack={() => navigate('/')}
+            />
+          } />
+
+          <Route path="/pendaftaran-sentra-usaha" element={
+            <PendaftaranSentraUsahaPage onBack={() => navigate('/')} />
           } />
         </Routes>
       </main>
@@ -369,8 +393,6 @@ export default function App() {
 
       {/* Footer */}
       <Footer
-        onOpenCMS={() => handleOpenCMSWithAuth()}
-        isCMSActive={isCMSOpen}
         logoUrl={siteSettings.logoUrl}
       />
     </div>

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Menu, X, LayoutGrid, Megaphone, Home, Settings, Building, FileText, Vote, ChevronDown } from 'lucide-react';
+import { Menu, X, LayoutGrid, Megaphone, Home, Settings, Building, FileText, Vote, ChevronDown, Recycle, Coffee, Images, Store } from 'lucide-react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { BJP_LOGO_URL } from '../assets/logo';
 import { NavbarTabConfig } from '../types';
@@ -93,7 +93,13 @@ export const Header: React.FC<HeaderProps> = ({
     { id: 'home', path: '/', label: 'Beranda', icon: Home },
     ...allTabItems.filter((t) => PRIMARY_TAB_IDS.includes(t.id)),
   ];
-  const moreItems = allTabItems.filter((t) => !PRIMARY_TAB_IDS.includes(t.id));
+  const moreItems = [
+    ...allTabItems.filter((t) => !PRIMARY_TAB_IDS.includes(t.id)),
+    { id: 'dokumentasi', path: '/dokumentasi', label: 'Dokumentasi', icon: Images },
+    { id: 'bank-sampah', path: '/bank-sampah', label: 'Bank Sampah KMS', icon: Recycle },
+    { id: 'pendaftaran-sentra-usaha', path: '/pendaftaran-sentra-usaha', label: 'Pendaftaran Sentra Usaha', icon: Store },
+    { id: 'podjok-santai', path: '/podjok-santai', label: 'Podjok Santai BJP', icon: Coffee },
+  ];
   const NAV_ITEMS = [...primaryItems, ...moreItems];
 
   const isItemActive = (path: string) =>
