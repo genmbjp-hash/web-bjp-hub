@@ -1,21 +1,34 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Entity } from '../../types';
+import { Entity, FeaturedPhotoItem } from '../../types';
 import { formatImageUrl } from '../../utils/imageUrl';
 import { FALLBACK_IMAGE_URL } from '../../constants/defaults';
 import { ChevronLeft, ChevronRight, X, ZoomIn } from 'lucide-react';
 
 interface AlbumFotoProps {
   entities: Entity[];
+  featuredPhotos?: FeaturedPhotoItem[];
 }
 
-export const AlbumFoto: React.FC<AlbumFotoProps> = ({ entities }) => {
+export const AlbumFoto: React.FC<AlbumFotoProps> = ({ entities, featuredPhotos = [] }) => {
   const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
   const [lightboxIdx, setLightboxIdx] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
 
-  // Collect all product photos from entities
+  // Curated "Foto Kegiatan" from CMS come first, then product photos from entities
   const allPhotos: { src: string; caption: string; entity: string }[] = [];
+
+  featuredPhotos
+    .filter((p) => p.enabled && p.imageUrl)
+    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+    .forEach((p) => {
+      allPhotos.push({
+        src: formatImageUrl(p.imageUrl) || p.imageUrl,
+        caption: p.caption || 'Kegiatan Warga BJP',
+        entity: 'Foto Kegiatan',
+      });
+    });
+
   entities.forEach((e) => {
     if (e.productPhotos && e.productPhotos.length > 0) {
       e.productPhotos.forEach((photo, idx) => {
@@ -113,7 +126,7 @@ export const AlbumFoto: React.FC<AlbumFotoProps> = ({ entities }) => {
             <button
               key={idx}
               onClick={() => openLightbox(idx)}
-              className="flex-shrink-0 w-56 sm:w-64 md:w-72 lg:w-80 group relative aspect-square rounded-2xl overflow-hidden bg-stone-800 border-2 border-transparent hover:border-emerald-500 transition-all snap-start shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60"
+              className="flex-shrink-0 w-56 sm:w-64 md:w-72 lg:w-80 group relative aspect-square rounded-2xl overflow-hidden bg-stone-800 border-2 border-transparent hover:border-emerald-500 transition-all snap-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60"
             >
               <img
                 src={photo.src}
@@ -157,7 +170,7 @@ export const AlbumFoto: React.FC<AlbumFotoProps> = ({ entities }) => {
           <img
             src={lightboxSrc}
             alt={photos[lightboxIdx]?.caption}
-            className="max-w-full max-h-[85vh] rounded-2xl object-contain shadow-2xl"
+            className="max-w-full max-h-[85vh] rounded-2xl object-contain shadow-lg"
             onClick={(e) => e.stopPropagation()}
             onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMAGE_URL; }}
           />

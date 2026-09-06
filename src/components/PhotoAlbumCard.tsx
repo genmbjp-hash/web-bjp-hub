@@ -85,7 +85,7 @@ export const PhotoAlbumCard: React.FC<PhotoAlbumCardProps> = ({
 
   return (
     <div
-      className="bg-white rounded-2xl border border-stone-200/90 shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group flex flex-col justify-between"
+      className="bg-white rounded-2xl border border-stone-200/90 shadow-xs hover:shadow-md hover:border-stone-300 transition-all duration-300 overflow-hidden group flex flex-col justify-between"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
@@ -109,12 +109,12 @@ export const PhotoAlbumCard: React.FC<PhotoAlbumCardProps> = ({
 
         {/* Top Badges */}
         <div className="absolute top-3 left-3 right-3 flex items-center justify-between z-10 pointer-events-none">
-          <span className="inline-flex items-center gap-1 px-3 py-1 bg-emerald-900/80 backdrop-blur-md text-emerald-100 rounded-full text-xs font-bold shadow-xs border border-emerald-700/50">
+          <span className="inline-flex items-center gap-1 px-3 py-1 bg-emerald-900/80 text-emerald-100 rounded-full text-xs font-bold border border-emerald-700/50">
             <Images className="w-3.5 h-3.5 text-emerald-300" />
             <span>Album Foto ({photos.length})</span>
           </span>
 
-          <span className="px-2.5 py-1 bg-stone-900/80 backdrop-blur-md text-stone-200 rounded-full text-[11px] font-extrabold border border-stone-600/40">
+          <span className="px-2.5 py-1 bg-stone-900/80 text-stone-200 rounded-full text-[11px] font-extrabold border border-stone-600/40">
             {entity.category}
           </span>
         </div>
@@ -144,7 +144,7 @@ export const PhotoAlbumCard: React.FC<PhotoAlbumCardProps> = ({
         {photos.length > 0 && (
           <button
             onClick={() => openLightbox(currentIndex)}
-            className="absolute bottom-3 right-3 p-2 rounded-xl bg-stone-900/80 hover:bg-emerald-800 text-white transition-colors backdrop-blur-md cursor-pointer z-10 shadow-xs"
+            className="absolute bottom-3 right-3 p-2 rounded-xl bg-stone-900/80 hover:bg-emerald-800 text-white transition-colors cursor-pointer z-10"
             title="Lihat foto layar penuh"
           >
             <Maximize2 className="w-4 h-4" />
@@ -319,7 +319,7 @@ export const PhotoAlbumCard: React.FC<PhotoAlbumCardProps> = ({
             <img
               src={formatImageUrl(photos[lightboxIndex]?.url)}
               alt={photos[lightboxIndex]?.caption || entity.name}
-              className="max-h-[80vh] max-w-full object-contain rounded-xl shadow-2xl"
+              className="max-h-[80vh] max-w-full object-contain rounded-xl shadow-lg"
             />
 
             {/* Arrows */}

@@ -62,7 +62,7 @@ export const PengumumanSection: React.FC<PengumumanSectionProps> = ({
               return (
                 <div
                   key={ann.id}
-                  className="group bg-white rounded-2xl border border-stone-200 hover:border-emerald-300 hover:shadow-lg transition-all duration-200 flex flex-col overflow-hidden"
+                  className="group bg-white rounded-2xl border border-stone-200 hover:border-emerald-300 hover:shadow-md transition-all duration-200 flex flex-col overflow-hidden"
                 >
                   {/* Image or colored header */}
                   {ann.image ? (
@@ -77,7 +77,7 @@ export const PengumumanSection: React.FC<PengumumanSectionProps> = ({
                       />
                     </div>
                   ) : (
-                    <div className="h-3 bg-gradient-to-r from-emerald-600 to-emerald-400" />
+                    <div className="h-3 bg-emerald-600" />
                   )}
 
                   <div className="p-5 flex flex-col flex-1 gap-3">

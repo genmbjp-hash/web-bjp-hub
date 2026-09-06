@@ -1,5 +1,5 @@
 import React from 'react';
-import { Heart, MapPin } from 'lucide-react';
+import { Heart, MapPin, Phone } from 'lucide-react';
 import { BJP_LOGO_URL } from '../assets/logo';
 import { formatImageUrl } from '../utils/imageUrl';
 import { Container } from './ui/Container';
@@ -41,7 +41,11 @@ export const Footer: React.FC<FooterProps> = ({ logoUrl }) => {
             <div className="space-y-2 text-xs text-stone-500">
               <div className="flex items-start gap-2">
                 <MapPin className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
-                <span>Komplek Bintara Jaya Permai, Bintara, Bekasi Barat, Jawa Barat 17134</span>
+                <span>Sekretariat RW 11, Bintara Jaya Permai, Kelurahan Bintara Jaya, Bekasi Barat, 17136</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <Phone className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                <a href="tel:08128199144" className="hover:text-emerald-400 transition-colors">0812-8199-144</a>
               </div>
             </div>
           </div>

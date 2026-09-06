@@ -194,7 +194,7 @@ export const AnnouncementsList: React.FC<AnnouncementsListProps> = ({
             <img
               src={formatImageUrl(selectedLightboxImage.url)}
               alt={selectedLightboxImage.title}
-              className="max-w-full max-h-[75vh] object-contain rounded-2xl shadow-2xl border border-white/20"
+              className="max-w-full max-h-[75vh] object-contain rounded-2xl shadow-lg border border-white/20"
             />
             <p className="text-white text-center text-xs sm:text-sm bg-black/60 px-4 py-2 rounded-xl border border-white/10 backdrop-blur-xs max-w-xl font-semibold">
               {selectedLightboxImage.title}

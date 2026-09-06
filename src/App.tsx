@@ -1,17 +1,10 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
-import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { Entity, Announcement, SiteSettings, CategoryHeaderConfig, User } from './types';
-import { SearchX, Plus } from 'lucide-react';
 
 // Components (via barrel export)
 import {
   Header,
-  CategoryPageHeader,
-  CategoryCarousel,
-  CategoryFilter,
-  EntityCard,
-  PhotoAlbumCard,
-  SinglePageView,
   EntityDetailModal,
   PasswordModal,
   Footer,
@@ -24,8 +17,9 @@ const CMSModal = lazy(() =>
   import('./components/CMSModal').then((m) => ({ default: m.CMSModal }))
 );
 
-// RtRwPage / LayananSuratPage / PollingPage are secondary routes most
-// visitors never open in a given session, so they're code-split per-route.
+// Every route except Home ("/") is code-split into its own chunk — visitors
+// only pay the download/parse cost for the page they actually open, which
+// keeps the initial load light since most sessions never touch most routes.
 const RtRwPage = lazy(() =>
   import('./pages/RtRwPage').then((m) => ({ default: m.RtRwPage }))
 );
@@ -34,6 +28,30 @@ const LayananSuratPage = lazy(() =>
 );
 const PollingPage = lazy(() =>
   import('./pages/PollingPage').then((m) => ({ default: m.PollingPage }))
+);
+const KomunitasPage = lazy(() =>
+  import('./pages/KomunitasPage').then((m) => ({ default: m.KomunitasPage }))
+);
+const PengumumanPage = lazy(() =>
+  import('./pages/PengumumanPage').then((m) => ({ default: m.PengumumanPage }))
+);
+const BankSampahPage = lazy(() =>
+  import('./pages/BankSampahPage').then((m) => ({ default: m.BankSampahPage }))
+);
+const PodjokSantaiPage = lazy(() =>
+  import('./pages/PodjokSantaiPage').then((m) => ({ default: m.PodjokSantaiPage }))
+);
+const DokumentasiPage = lazy(() =>
+  import('./pages/DokumentasiPage').then((m) => ({ default: m.DokumentasiPage }))
+);
+const PendaftaranSentraUsahaPage = lazy(() =>
+  import('./pages/PendaftaranSentraUsahaPage').then((m) => ({ default: m.PendaftaranSentraUsahaPage }))
+);
+const SosialKeagamaanPage = lazy(() =>
+  import('./pages/SosialKeagamaanPage').then((m) => ({ default: m.SosialKeagamaanPage }))
+);
+const DkmMasjidPage = lazy(() =>
+  import('./pages/DkmMasjidPage').then((m) => ({ default: m.DkmMasjidPage }))
 );
 
 // Custom Hooks
@@ -46,12 +64,6 @@ import { setAnnouncementMetaTags } from './utils/meta';
 
 // Pages
 import { HomePage } from './pages/HomePage';
-import { KomunitasPage } from './pages/KomunitasPage';
-import { PengumumanPage } from './pages/PengumumanPage';
-import { BankSampahPage } from './pages/BankSampahPage';
-import { PodjokSantaiPage } from './pages/PodjokSantaiPage';
-import { DokumentasiPage } from './pages/DokumentasiPage';
-import { PendaftaranSentraUsahaPage } from './pages/PendaftaranSentraUsahaPage';
 import { RunningTeks } from './components/home/RunningTeks';
 
 export default function App() {
@@ -264,30 +276,34 @@ export default function App() {
           } />
 
           <Route path="/komunitas" element={
-            <KomunitasPage
-              entities={entities}
-              categoryNames={categoryNames}
-              selectedCategory={selectedCategory}
-              onSelectCategory={(cat) => { setSelectedCategory(cat); }}
-              searchTerm={searchTerm}
-              onSearchChange={setSearchTerm}
-              categoryConfigs={categoryConfigs}
-              isCMSOpen={isCMSOpen}
-              onSelectEntity={setSelectedEntityForModal}
-              onShareEntity={(ent) => setShareModalItem({ item: ent, type: 'entity' })}
-              onEditEntity={handleEditEntityInCMS}
-              onOpenCMSWithAuth={handleOpenCMSWithAuth}
-            />
+            <Suspense fallback={null}>
+              <KomunitasPage
+                entities={entities}
+                categoryNames={categoryNames}
+                selectedCategory={selectedCategory}
+                onSelectCategory={(cat) => { setSelectedCategory(cat); }}
+                searchTerm={searchTerm}
+                onSearchChange={setSearchTerm}
+                categoryConfigs={categoryConfigs}
+                isCMSOpen={isCMSOpen}
+                onSelectEntity={setSelectedEntityForModal}
+                onShareEntity={(ent) => setShareModalItem({ item: ent, type: 'entity' })}
+                onEditEntity={handleEditEntityInCMS}
+                onOpenCMSWithAuth={handleOpenCMSWithAuth}
+              />
+            </Suspense>
           } />
 
           <Route path="/pengumuman" element={
-            <PengumumanPage
-              announcements={announcements}
-              onOpenCMS={() => handleOpenCMSWithAuth()}
-              isCMSActive={isCMSOpen}
-              onShare={(ann) => setShareModalItem({ item: ann, type: 'announcement' })}
-              onBack={() => navigate('/')}
-            />
+            <Suspense fallback={null}>
+              <PengumumanPage
+                announcements={announcements}
+                onOpenCMS={() => handleOpenCMSWithAuth()}
+                isCMSActive={isCMSOpen}
+                onShare={(ann) => setShareModalItem({ item: ann, type: 'announcement' })}
+                onBack={() => navigate('/')}
+              />
+            </Suspense>
           } />
 
           <Route path="/rt-rw" element={
@@ -318,27 +334,56 @@ export default function App() {
           } />
 
           <Route path="/podjok-santai" element={
-            <PodjokSantaiPage onBack={() => navigate('/')} />
+            <Suspense fallback={null}>
+              <PodjokSantaiPage onBack={() => navigate('/')} />
+            </Suspense>
           } />
 
           <Route path="/dokumentasi" element={
-            <DokumentasiPage
-              entities={entities}
-              featuredVideos={siteSettings.featuredVideos || []}
-              onBack={() => navigate('/')}
-            />
+            <Suspense fallback={null}>
+              <DokumentasiPage
+                entities={entities}
+                featuredVideos={siteSettings.featuredVideos || []}
+                featuredPhotos={siteSettings.featuredPhotos || []}
+                onBack={() => navigate('/')}
+              />
+            </Suspense>
           } />
 
           <Route path="/bank-sampah" element={
-            <BankSampahPage
-              entity={entities.find((e) => e.id === 'ent-5') || entities.find((e) => e.name.toLowerCase().includes('bank sampah'))}
-              config={siteSettings.bankSampahConfig}
-              onBack={() => navigate('/')}
-            />
+            <Suspense fallback={null}>
+              <BankSampahPage
+                entity={entities.find((e) => e.id === 'ent-5') || entities.find((e) => e.name.toLowerCase().includes('bank sampah'))}
+                config={siteSettings.bankSampahConfig}
+                onBack={() => navigate('/')}
+              />
+            </Suspense>
           } />
 
           <Route path="/pendaftaran-sentra-usaha" element={
-            <PendaftaranSentraUsahaPage onBack={() => navigate('/')} />
+            <Suspense fallback={null}>
+              <PendaftaranSentraUsahaPage onBack={() => navigate('/')} />
+            </Suspense>
+          } />
+
+          <Route path="/sosial-keagamaan" element={
+            <Suspense fallback={null}>
+              <SosialKeagamaanPage
+                entities={entities}
+                onSelectEntity={setSelectedEntityForModal}
+                onBack={() => navigate('/')}
+              />
+            </Suspense>
+          } />
+
+          <Route path="/dkm-masjid" element={
+            <Suspense fallback={null}>
+              <DkmMasjidPage
+                entity={entities.find((e) => e.name.toLowerCase().includes('dkm masjid'))}
+                config={siteSettings.dkmMasjidConfig}
+                onBack={() => navigate('/sosial-keagamaan')}
+              />
+            </Suspense>
           } />
         </Routes>
       </main>

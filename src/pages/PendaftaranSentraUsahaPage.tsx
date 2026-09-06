@@ -51,8 +51,8 @@ export const PendaftaranSentraUsahaPage: React.FC<PendaftaranSentraUsahaPageProp
       </Card>
 
       {/* Form Card */}
-      <Card radius="3xl" padding="none" className="shadow-md overflow-hidden">
-        <div className="p-5 sm:p-6 bg-gradient-to-b from-stone-50 to-white border-b border-stone-100 flex items-center justify-between gap-3">
+      <Card radius="3xl" padding="none" className="shadow-xs overflow-hidden">
+        <div className="p-5 sm:p-6 bg-stone-50 border-b border-stone-100 flex items-center justify-between gap-3">
           <h2 className="text-sm sm:text-base font-bold text-stone-900">Formulir Pendaftaran UMKM</h2>
           <a
             href={REGISTRATION_FORM_URL}

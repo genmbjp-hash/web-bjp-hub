@@ -58,7 +58,7 @@ export const EntityCard: React.FC<EntityCardProps> = ({
 
         {/* Category Badge */}
         <div className="absolute top-2.5 left-2.5 z-10">
-          <span className="bg-emerald-700/90 backdrop-blur-md text-white text-xs font-bold px-2.5 py-1 rounded-md">
+          <span className="bg-emerald-700/90 text-white text-xs font-bold px-2.5 py-1 rounded-md">
             {entity.category}
           </span>
         </div>
@@ -68,7 +68,7 @@ export const EntityCard: React.FC<EntityCardProps> = ({
           <button
             type="button"
             onClick={(e) => { e.stopPropagation(); onEdit(entity); }}
-            className="absolute top-2.5 right-2.5 z-10 p-1.5 bg-amber-400/90 hover:bg-amber-500 text-stone-900 rounded-lg backdrop-blur-md transition-all shadow-sm"
+            className="absolute top-2.5 right-2.5 z-10 p-1.5 bg-amber-400/90 hover:bg-amber-500 text-stone-900 rounded-lg transition-all"
             title="Edit entitas ini"
           >
             <Edit className="w-3 h-3" />

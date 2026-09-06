@@ -57,7 +57,7 @@ export const RunningTeks: React.FC<RunningTeksProps> = ({ announcements, siteSet
           isSecurity
             ? 'bg-blue-100 text-blue-800 border-blue-200'
             : isMixed
-            ? 'bg-gradient-to-r from-blue-50 to-emerald-50 text-emerald-800 border-stone-200'
+            ? 'bg-emerald-50 text-emerald-800 border-stone-200'
             : 'bg-emerald-50 text-emerald-800 border-stone-200'
         }`}
       >

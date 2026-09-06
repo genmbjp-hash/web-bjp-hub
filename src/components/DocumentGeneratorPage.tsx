@@ -169,7 +169,7 @@ Terverifikasi Sistem BJP HUB RW 11
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Form Column */}
-        <Card radius="3xl" padding="none" className="lg:col-span-5 p-6 shadow-md space-y-5 no-print">
+        <Card radius="3xl" padding="none" className="lg:col-span-5 p-6 shadow-xs space-y-5 no-print">
           <div className="border-b border-stone-100 pb-3">
             <h2 className="font-extrabold text-stone-900 text-base sm:text-lg flex items-center gap-2">
               <UserCheck className="w-5 h-5 text-emerald-700" />
@@ -336,7 +336,7 @@ Terverifikasi Sistem BJP HUB RW 11
               </Card>
 
               {/* Formal Letter Paper Design */}
-              <div className="bg-white p-8 sm:p-12 rounded-2xl border border-stone-300 shadow-xl space-y-6 text-stone-900 text-xs sm:text-sm font-serif relative">
+              <div className="bg-white p-8 sm:p-12 rounded-2xl border border-stone-300 shadow-sm space-y-6 text-stone-900 text-xs sm:text-sm font-serif relative">
                 {/* Formal KOP SURAT */}
                 <div className="border-b-4 border-double border-stone-950 pb-4 text-center space-y-1 font-sans">
                   <h3 className="text-base sm:text-lg font-black uppercase tracking-wide text-stone-950">

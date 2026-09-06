@@ -50,7 +50,7 @@ export const AlbumVideo: React.FC<AlbumVideoProps> = ({ videos }) => {
         {/* Video Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {displayVideos.map((video, idx) => (
-            <div key={`${video.youtubeId}-${idx}`} className="relative rounded-2xl overflow-hidden bg-black aspect-video shadow-lg group">
+            <div key={`${video.youtubeId}-${idx}`} className="relative rounded-2xl overflow-hidden bg-black aspect-video shadow-xs group">
               {playingId === video.youtubeId ? (
                 <iframe
                   src={`https://www.youtube.com/embed/${video.youtubeId}?autoplay=1`}

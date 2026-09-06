@@ -1,4 +1,4 @@
-import { Entity, Announcement, SiteSettings, CategoryHeaderConfig, User, RtRwPageConfig, BankSampahConfig } from '../types';
+import { Entity, Announcement, SiteSettings, CategoryHeaderConfig, User, RtRwPageConfig, BankSampahConfig, DkmMasjidConfig } from '../types';
 import { INITIAL_ENTITIES, INITIAL_ANNOUNCEMENTS } from '../data/initialData';
 import { BJP_LOGO_URL } from '../assets/logo';
 import { updateSiteFaviconAndOgImage } from './meta';
@@ -45,13 +45,6 @@ export const DEFAULT_USERS: User[] = [
 ];
 
 export const DEFAULT_CATEGORY_CONFIGS: CategoryHeaderConfig[] = [
-  {
-    id: 'Galeri Warga',
-    name: 'Galeri Warga',
-    description: 'Dokumentasi foto kegiatan warga, gotong royong, acara peringatan, dan momen kebersamaan Bintara Jaya Permai (RW 11)',
-    logoUrl: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=800&q=80',
-    layoutType: 'photo_album',
-  },
   {
     id: 'Sentra Usaha BJP',
     name: 'Sentra Usaha BJP',
@@ -175,8 +168,8 @@ export const DEFAULT_RTRW_CONFIG: RtRwPageConfig = {
       title: 'Tatib Warga RW 011 (2026)',
       description: 'Dokumen resmi Tata Tertib Warga RW 011 Bintara Jaya Permai versi 2026.',
       categoryBadge: 'Peraturan Warga',
-      fileUrl: 'https://drive.google.com/file/d/1GLF1PYdr3Fy903pRUVLtyJSxouEgughb/view?usp=sharing',
-      fileName: 'Tatib Warga RW11 BJP 2026.pdf',
+      fileUrl: 'https://drive.google.com/file/d/1_7w3o6T4YIfi5NozmsX56zd4E-GqUGFJ/view?usp=sharing',
+      fileName: 'Tata Tertib Warga RW11 BJP 2026.pdf',
       ctaText: 'Buka Dokumen Lengkap',
       enabled: true,
       order: 2,
@@ -313,6 +306,154 @@ export const DEFAULT_RTRW_CONFIG: RtRwPageConfig = {
       enabled: true,
       order: 15,
     },
+    {
+      id: 'card-pdf-2',
+      type: 'pdf',
+      title: 'Tata Tertib Security, SOP, dan Sistem Penggajian',
+      description: 'Dokumen resmi Tata Tertib Petugas Keamanan (Security), Standar Operasional Prosedur (SOP), dan Sistem Penggajian RW 011 Bintara Jaya Permai.',
+      categoryBadge: 'Peraturan Keamanan',
+      fileUrl: 'https://drive.google.com/file/d/19wEYu4thWZSf-pzTy_HfGcSXc2971cZ8/view?usp=sharing',
+      fileName: 'TATA TERTIB SECURITY, SOP DAN SISTEM PENGGAJIAN-FINAL-2.pdf',
+      ctaText: 'Buka Dokumen Lengkap',
+      enabled: true,
+      order: 16,
+    },
+  ],
+  programKerjaTitle: 'Program Kerja',
+  programKerjaIntro: 'Program kerja ini dibuat sebagai agenda kegiatan dan penganggaran dalam menjalankan kepengurusan untuk mencapat tujuan TeGAR!',
+  programKerjaShortTitle: 'I. Program Kerja Jangka Pendek dan Menengah',
+  programKerjaShortDescription: 'Fokus pada tahun pertama sampai ketiga adalah penguatan fondasi pelayanan, perbaikan dan pembangunan infrastruktur dasar, digitalisasi informasi, pengelolaan lingkungan, serta penertiban lingkungan warga.',
+  programKerjaShort: [
+    {
+      id: 'pk-short-1',
+      title: 'Peningkatan Administrasi dan Pelayanan Publik',
+      description: 'Mengoptimalkan sistem administrasi kependudukan dan meningkatkan kualitas pelayanan kepada warga secara cepat dan tepat.',
+      enabled: true,
+      order: 0,
+    },
+    {
+      id: 'pk-short-2',
+      title: 'Sentralisasi Media Komunikasi dan Koordinasi Komunitas (BJPhub)',
+      description: 'Meluncurkan dan mengelola BJPhub sebagai wadah sentralisasi media komunikasi, pusat informasi, dan koordinasi terpadu bagi seluruh elemen dan komunitas warga di lingkungan Bintara Jaya Permai.',
+      enabled: true,
+      order: 1,
+    },
+    {
+      id: 'pk-short-3',
+      title: 'Pemeliharaan Sekretariat dan Inventaris',
+      description: 'Melakukan perawatan gedung Sekretariat RW serta melengkapi fasilitas dan inventaris kantor untuk mendukung kelancaran operasional kepengurusan.',
+      enabled: true,
+      order: 2,
+    },
+    {
+      id: 'pk-short-4',
+      title: 'Peningkatan Keamanan dan Ketertiban Masyarakat (Kamtibmas)',
+      description: 'Mengaktifkan kembali sistem keamanan lingkungan (Siskamling), penataan jadwal keamanan, dan menyusun tata tertib warga.',
+      enabled: true,
+      order: 3,
+    },
+    {
+      id: 'pk-short-5',
+      title: 'Perbaikan dan Pemeliharaan Infrastruktur Lingkungan',
+      description: 'Melakukan perbaikan sarana fisik lingkungan secara komprehensif, mencakup pengaspalan/pengecoran jalan, pengadaan rambu-rambu lalu lintas, penerangan jalan umum (PJU), dan infrastruktur penunjang lainnya.',
+      enabled: true,
+      order: 4,
+    },
+    {
+      id: 'pk-short-6',
+      title: 'Pengelolaan Bank Sampah dan Kebersihan Lingkungan',
+      description: 'Membentuk dan mengelola program Bank Sampah secara aktif untuk mewujudkan lingkungan yang bersih, sehat, sekaligus memberikan nilai tambah ekonomis bagi warga.',
+      enabled: true,
+      order: 5,
+    },
+    {
+      id: 'pk-short-7',
+      title: 'Optimalisasi Fasos dan Fasum',
+      description: 'Mengelola, merawat, dan mengembalikan fungsi utama Fasilitas Sosial (Fasos) dan Fasilitas Umum (Fasum) agar dapat dimanfaatkan secara maksimal oleh seluruh warga.',
+      enabled: true,
+      order: 6,
+    },
+    {
+      id: 'pk-short-8',
+      title: 'Pengendalian Banjir dan Perawatan Saluran Induk',
+      description: 'Melakukan pemeliharaan saluran induk secara berkala oleh petugas khusus dan melaksanakan kerja bakti oleh warga dalam program K3 (Keindahan, Kebersihan & Ketertiban) - Lingkungan Bersih.',
+      enabled: true,
+      order: 7,
+    },
+    {
+      id: 'pk-short-9',
+      title: 'Realisasi Program Hibah Pemerintah Daerah',
+      description: 'Mengawal, mengelola, dan merealisasikan program bantuan atau dana hibah dari pemerintah daerah secara transparan, akuntabel, dan tepat sasaran untuk pembangunan lingkungan.',
+      enabled: true,
+      order: 8,
+    },
+    {
+      id: 'pk-short-10',
+      title: 'Koordinasi dan Konsolidasi Lingkungan',
+      description: 'Membangun komunikasi yang solid dan rutin antara Pengurus RW, Pengurus RT, tokoh masyarakat, dan warga melalui pertemuan atau musyawarah tingkat RW.',
+      enabled: true,
+      order: 9,
+    },
+    {
+      id: 'pk-short-11',
+      title: 'Pemberdayaan Kepemudaan dan Olahraga',
+      description: 'Membina kegiatan Karang Taruna serta memfasilitasi kegiatan olahraga untuk membangun generasi muda yang aktif, kreatif, dan positif.',
+      enabled: true,
+      order: 10,
+    },
+    {
+      id: 'pk-short-12',
+      title: 'Peningkatan kesehatan warga',
+      description: 'Dengan peran serta Posyandu-Posbindu secara berkala 2 bulan sekali melakukan pemeriksaan kesehatan dan melaksanakan pemantauan terhadap penyakit menular dan anak-anak stunting serta rumah tidak layak huni.',
+      enabled: true,
+      order: 11,
+    },
+    {
+      id: 'pk-short-13',
+      title: 'Evaluasi dan Pelaporan Berkala',
+      description: 'Menyelenggarakan rapat evaluasi program kerja dan menyampaikan laporan pertanggungjawaban (keuangan dan progres kegiatan) kepada warga setiap triwulan (3 bulan sekali).',
+      enabled: true,
+      order: 12,
+    },
+  ],
+  programKerjaLongTitle: 'II. Program Kerja Jangka Panjang',
+  programKerjaLongDescription: 'Fokus pada tahun keempat hingga kelima adalah keberlanjutan program, pematangan ekosistem digital warga, adaptasi terhadap kebutuhan lingkungan yang berkembang, serta perluasan sinergi dengan pemerintah daerah.',
+  programKerjaLong: [
+    {
+      id: 'pk-long-1',
+      title: 'Keberlanjutan dan Pengembangan Program',
+      description: 'Melanjutkan dan meningkatkan skala program kerja yang dinilai berhasil (seperti Bank Sampah dan perawatan infrastruktur) berdasarkan hasil evaluasi tahun ke-1 dan ke-2.',
+      enabled: true,
+      order: 0,
+    },
+    {
+      id: 'pk-long-2',
+      title: 'Pengembangan Ekosistem BJPhub',
+      description: 'Meningkatkan fitur dan pemanfaatan BJPhub tidak hanya sebagai media komunikasi, tetapi juga sebagai sarana pemberdayaan ekonomi warga (UMKM) dan pelayanan administrasi digital mandiri.',
+      enabled: true,
+      order: 1,
+    },
+    {
+      id: 'pk-long-3',
+      title: 'Penyesuaian dan Revisi Program (Dinamis)',
+      description: 'Melakukan penyesuaian atau perubahan rencana kerja secara dinamis untuk menjawab isu-isu lingkungan terbaru yang mendesak di masyarakat.',
+      enabled: true,
+      order: 2,
+    },
+    {
+      id: 'pk-long-4',
+      title: 'Sinergi Program Pemerintah Kota (Musrenbang)',
+      description: 'Mengusulkan, merancang, dan mengawal program pembangunan skala besar agar terintegrasi dengan rencana pembangunan Pemerintah Kota Bekasi, khususnya melalui jalur RAPBD dan Musyawarah Perencanaan Pembangunan (Musrenbang).',
+      enabled: true,
+      order: 3,
+    },
+    {
+      id: 'pk-long-5',
+      title: 'Dukungan Pelaksanaan Pemilu dan Pilkada',
+      description: 'Berpartisipasi aktif dalam menjaga kondusivitas, keamanan lingkungan, dan membantu kelancaran penyelenggaraan pesta demokrasi (Pemilu dan Pilkada) di tingkat warga pada tahun yang bersangkutan.',
+      enabled: true,
+      order: 4,
+    },
   ],
 };
 
@@ -330,6 +471,13 @@ export const DEFAULT_BANK_SAMPAH_CONFIG: BankSampahConfig = {
       order: 0,
     },
   ],
+};
+
+export const DEFAULT_DKM_MASJID_CONFIG: DkmMasjidConfig = {
+  enabled: true,
+  aboutText: '',
+  agenda: [],
+  struktur: [],
 };
 
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
@@ -400,8 +548,31 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
       enabled: true,
       order: 4,
     },
+    {
+      id: 'mp-6',
+      name: 'Bjpbadmintonclub',
+      logoUrl: 'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=200&auto=format&fit=crop&q=80',
+      instagramUrl: 'https://www.instagram.com/bjpbadmintonclub/',
+      instagramEnabled: true,
+      youtubeUrl: '',
+      youtubeEnabled: false,
+      enabled: true,
+      order: 5,
+    },
+    {
+      id: 'mp-7',
+      name: 'Bjppadelclub',
+      logoUrl: 'https://images.unsplash.com/photo-1554068865-24cecd4e34b8?w=200&auto=format&fit=crop&q=80',
+      instagramUrl: 'https://www.instagram.com/bjp.padelclub/',
+      instagramEnabled: true,
+      youtubeUrl: '',
+      youtubeEnabled: false,
+      enabled: true,
+      order: 6,
+    },
   ],
   featuredVideos: [],
+  featuredPhotos: [],
   documentTemplates: [
     {
       id: 'tmpl-1',
@@ -452,6 +623,7 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   },
   rtRwConfig: DEFAULT_RTRW_CONFIG,
   bankSampahConfig: DEFAULT_BANK_SAMPAH_CONFIG,
+  dkmMasjidConfig: DEFAULT_DKM_MASJID_CONFIG,
 };
 
 // ---------------------------------------------------------------------------
@@ -459,6 +631,26 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
 // ---------------------------------------------------------------------------
 function normalizeCategoryName(category: string): string {
   return CATEGORY_LEGACY_MAP[category] ?? category;
+}
+
+// ---------------------------------------------------------------------------
+// Helper: merge a seed/default list with what's saved in localStorage.
+//
+// A plain `Array.isArray(saved) ? saved : defaults` check (used before this
+// helper existed) means that once a visitor's browser has ANY saved value
+// for a list, new items added to the defaults later in code never reach
+// them again — the saved array wins outright. This merges by id instead: an
+// admin's edits to an existing default item are kept, brand-new default
+// items (added in a later update) still show up, and any custom items the
+// admin added themselves (ids not found in defaults) are preserved too.
+// ---------------------------------------------------------------------------
+function mergeListById<T extends { id: string }>(defaults: T[], saved: unknown): T[] {
+  if (!Array.isArray(saved)) return defaults;
+  const savedMap = new Map(saved.map((item: T) => [item.id, item]));
+  const merged = defaults.map((def) => savedMap.get(def.id) || def);
+  const defaultIds = new Set(defaults.map((d) => d.id));
+  const customItems = saved.filter((item: T) => !defaultIds.has(item.id));
+  return [...merged, ...customItems];
 }
 
 // ---------------------------------------------------------------------------
@@ -508,30 +700,35 @@ export function getSiteSettings(): SiteSettings {
         navbarTabs: loadedNavbarTabs,
         categoryConfigs: mergedCategoryConfigs,
         securitySchedules: Array.isArray(parsed.securitySchedules) ? parsed.securitySchedules : [],
-        mediaPartners: Array.isArray(parsed.mediaPartners) ? parsed.mediaPartners : DEFAULT_SITE_SETTINGS.mediaPartners,
-        featuredVideos: Array.isArray(parsed.featuredVideos) ? parsed.featuredVideos : DEFAULT_SITE_SETTINGS.featuredVideos,
-        documentTemplates: Array.isArray(parsed.documentTemplates)
-          ? parsed.documentTemplates
-          : DEFAULT_SITE_SETTINGS.documentTemplates,
+        mediaPartners: mergeListById(DEFAULT_SITE_SETTINGS.mediaPartners!, parsed.mediaPartners),
+        featuredVideos: mergeListById(DEFAULT_SITE_SETTINGS.featuredVideos!, parsed.featuredVideos),
+        featuredPhotos: mergeListById(DEFAULT_SITE_SETTINGS.featuredPhotos!, parsed.featuredPhotos),
+        documentTemplates: mergeListById(DEFAULT_SITE_SETTINGS.documentTemplates!, parsed.documentTemplates),
         pollingConfig: parsed.pollingConfig || DEFAULT_SITE_SETTINGS.pollingConfig,
         rtRwConfig: parsed.rtRwConfig
           ? {
               ...DEFAULT_RTRW_CONFIG,
               ...parsed.rtRwConfig,
-              extraCards: Array.isArray(parsed.rtRwConfig.extraCards)
-                ? parsed.rtRwConfig.extraCards
-                : DEFAULT_RTRW_CONFIG.extraCards,
+              extraCards: mergeListById(DEFAULT_RTRW_CONFIG.extraCards!, parsed.rtRwConfig.extraCards),
+              programKerjaShort: mergeListById(DEFAULT_RTRW_CONFIG.programKerjaShort!, parsed.rtRwConfig.programKerjaShort),
+              programKerjaLong: mergeListById(DEFAULT_RTRW_CONFIG.programKerjaLong!, parsed.rtRwConfig.programKerjaLong),
             }
           : DEFAULT_RTRW_CONFIG,
         bankSampahConfig: parsed.bankSampahConfig
           ? {
               ...DEFAULT_BANK_SAMPAH_CONFIG,
               ...parsed.bankSampahConfig,
-              charts: Array.isArray(parsed.bankSampahConfig.charts)
-                ? parsed.bankSampahConfig.charts
-                : DEFAULT_BANK_SAMPAH_CONFIG.charts,
+              charts: mergeListById(DEFAULT_BANK_SAMPAH_CONFIG.charts, parsed.bankSampahConfig.charts),
             }
           : DEFAULT_BANK_SAMPAH_CONFIG,
+        dkmMasjidConfig: parsed.dkmMasjidConfig
+          ? {
+              ...DEFAULT_DKM_MASJID_CONFIG,
+              ...parsed.dkmMasjidConfig,
+              agenda: mergeListById(DEFAULT_DKM_MASJID_CONFIG.agenda, parsed.dkmMasjidConfig.agenda),
+              struktur: mergeListById(DEFAULT_DKM_MASJID_CONFIG.struktur, parsed.dkmMasjidConfig.struktur),
+            }
+          : DEFAULT_DKM_MASJID_CONFIG,
       };
     }
   } catch (err) {

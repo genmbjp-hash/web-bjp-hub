@@ -6,7 +6,7 @@ import {
   Bold, Italic, List, Heading, ExternalLink, ShieldAlert, ArrowLeft,
   GripVertical, ArrowUp, ArrowDown, MapPin, Info, Globe, Sliders, Palette, Eye, EyeOff,
   Users, UserPlus, ShieldCheck, Shield, Lock, LogOut, CheckSquare, Square, Search, User as UserIcon,
-  Database, Server, CheckCircle2, XCircle, Terminal, Code, FileText, Vote, Instagram, Save, Youtube, Recycle
+  Database, Server, CheckCircle2, XCircle, Terminal, Code, FileText, Vote, Instagram, Save, Youtube, Recycle, Church
 } from 'lucide-react';
 import { exportDataAsJSON, importDataFromJSON, resetToDefaults, DEFAULT_CATEGORY_CONFIGS } from '../utils/storage';
 import { useDragScroll } from '../hooks/useDragScroll';
@@ -21,7 +21,9 @@ import { DocumentTemplatesCMS } from './DocumentTemplatesCMS';
 import { PollingCMS } from './PollingCMS';
 import { MediaPartnersCMS } from './MediaPartnersCMS';
 import { VideoCMS } from './VideoCMS';
+import { PhotoCMS } from './PhotoCMS';
 import { BankSampahCMS } from './BankSampahCMS';
+import { DkmMasjidCMS } from './DkmMasjidCMS';
 import {
   isSupabaseConfigured,
   testSupabaseConnection,
@@ -108,7 +110,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
   editingEntityInit,
   initialCategoryForNewEntity,
 }) => {
-const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'settings' | 'security' | 'rtrw' | 'documents' | 'polling' | 'videos' | 'banksampah' | 'users' | 'supabase' | 'backup'>('entities');
+const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'settings' | 'security' | 'rtrw' | 'documents' | 'polling' | 'videos' | 'photos' | 'banksampah' | 'dkmmasjid' | 'users' | 'supabase' | 'backup'>('entities');
   const navTabsRef = useDragScroll<HTMLDivElement>();
 
   // Supabase State & Handlers
@@ -816,7 +818,7 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-stone-900/80 backdrop-blur-md animate-fade-in">
-      <div className="bg-stone-50 rounded-2xl w-full max-w-5xl h-[92vh] flex flex-col shadow-2xl border border-stone-300 overflow-hidden relative">
+      <div className="bg-stone-50 rounded-2xl w-full max-w-5xl h-[92vh] flex flex-col shadow-lg border border-stone-300 overflow-hidden relative">
 
         {/* Toast Notification */}
         {notification && (
@@ -1010,6 +1012,20 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
 
           <button
             onClick={() => {
+              setActiveTab('photos');
+            }}
+            className={`flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-semibold border-b-2 transition-all whitespace-nowrap ${
+              activeTab === 'photos'
+                ? 'border-emerald-700 text-emerald-900 bg-emerald-50/50 rounded-t-lg'
+                : 'border-transparent text-stone-600 hover:text-stone-900'
+            }`}
+          >
+            <ImageIcon className="w-4 h-4 text-emerald-700" />
+            <span>Foto Kegiatan</span>
+          </button>
+
+          <button
+            onClick={() => {
               setActiveTab('banksampah');
             }}
             className={`flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-semibold border-b-2 transition-all whitespace-nowrap ${
@@ -1020,6 +1036,20 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
           >
             <Recycle className="w-4 h-4 text-emerald-700" />
             <span>Bank Sampah KMS</span>
+          </button>
+
+          <button
+            onClick={() => {
+              setActiveTab('dkmmasjid');
+            }}
+            className={`flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-semibold border-b-2 transition-all whitespace-nowrap ${
+              activeTab === 'dkmmasjid'
+                ? 'border-emerald-700 text-emerald-900 bg-emerald-50/50 rounded-t-lg'
+                : 'border-transparent text-stone-600 hover:text-stone-900'
+            }`}
+          >
+            <Church className="w-4 h-4 text-emerald-700" />
+            <span>DKM Masjid</span>
           </button>
 
           <button
@@ -2884,9 +2914,18 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
             <VideoCMS siteSettings={siteSettings} onSaveSiteSettings={onSaveSiteSettings} />
           )}
 
+          {/* TAB: FOTO KEGIATAN */}
+          {activeTab === 'photos' && (
+            <PhotoCMS siteSettings={siteSettings} onSaveSiteSettings={onSaveSiteSettings} />
+          )}
+
           {/* TAB: BANK SAMPAH KMS */}
           {activeTab === 'banksampah' && (
             <BankSampahCMS siteSettings={siteSettings} onSaveSiteSettings={onSaveSiteSettings} />
+          )}
+
+          {activeTab === 'dkmmasjid' && (
+            <DkmMasjidCMS siteSettings={siteSettings} onSaveSiteSettings={onSaveSiteSettings} />
           )}
 
           {/* TAB: USER MANAGEMENT */}

@@ -47,7 +47,7 @@ export const SinglePageView: React.FC<SinglePageViewProps> = ({
 `;
 
   return (
-    <Card radius="3xl" padding="none" className="shadow-md overflow-hidden max-w-5xl mx-auto my-8">
+    <Card radius="3xl" padding="none" className="shadow-xs overflow-hidden max-w-5xl mx-auto my-8">
       {/* Hero Image Section */}
       <div className="relative h-64 sm:h-80 md:h-96 w-full bg-stone-900 overflow-hidden">
         <img

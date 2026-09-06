@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { SiteSettings, RtRwPageConfig, RtDetailItem, RtRwValueItem, RtRwContentCard, RtRwCardType } from '../types';
+import { SiteSettings, RtRwPageConfig, RtDetailItem, RtRwValueItem, RtRwContentCard, RtRwCardType, ProgramKerjaItem } from '../types';
 import { DEFAULT_RTRW_CONFIG } from '../utils/storage';
 import { CARD_TITLE_MAX_LENGTH, CARD_DESCRIPTION_MAX_LENGTH } from '../constants/defaults';
 import { MapPin, Save, Plus, Trash2, Upload, Eye, EyeOff } from 'lucide-react';
@@ -29,6 +29,14 @@ const emptyCard = (type: RtRwCardType): RtRwContentCard => ({
   description: '',
   enabled: true,
   order: 0,
+});
+
+const emptyProgramKerja = (order: number): ProgramKerjaItem => ({
+  id: `pk-${Date.now()}`,
+  title: '',
+  description: '',
+  enabled: true,
+  order,
 });
 
 export const RtRwCMS: React.FC<RtRwCMSProps> = ({ siteSettings, onSaveSiteSettings }) => {
@@ -64,6 +72,22 @@ export const RtRwCMS: React.FC<RtRwCMSProps> = ({ siteSettings, onSaveSiteSettin
   };
   const addMission = () => setConfig({ ...config, missions: [...config.missions, ''] });
   const removeMission = (idx: number) => setConfig({ ...config, missions: config.missions.filter((_, i) => i !== idx) });
+
+  const programKerjaShort = config.programKerjaShort || [];
+  const updateProgramShort = (id: string, patch: Partial<ProgramKerjaItem>) =>
+    setConfig({ ...config, programKerjaShort: programKerjaShort.map((p) => (p.id === id ? { ...p, ...patch } : p)) });
+  const addProgramShort = () =>
+    setConfig({ ...config, programKerjaShort: [...programKerjaShort, emptyProgramKerja(programKerjaShort.length)] });
+  const removeProgramShort = (id: string) =>
+    setConfig({ ...config, programKerjaShort: programKerjaShort.filter((p) => p.id !== id) });
+
+  const programKerjaLong = config.programKerjaLong || [];
+  const updateProgramLong = (id: string, patch: Partial<ProgramKerjaItem>) =>
+    setConfig({ ...config, programKerjaLong: programKerjaLong.map((p) => (p.id === id ? { ...p, ...patch } : p)) });
+  const addProgramLong = () =>
+    setConfig({ ...config, programKerjaLong: [...programKerjaLong, emptyProgramKerja(programKerjaLong.length)] });
+  const removeProgramLong = (id: string) =>
+    setConfig({ ...config, programKerjaLong: programKerjaLong.filter((p) => p.id !== id) });
 
   const cards = config.extraCards || [];
   const updateCard = (id: string, patch: Partial<RtRwContentCard>) => {
@@ -271,6 +295,180 @@ export const RtRwCMS: React.FC<RtRwCMSProps> = ({ siteSettings, onSaveSiteSettin
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Tambah Nilai</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Program Kerja */}
+      <div className="bg-white p-5 rounded-2xl border border-stone-200 shadow-xs space-y-4">
+        <h4 className="text-xs font-bold text-stone-800 border-b border-stone-100 pb-2">Program Kerja</h4>
+
+        <div className="space-y-1">
+          <label className="text-xs font-bold text-stone-700 block">Label Badge</label>
+          <input
+            type="text"
+            value={config.programKerjaTitle || ''}
+            onChange={(e) => setConfig({ ...config, programKerjaTitle: e.target.value })}
+            className="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded-xl text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+          />
+        </div>
+        <div className="space-y-1">
+          <label className="text-xs font-bold text-stone-700 block">Teks Pengantar</label>
+          <textarea
+            rows={2}
+            value={config.programKerjaIntro || ''}
+            onChange={(e) => setConfig({ ...config, programKerjaIntro: e.target.value })}
+            className="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded-xl text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+          />
+        </div>
+
+        {/* Jangka Pendek & Menengah */}
+        <div className="space-y-2 pt-2 border-t border-stone-100">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-stone-700 block">Judul Jangka Pendek/Menengah</label>
+              <input
+                type="text"
+                value={config.programKerjaShortTitle || ''}
+                onChange={(e) => setConfig({ ...config, programKerjaShortTitle: e.target.value })}
+                className="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded-xl text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-stone-700 block">Deskripsi Jangka Pendek/Menengah</label>
+              <input
+                type="text"
+                value={config.programKerjaShortDescription || ''}
+                onChange={(e) => setConfig({ ...config, programKerjaShortDescription: e.target.value })}
+                className="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded-xl text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-3 pt-1">
+            {programKerjaShort.map((p, idx) => (
+              <div key={p.id} className="bg-stone-50 p-4 rounded-xl border border-stone-200 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-stone-900">Program #{idx + 1}</span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => updateProgramShort(p.id, { enabled: !p.enabled })}
+                      className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold transition-colors ${
+                        p.enabled ? 'bg-emerald-100 text-emerald-800' : 'bg-stone-200 text-stone-600'
+                      }`}
+                    >
+                      {p.enabled ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+                      <span>{p.enabled ? 'Aktif' : 'Nonaktif'}</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => removeProgramShort(p.id)}
+                      className="p-1.5 text-stone-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+                <input
+                  type="text"
+                  value={p.title}
+                  onChange={(e) => updateProgramShort(p.id, { title: e.target.value })}
+                  placeholder="Judul Program"
+                  className="w-full px-2.5 py-1.5 bg-white border border-stone-300 rounded-lg text-xs font-semibold"
+                />
+                <textarea
+                  rows={2}
+                  value={p.description}
+                  onChange={(e) => updateProgramShort(p.id, { description: e.target.value })}
+                  placeholder="Deskripsi Program"
+                  className="w-full px-2.5 py-1.5 bg-white border border-stone-300 rounded-lg text-xs"
+                />
+              </div>
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={addProgramShort}
+            className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-stone-100 hover:bg-stone-200 text-stone-800 font-semibold rounded-lg text-xs transition-colors border border-dashed border-stone-300"
+          >
+            <Plus className="w-4 h-4 text-emerald-700" />
+            Tambah Program Jangka Pendek/Menengah
+          </button>
+        </div>
+
+        {/* Jangka Panjang */}
+        <div className="space-y-2 pt-2 border-t border-stone-100">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-stone-700 block">Judul Jangka Panjang</label>
+              <input
+                type="text"
+                value={config.programKerjaLongTitle || ''}
+                onChange={(e) => setConfig({ ...config, programKerjaLongTitle: e.target.value })}
+                className="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded-xl text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-stone-700 block">Deskripsi Jangka Panjang</label>
+              <input
+                type="text"
+                value={config.programKerjaLongDescription || ''}
+                onChange={(e) => setConfig({ ...config, programKerjaLongDescription: e.target.value })}
+                className="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded-xl text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-3 pt-1">
+            {programKerjaLong.map((p, idx) => (
+              <div key={p.id} className="bg-stone-50 p-4 rounded-xl border border-stone-200 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-stone-900">Program #{idx + 1}</span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => updateProgramLong(p.id, { enabled: !p.enabled })}
+                      className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold transition-colors ${
+                        p.enabled ? 'bg-emerald-100 text-emerald-800' : 'bg-stone-200 text-stone-600'
+                      }`}
+                    >
+                      {p.enabled ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+                      <span>{p.enabled ? 'Aktif' : 'Nonaktif'}</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => removeProgramLong(p.id)}
+                      className="p-1.5 text-stone-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+                <input
+                  type="text"
+                  value={p.title}
+                  onChange={(e) => updateProgramLong(p.id, { title: e.target.value })}
+                  placeholder="Judul Program"
+                  className="w-full px-2.5 py-1.5 bg-white border border-stone-300 rounded-lg text-xs font-semibold"
+                />
+                <textarea
+                  rows={2}
+                  value={p.description}
+                  onChange={(e) => updateProgramLong(p.id, { description: e.target.value })}
+                  placeholder="Deskripsi Program"
+                  className="w-full px-2.5 py-1.5 bg-white border border-stone-300 rounded-lg text-xs"
+                />
+              </div>
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={addProgramLong}
+            className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-stone-100 hover:bg-stone-200 text-stone-800 font-semibold rounded-lg text-xs transition-colors border border-dashed border-stone-300"
+          >
+            <Plus className="w-4 h-4 text-emerald-700" />
+            Tambah Program Jangka Panjang
           </button>
         </div>
       </div>

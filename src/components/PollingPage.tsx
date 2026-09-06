@@ -69,9 +69,9 @@ export const PollingPage: React.FC<PollingPageProps> = ({ config, onGoHome }) =>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
         {/* Section 1 */}
         {section1 && section1.enabled ? (
-          <Card radius="3xl" padding="none" className="shadow-md overflow-hidden flex flex-col justify-between">
+          <Card radius="3xl" padding="none" className="shadow-xs overflow-hidden flex flex-col justify-between">
             {/* Card Header */}
-            <div className="p-6 bg-gradient-to-b from-stone-50 to-white border-b border-stone-100 space-y-2">
+            <div className="p-6 bg-stone-50 border-b border-stone-100 space-y-2">
               <div className="flex items-center justify-between gap-2">
                 <span className="px-3 py-1 bg-emerald-100 text-emerald-900 font-bold rounded-full text-xs">
                   Polling Section 01
@@ -120,7 +120,7 @@ export const PollingPage: React.FC<PollingPageProps> = ({ config, onGoHome }) =>
             </div>
           </Card>
         ) : (
-          <div className="bg-stone-50 rounded-3xl border border-dashed border-stone-300 p-8 text-center text-stone-400 space-y-2">
+          <div className="bg-stone-50 rounded-2xl border border-dashed border-stone-300 p-8 text-center text-stone-400 space-y-2">
             <Vote className="w-8 h-8 mx-auto opacity-40" />
             <p className="text-xs font-bold">Section Polling 1 Dinonaktifkan</p>
           </div>
@@ -128,9 +128,9 @@ export const PollingPage: React.FC<PollingPageProps> = ({ config, onGoHome }) =>
 
         {/* Section 2 */}
         {section2 && section2.enabled ? (
-          <Card radius="3xl" padding="none" className="shadow-md overflow-hidden flex flex-col justify-between">
+          <Card radius="3xl" padding="none" className="shadow-xs overflow-hidden flex flex-col justify-between">
             {/* Card Header */}
-            <div className="p-6 bg-gradient-to-b from-stone-50 to-white border-b border-stone-100 space-y-2">
+            <div className="p-6 bg-stone-50 border-b border-stone-100 space-y-2">
               <div className="flex items-center justify-between gap-2">
                 <span className="px-3 py-1 bg-emerald-100 text-emerald-900 font-bold rounded-full text-xs">
                   Polling Section 02
@@ -179,7 +179,7 @@ export const PollingPage: React.FC<PollingPageProps> = ({ config, onGoHome }) =>
             </div>
           </Card>
         ) : (
-          <div className="bg-stone-50 rounded-3xl border border-dashed border-stone-300 p-8 text-center text-stone-400 space-y-2">
+          <div className="bg-stone-50 rounded-2xl border border-dashed border-stone-300 p-8 text-center text-stone-400 space-y-2">
             <Vote className="w-8 h-8 mx-auto opacity-40" />
             <p className="text-xs font-bold">Section Polling 2 Dinonaktifkan</p>
           </div>

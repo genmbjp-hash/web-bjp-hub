@@ -53,8 +53,8 @@ export const HomePage: React.FC<HomePageProps> = ({
         />
       </motion.div>
 
-      {/* Section Wrapper for Kanal & Entity Slider */}
-      <div className="bg-white relative border-b border-stone-200/50">
+      {/* Section Wrapper for Kanal Slider */}
+      <div className="bg-white relative">
 
         {/* 2. Kanal Slider */}
         <Section id="kanal-section" className="pt-10">
@@ -67,9 +67,23 @@ export const HomePage: React.FC<HomePageProps> = ({
 
         {/* 2.5 Community Logos */}
         <CommunityLogos />
+      </div>
 
-        {/* 3. Entity Slider (Featured) */}
-        <Section className="mt-8" delay={0.1}>
+      {/* 3. Album Foto */}
+      <div className="bg-stone-950">
+        <Section>
+          <AlbumFoto entities={entities} featuredPhotos={siteSettings.featuredPhotos} />
+        </Section>
+      </div>
+
+      {/* 4. Album Video (renders nothing if no video is enabled in CMS > Video Kegiatan) */}
+      <Section>
+        <AlbumVideo videos={siteSettings.featuredVideos || []} />
+      </Section>
+
+      {/* 5. Entity Slider (Sorotan Komunitas) */}
+      <div className="bg-white relative border-b border-stone-200/50">
+        <Section className="pt-10" delay={0.1}>
           <EntitySlider
             entities={entities}
             onSelectEntity={onSelectEntity}
@@ -78,7 +92,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         </Section>
       </div>
 
-      {/* 4. Pengumuman & Agenda */}
+      {/* 6. Pengumuman & Agenda */}
       <div className="bg-white">
         <Section>
           <PengumumanSection
@@ -90,18 +104,6 @@ export const HomePage: React.FC<HomePageProps> = ({
 
       {/* Divider */}
       <div className="h-px bg-stone-200 w-full" />
-
-      {/* 5. Album Foto */}
-      <div className="bg-stone-950">
-        <Section>
-          <AlbumFoto entities={entities} />
-        </Section>
-      </div>
-
-      {/* 6. Album Video (renders nothing if no video is enabled in CMS > Video Kegiatan) */}
-      <Section>
-        <AlbumVideo videos={siteSettings.featuredVideos || []} />
-      </Section>
 
       {/* 7. Google Map */}
       <div className="bg-white">

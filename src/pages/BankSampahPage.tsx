@@ -93,14 +93,11 @@ export const BankSampahPage: React.FC<BankSampahPageProps> = ({ entity, config, 
 
       {/* Full-bleed Hero Banner */}
       <div className="relative mt-6 bg-stone-950 overflow-hidden">
-        <div className="absolute -top-24 -right-24 w-96 h-96 bg-emerald-600/20 rounded-full blur-3xl" />
-        <div className="absolute -bottom-24 -left-24 w-72 h-72 bg-emerald-500/10 rounded-full blur-3xl" />
-
         <Container className="relative py-8 sm:py-14 flex flex-row items-start gap-4 sm:gap-10">
           <img
             src={heroLogo}
             alt={entity.name}
-            className="w-16 h-16 sm:w-36 sm:h-36 object-contain shrink-0 drop-shadow-lg"
+            className="w-16 h-16 sm:w-36 sm:h-36 object-contain shrink-0"
             onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_ENTITY_IMAGE_URL; }}
           />
           <div className="text-left space-y-2 sm:space-y-3 max-w-2xl">
@@ -329,7 +326,7 @@ export const BankSampahPage: React.FC<BankSampahPageProps> = ({ entity, config, 
             <img
               src={formatImageUrl(lightboxImage.url)}
               alt={lightboxImage.caption || 'Galeri'}
-              className="max-w-full max-h-[75vh] object-contain rounded-2xl shadow-2xl border border-white/20 bg-white"
+              className="max-w-full max-h-[75vh] object-contain rounded-2xl shadow-lg border border-white/20 bg-white"
             />
             {lightboxImage.caption && (
               <p className="text-white text-center text-xs sm:text-sm bg-black/60 px-4 py-2 rounded-xl border border-white/10 backdrop-blur-xs max-w-xl">

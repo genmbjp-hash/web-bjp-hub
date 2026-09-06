@@ -20,10 +20,13 @@ const paddings: Record<CardPadding, string> = {
   lg: 'p-6 sm:p-8',
 };
 
+// '3xl' is kept as a distinct prop value for callers that still request it,
+// but maps to the same 2xl radius as the rest of the site's "soft minimal"
+// look so corners stay consistent everywhere without touching every caller.
 const radii: Record<CardRadius, string> = {
   xl: 'rounded-xl',
   '2xl': 'rounded-2xl',
-  '3xl': 'rounded-3xl',
+  '3xl': 'rounded-2xl',
 };
 
 export const Card: React.FC<CardProps> = ({

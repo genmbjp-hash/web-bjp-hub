@@ -111,6 +111,15 @@ export interface FeaturedVideoItem {
   order: number;
 }
 
+export interface FeaturedPhotoItem {
+  id: string;
+  imageUrl: string;
+  caption?: string;
+  year?: string; // Dipakai untuk pemisah tahun di halaman Dokumentasi
+  enabled: boolean;
+  order: number;
+}
+
 export interface DocumentTemplate {
   id: string;
   title: string;
@@ -139,6 +148,14 @@ export interface RtDetailItem {
 export interface RtRwValueItem {
   title: string;
   description: string;
+}
+
+export interface ProgramKerjaItem {
+  id: string;
+  title: string;
+  description: string;
+  enabled: boolean;
+  order: number;
 }
 
 export type RtRwCardType = 'pdf' | 'image' | 'text';
@@ -178,6 +195,14 @@ export interface RtRwPageConfig {
   extraSectionTitle?: string;
   extraSectionDescription?: string;
   extraCards?: RtRwContentCard[];
+  programKerjaTitle?: string;
+  programKerjaIntro?: string;
+  programKerjaShortTitle?: string;
+  programKerjaShortDescription?: string;
+  programKerjaShort?: ProgramKerjaItem[];
+  programKerjaLongTitle?: string;
+  programKerjaLongDescription?: string;
+  programKerjaLong?: ProgramKerjaItem[];
 }
 
 export interface SecuritySchedule {
@@ -201,6 +226,31 @@ export interface BankSampahConfig {
   charts: BankSampahChartItem[];
 }
 
+export interface DkmAgendaItem {
+  id: string;
+  title: string;
+  date: string; // YYYY-MM-DD
+  description?: string;
+  enabled: boolean;
+  order: number;
+}
+
+export interface DkmStrukturItem {
+  id: string;
+  name: string;
+  role: string; // e.g. "Ketua DKM"
+  photoUrl?: string;
+  enabled: boolean;
+  order: number;
+}
+
+export interface DkmMasjidConfig {
+  enabled: boolean;
+  aboutText?: string;
+  agenda: DkmAgendaItem[];
+  struktur: DkmStrukturItem[];
+}
+
 export interface SiteSettings {
   logoUrl: string;
   siteTitle?: string;
@@ -210,10 +260,12 @@ export interface SiteSettings {
   securitySchedules?: SecuritySchedule[];
   mediaPartners?: MediaPartnerItem[];
   featuredVideos?: FeaturedVideoItem[];
+  featuredPhotos?: FeaturedPhotoItem[];
   documentTemplates?: DocumentTemplate[];
   pollingConfig?: PollingPageConfig;
   rtRwConfig?: RtRwPageConfig;
   bankSampahConfig?: BankSampahConfig;
+  dkmMasjidConfig?: DkmMasjidConfig;
 }
 
 export interface Announcement {

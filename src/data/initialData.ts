@@ -494,6 +494,49 @@ export const INITIAL_ENTITIES: Entity[] = [
     updatedAt: '2026-01-01T00:00:00Z'
   },
   {
+    id: 'ent-rel-5',
+    name: 'Taman Firdaus',
+    category: 'Keagamaan',
+    description: `Ruang terbuka hijau di lingkungan Masjid Ja'mi Al Aqwam yang digunakan warga untuk kegiatan sosial keagamaan, silaturahmi, dan acara bersama komplek Bintara Jaya Permai.
+
+<p><strong>Pemanfaatan:</strong></p>
+<ul>
+  <li>Area Kumpul & Silaturahmi Warga Sekitar Masjid</li>
+  <li>Lokasi Kegiatan Sosial Keagamaan & Perayaan Hari Besar Islam</li>
+  <li>Ruang Terbuka Hijau Pendukung Lingkungan Masjid</li>
+</ul>`,
+    image: 'https://images.unsplash.com/photo-1519331379826-f10be5486c6f?auto=format&fit=crop&w=600&q=80',
+    ctaUrl: '#',
+    ctaWording: 'Info Lebih Lanjut',
+    contact: '0813-1122-3344 (Pengurus DKM)',
+    address: 'Komplek Bintara Jaya Permai, Bintara Jaya, Bekasi Barat, Bekasi Kota, Jawa Barat 17136',
+    isFeatured: false,
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z'
+  },
+  {
+    id: 'ent-rel-6',
+    name: 'TK Al Aqwam',
+    category: 'Keagamaan',
+    description: `Taman Kanak-Kanak di bawah naungan Yayasan Al Aqwam yang melayani pendidikan anak usia dini bagi warga Komplek Bintara Jaya Permai dan sekitarnya, dengan pembinaan akhlak dan nilai-nilai keislaman sejak dini.
+
+<p><strong>Program Pendidikan:</strong></p>
+<ul>
+  <li>Pendidikan Anak Usia Dini Berbasis Nilai Islami</li>
+  <li>Pengenalan Calistung, Motorik, & Kreativitas Anak</li>
+  <li>Pembiasaan Ibadah & Akhlak Sejak Dini</li>
+</ul>`,
+    image: 'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=600&q=80',
+    ctaUrl: '#',
+    ctaWording: 'Info Pendaftaran TK',
+    contact: '0813-1122-3344 (Pengurus Yayasan Al Aqwam)',
+    address: 'Komplek Bintara Jaya Permai, Bintara Jaya, Bekasi Barat, Bekasi Kota, Jawa Barat 17136',
+    schedule: 'Senin - Jumat (Jam Belajar Pagi)',
+    isFeatured: false,
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z'
+  },
+  {
     id: 'ent-umkm-2',
     name: 'ATHAN Snack Corner',
     category: 'Sentra Usaha BJP',

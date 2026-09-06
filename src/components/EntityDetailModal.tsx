@@ -103,7 +103,7 @@ export const EntityDetailModal: React.FC<EntityDetailModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-sm animate-fade-in">
       <div
-        className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-stone-200 relative flex flex-col"
+        className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-lg border border-stone-200 relative flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header Image */}
@@ -405,7 +405,7 @@ export const EntityDetailModal: React.FC<EntityDetailModalProps> = ({
             <img
               src={formatImageUrl(selectedLightboxImage.photo)}
               alt={selectedLightboxImage.caption || "Galeri Produk"}
-              className="max-w-full max-h-[75vh] object-contain rounded-2xl shadow-2xl border border-white/20"
+              className="max-w-full max-h-[75vh] object-contain rounded-2xl shadow-lg border border-white/20"
             />
             {selectedLightboxImage.caption && (
               <p className="text-white text-center text-xs sm:text-sm bg-black/60 px-4 py-2 rounded-xl border border-white/10 backdrop-blur-xs max-w-xl">

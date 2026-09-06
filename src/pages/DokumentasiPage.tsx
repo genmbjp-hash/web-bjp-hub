@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Entity, FeaturedVideoItem } from '../types';
+import { Entity, FeaturedVideoItem, FeaturedPhotoItem } from '../types';
 import { formatImageUrl } from '../utils/imageUrl';
 import { FALLBACK_IMAGE_URL } from '../constants/defaults';
 import {
@@ -17,6 +17,7 @@ import { Container } from '../components/ui/Container';
 interface DokumentasiPageProps {
   entities: Entity[];
   featuredVideos: FeaturedVideoItem[];
+  featuredPhotos?: FeaturedPhotoItem[];
   onBack?: () => void;
 }
 
@@ -35,14 +36,27 @@ function extractYouTubeId(url: string): string | null {
   return null;
 }
 
-export const DokumentasiPage: React.FC<DokumentasiPageProps> = ({ entities, featuredVideos, onBack }) => {
+export const DokumentasiPage: React.FC<DokumentasiPageProps> = ({ entities, featuredVideos, featuredPhotos = [], onBack }) => {
   const [activeTab, setActiveTab] = useState<'foto' | 'video'>('foto');
   const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
   const [playingId, setPlayingId] = useState<string | null>(null);
 
-  // Collect every available photo across all entities (product photos first, entity photo as fallback).
+  // Collect every available photo: curated "Foto Kegiatan" from CMS first, then
+  // product photos across all entities (entity photo as fallback).
   // Each photo gets a year: the per-photo year set in CMS, or the entity's creation year as fallback.
   const photos: { src: string; caption: string; year: string }[] = [];
+
+  featuredPhotos
+    .filter((p) => p.enabled && p.imageUrl)
+    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+    .forEach((p) => {
+      photos.push({
+        src: formatImageUrl(p.imageUrl) || p.imageUrl,
+        caption: p.caption || 'Kegiatan Warga BJP',
+        year: p.year?.trim() || 'Lainnya',
+      });
+    });
+
   entities.forEach((e) => {
     const entityYear = e.createdAt ? String(new Date(e.createdAt).getFullYear()) : 'Lainnya';
     if (e.productPhotos && e.productPhotos.length > 0) {
@@ -259,7 +273,7 @@ export const DokumentasiPage: React.FC<DokumentasiPageProps> = ({ entities, feat
             <img
               src={photos[lightboxIdx].src}
               alt={photos[lightboxIdx].caption}
-              className="max-w-full max-h-[75vh] object-contain rounded-2xl shadow-2xl border border-white/20"
+              className="max-w-full max-h-[75vh] object-contain rounded-2xl shadow-lg border border-white/20"
               onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMAGE_URL; }}
             />
             <p className="text-white text-center text-xs sm:text-sm bg-black/60 px-4 py-2 rounded-xl border border-white/10 backdrop-blur-xs max-w-xl">

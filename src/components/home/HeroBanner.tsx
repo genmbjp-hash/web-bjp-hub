@@ -36,14 +36,14 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
       <div className="relative z-10 px-4 max-w-5xl mx-auto flex flex-col items-center gap-8 text-center">
 
         {/* Top badge */}
-        <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 text-emerald-300 text-xs font-bold px-4 py-2 rounded-full tracking-widest uppercase shadow-lg">
+        <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 text-emerald-300 text-xs font-bold px-4 py-2 rounded-full tracking-widest uppercase">
           <Sparkles className="w-3.5 h-3.5" />
           <span>Komplek Bintara Jaya Permai RW 011</span>
         </div>
 
         {/* Title & Tagline */}
         <div className="space-y-4 max-w-4xl">
-          <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold text-white tracking-tight leading-tight drop-shadow-2xl">
+          <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold text-white tracking-tight leading-tight">
             SELAMAT DATANG DI{' '}
             <span className="text-emerald-400">{title}</span>
           </h1>
