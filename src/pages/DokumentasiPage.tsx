@@ -44,7 +44,7 @@ export const DokumentasiPage: React.FC<DokumentasiPageProps> = ({ entities, feat
   // Collect every available photo: curated "Foto Kegiatan" from CMS first, then
   // product photos across all entities (entity photo as fallback).
   // Each photo gets a year: the per-photo year set in CMS, or the entity's creation year as fallback.
-  const photos: { src: string; caption: string; year: string }[] = [];
+  const photos: { src: string; caption: string; year: string; aspectRatio?: number }[] = [];
 
   featuredPhotos
     .filter((p) => p.enabled && p.imageUrl)
@@ -54,6 +54,7 @@ export const DokumentasiPage: React.FC<DokumentasiPageProps> = ({ entities, feat
         src: formatImageUrl(p.imageUrl) || p.imageUrl,
         caption: p.caption || 'Kegiatan Warga BJP',
         year: p.year?.trim() || 'Lainnya',
+        aspectRatio: p.aspectRatio,
       });
     });
 
@@ -74,7 +75,7 @@ export const DokumentasiPage: React.FC<DokumentasiPageProps> = ({ entities, feat
   });
 
   // Group photos by year (newest first) for section separators in the photo wall.
-  const photoGroups: { year: string; items: { src: string; caption: string; index: number }[] }[] = [];
+  const photoGroups: { year: string; items: { src: string; caption: string; index: number; aspectRatio?: number }[] }[] = [];
   photos.forEach((photo, idx) => {
     let group = photoGroups.find((g) => g.year === photo.year);
     if (!group) {
@@ -187,6 +188,7 @@ export const DokumentasiPage: React.FC<DokumentasiPageProps> = ({ entities, feat
                         alt={photo.caption}
                         loading="lazy"
                         decoding="async"
+                        style={photo.aspectRatio ? { aspectRatio: String(photo.aspectRatio) } : undefined}
                         className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-300"
                         onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMAGE_URL; }}
                       />
@@ -251,7 +253,7 @@ export const DokumentasiPage: React.FC<DokumentasiPageProps> = ({ entities, feat
       {/* Photo Lightbox */}
       {lightboxIdx !== null && photos[lightboxIdx] && (
         <div
-          className="fixed inset-0 z-60 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in"
+          className="fixed inset-0 z-60 bg-black/60 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in"
           onClick={closeLightbox}
         >
           <button
@@ -276,7 +278,7 @@ export const DokumentasiPage: React.FC<DokumentasiPageProps> = ({ entities, feat
               className="max-w-full max-h-[75vh] object-contain rounded-2xl shadow-lg border border-white/20"
               onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMAGE_URL; }}
             />
-            <p className="text-white text-center text-xs sm:text-sm bg-black/60 px-4 py-2 rounded-xl border border-white/10 backdrop-blur-xs max-w-xl">
+            <p className="text-white text-center text-xs sm:text-sm bg-black/30 px-4 py-2 rounded-xl border border-white/10 backdrop-blur-md max-w-xl">
               {photos[lightboxIdx].caption} · {lightboxIdx + 1} / {photos.length}
             </p>
           </div>

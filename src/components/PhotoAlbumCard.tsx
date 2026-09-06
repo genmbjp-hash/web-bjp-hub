@@ -292,7 +292,7 @@ export const PhotoAlbumCard: React.FC<PhotoAlbumCardProps> = ({
       {/* Fullscreen Lightbox Modal */}
       {lightboxOpen && photos.length > 0 && (
         <div
-          className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex flex-col items-center justify-between p-4"
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex flex-col items-center justify-between p-4"
           onClick={() => setLightboxOpen(false)}
         >
           {/* Top Bar */}
@@ -305,7 +305,7 @@ export const PhotoAlbumCard: React.FC<PhotoAlbumCardProps> = ({
             </div>
             <button
               onClick={() => setLightboxOpen(false)}
-              className="p-2 text-stone-400 hover:text-white hover:bg-stone-800 rounded-xl transition-colors cursor-pointer"
+              className="p-2 text-stone-400 hover:text-white hover:bg-white/10 rounded-xl transition-colors cursor-pointer"
             >
               <X className="w-6 h-6" />
             </button>
@@ -329,13 +329,13 @@ export const PhotoAlbumCard: React.FC<PhotoAlbumCardProps> = ({
                   onClick={() =>
                     setLightboxIndex((prev) => (prev - 1 + photos.length) % photos.length)
                   }
-                  className="absolute left-2 top-1/2 -translate-y-1/2 p-3 rounded-full bg-stone-900/80 hover:bg-emerald-700 text-white transition-colors cursor-pointer"
+                  className="absolute left-2 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/10 backdrop-blur-md hover:bg-emerald-700 text-white transition-colors cursor-pointer"
                 >
                   <ChevronLeft className="w-6 h-6" />
                 </button>
                 <button
                   onClick={() => setLightboxIndex((prev) => (prev + 1) % photos.length)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-3 rounded-full bg-stone-900/80 hover:bg-emerald-700 text-white transition-colors cursor-pointer"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/10 backdrop-blur-md hover:bg-emerald-700 text-white transition-colors cursor-pointer"
                 >
                   <ChevronRight className="w-6 h-6" />
                 </button>
@@ -346,7 +346,7 @@ export const PhotoAlbumCard: React.FC<PhotoAlbumCardProps> = ({
           {/* Lightbox Caption Footer */}
           <div className="w-full max-w-3xl text-center text-white pb-4">
             {photos[lightboxIndex]?.caption && (
-              <p className="text-sm font-semibold text-stone-100 bg-stone-900/90 px-4 py-2 rounded-xl inline-block border border-stone-800 shadow-md">
+              <p className="text-sm font-semibold text-stone-100 bg-black/30 backdrop-blur-md px-4 py-2 rounded-xl inline-block border border-white/10 shadow-md">
                 "{photos[lightboxIndex]?.caption}"
               </p>
             )}

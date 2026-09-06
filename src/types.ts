@@ -118,6 +118,7 @@ export interface FeaturedPhotoItem {
   year?: string; // Dipakai untuk pemisah tahun di halaman Dokumentasi
   enabled: boolean;
   order: number;
+  aspectRatio?: number; // width / height gambar asli, direkam saat upload agar ukuran di halaman Dokumentasi menyesuaikan
 }
 
 export interface DocumentTemplate {
@@ -251,6 +252,63 @@ export interface DkmMasjidConfig {
   struktur: DkmStrukturItem[];
 }
 
+export interface FasilitasFact {
+  id: string;
+  label: string; // mis. "Alamat", "Luas Lahan", "Tahun Dibangun"
+  value: string;
+}
+
+export interface FasilitasPhoto {
+  id: string;
+  url: string;
+  caption?: string;
+  aspectRatio?: number; // direkam saat upload agar ukuran gambar menyesuaikan
+  enabled: boolean;
+  order: number;
+}
+
+export type FasilitasBlockType = 'text' | 'image' | 'pdf';
+
+export interface FasilitasBlock {
+  id: string;
+  type: FasilitasBlockType;
+  title?: string;
+  text?: string; // type 'text'
+  imageUrl?: string; // type 'image'
+  imageCaption?: string;
+  aspectRatio?: number; // type 'image', direkam saat upload
+  fileUrl?: string; // type 'pdf' — link Google Drive atau data URL
+  fileName?: string;
+  enabled: boolean;
+  order: number;
+}
+
+export interface FasilitasLingkunganItem {
+  id: string;
+  name: string;
+  slug: string; // Segmen URL halaman detail, unik antar item, auto dari nama
+  category: string; // mis. "Taman", "Olahraga", "Keamanan", "Persampahan", "Ibadah", "Umum"
+  location?: string; // Lokasi / blok, mis. "Blok C, dekat Pos 2"
+  status?: string; // mis. "Aktif", "Dalam Perbaikan", "Rencana Pembangunan"
+  summary?: string; // Teks pendek untuk kartu di halaman daftar
+  description?: string; // Legacy — dipakai sebagai fallback summary untuk data lama
+  imageUrl?: string; // Thumbnail kartu + fallback gambar hero halaman detail
+  aspectRatio?: number; // width / height gambar asli, direkam saat upload agar ukuran gambar menyesuaikan
+  facts?: FasilitasFact[];
+  gallery?: FasilitasPhoto[];
+  blocks?: FasilitasBlock[]; // Konten panjang halaman detail
+  mapEmbedUrl?: string; // src iframe Google Maps (opsional)
+  enabled: boolean;
+  order: number;
+}
+
+export interface FasilitasLingkunganConfig {
+  enabled: boolean;
+  pageTitle: string;
+  pageDescription?: string;
+  items: FasilitasLingkunganItem[];
+}
+
 export interface SiteSettings {
   logoUrl: string;
   siteTitle?: string;
@@ -266,6 +324,7 @@ export interface SiteSettings {
   rtRwConfig?: RtRwPageConfig;
   bankSampahConfig?: BankSampahConfig;
   dkmMasjidConfig?: DkmMasjidConfig;
+  fasilitasLingkunganConfig?: FasilitasLingkunganConfig;
 }
 
 export interface Announcement {

@@ -60,7 +60,7 @@ export const INITIAL_ENTITIES: Entity[] = [
   <li>Perayaan Hari Besar Islam</li>
   <li>Penyaluran Bantuan Sosial & ZISWAF Warga</li>
 </ul>`,
-    image: 'https://images.unsplash.com/photo-1590076175571-4b5459efb08c?auto=format&fit=crop&w=600&q=80',
+    image: '/images/masjid_al_aqwam.jpg',
     ctaUrl: 'https://alaqwam.mosque.id/',
     ctaWording: 'Website Resmi Masjid Al Aqwam',
     instagram: 'https://www.instagram.com/masjid.alaqwam/',

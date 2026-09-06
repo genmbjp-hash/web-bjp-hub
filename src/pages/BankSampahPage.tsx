@@ -312,7 +312,7 @@ export const BankSampahPage: React.FC<BankSampahPageProps> = ({ entity, config, 
       {/* Lightbox */}
       {lightboxImage && (
         <div
-          className="fixed inset-0 z-60 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in"
+          className="fixed inset-0 z-60 bg-black/60 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in"
           onClick={() => setLightboxImage(null)}
         >
           <div className="relative max-w-4xl max-h-[90vh] flex flex-col items-center gap-3" onClick={(e) => e.stopPropagation()}>
@@ -329,7 +329,7 @@ export const BankSampahPage: React.FC<BankSampahPageProps> = ({ entity, config, 
               className="max-w-full max-h-[75vh] object-contain rounded-2xl shadow-lg border border-white/20 bg-white"
             />
             {lightboxImage.caption && (
-              <p className="text-white text-center text-xs sm:text-sm bg-black/60 px-4 py-2 rounded-xl border border-white/10 backdrop-blur-xs max-w-xl">
+              <p className="text-white text-center text-xs sm:text-sm bg-black/30 px-4 py-2 rounded-xl border border-white/10 backdrop-blur-md max-w-xl">
                 {lightboxImage.caption}
               </p>
             )}

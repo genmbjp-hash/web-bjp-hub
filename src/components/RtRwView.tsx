@@ -350,7 +350,7 @@ export const RtRwView: React.FC<RtRwViewProps> = ({ config, onBack }) => {
                 <span>Dokumen Resmi (PDF)</span>
                 <span className="text-[11px] font-bold px-2 py-0.5 bg-red-100 text-red-800 rounded-full">{pdfCards.length}</span>
               </h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {pdfCards.map((card) => {
                   const drivePreviewUrl = getDrivePreviewUrl(card.fileUrl);
                   const driveViewUrl = getDriveViewUrl(card.fileUrl);
@@ -360,7 +360,7 @@ export const RtRwView: React.FC<RtRwViewProps> = ({ config, onBack }) => {
                       key={card.id}
                       padding="none"
                       interactive
-                      className="p-5 flex flex-col justify-between space-y-4 md:col-span-2 lg:col-span-1"
+                      className="p-5 flex flex-col justify-between space-y-4"
                     >
                       <div className="space-y-3">
                         <div className="flex items-center justify-between gap-2">
@@ -397,7 +397,7 @@ export const RtRwView: React.FC<RtRwViewProps> = ({ config, onBack }) => {
                           <iframe
                             src={drivePreviewUrl}
                             title={card.title}
-                            className="w-full h-72 rounded-xl border border-stone-200"
+                            className="w-full h-[520px] rounded-xl border border-stone-200"
                             loading="lazy"
                           />
                         )}
@@ -573,29 +573,30 @@ export const RtRwView: React.FC<RtRwViewProps> = ({ config, onBack }) => {
         </div>
       )}
 
-      {/* Image Lightbox Modal */}
+      {/* Image Lightbox Modal — frosted "glass" panel over a dimmed backdrop
+          instead of a flat black box */}
       {activeImageModal && (
         <div
-          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 bg-black/50 backdrop-blur-md flex items-center justify-center p-4"
           onClick={() => setActiveImageModal(null)}
         >
           <div
-            className="relative max-w-4xl w-full bg-stone-900 rounded-2xl overflow-hidden border border-stone-800 text-white shadow-lg space-y-4 p-4 sm:p-6"
+            className="relative max-w-4xl w-full bg-white/10 backdrop-blur-2xl rounded-2xl overflow-hidden border border-white/20 text-white shadow-lg space-y-4 p-4 sm:p-6"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between border-b border-stone-800 pb-3">
+            <div className="flex items-center justify-between border-b border-white/10 pb-3">
               <h3 className="font-bold text-base sm:text-lg text-white truncate pr-4">
                 {activeImageModal.title}
               </h3>
               <button
                 onClick={() => setActiveImageModal(null)}
-                className="p-1.5 bg-stone-800 hover:bg-stone-700 text-stone-300 hover:text-white rounded-full transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60"
+                className="p-1.5 bg-white/10 hover:bg-white/20 text-stone-200 hover:text-white rounded-full transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="max-h-[70vh] flex items-center justify-center bg-black/50 rounded-2xl overflow-hidden border border-stone-800">
+            <div className="max-h-[70vh] flex items-center justify-center bg-black/20 rounded-2xl overflow-hidden border border-white/10">
               <img
                 src={activeImageModal.url}
                 alt={activeImageModal.title}
@@ -604,7 +605,7 @@ export const RtRwView: React.FC<RtRwViewProps> = ({ config, onBack }) => {
             </div>
 
             {activeImageModal.caption && (
-              <p className="text-xs sm:text-sm text-stone-300 text-center italic bg-stone-950/80 p-3 rounded-xl border border-stone-800">
+              <p className="text-xs sm:text-sm text-stone-100 text-center italic bg-black/20 backdrop-blur-md p-3 rounded-xl border border-white/10">
                 "{activeImageModal.caption}"
               </p>
             )}

@@ -6,7 +6,7 @@ import {
   Bold, Italic, List, Heading, ExternalLink, ShieldAlert, ArrowLeft,
   GripVertical, ArrowUp, ArrowDown, MapPin, Info, Globe, Sliders, Palette, Eye, EyeOff,
   Users, UserPlus, ShieldCheck, Shield, Lock, LogOut, CheckSquare, Square, Search, User as UserIcon,
-  Database, Server, CheckCircle2, XCircle, Terminal, Code, FileText, Vote, Instagram, Save, Youtube, Recycle, Church
+  Database, Server, CheckCircle2, XCircle, Terminal, Code, FileText, Vote, Instagram, Save, Youtube, Recycle, Church, Trees
 } from 'lucide-react';
 import { exportDataAsJSON, importDataFromJSON, resetToDefaults, DEFAULT_CATEGORY_CONFIGS } from '../utils/storage';
 import { useDragScroll } from '../hooks/useDragScroll';
@@ -24,6 +24,7 @@ import { VideoCMS } from './VideoCMS';
 import { PhotoCMS } from './PhotoCMS';
 import { BankSampahCMS } from './BankSampahCMS';
 import { DkmMasjidCMS } from './DkmMasjidCMS';
+import { FasilitasLingkunganCMS } from './FasilitasLingkunganCMS';
 import {
   isSupabaseConfigured,
   testSupabaseConnection,
@@ -110,7 +111,7 @@ export const CMSModal: React.FC<CMSModalProps> = ({
   editingEntityInit,
   initialCategoryForNewEntity,
 }) => {
-const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'settings' | 'security' | 'rtrw' | 'documents' | 'polling' | 'videos' | 'photos' | 'banksampah' | 'dkmmasjid' | 'users' | 'supabase' | 'backup'>('entities');
+const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'settings' | 'security' | 'rtrw' | 'documents' | 'polling' | 'videos' | 'photos' | 'banksampah' | 'dkmmasjid' | 'fasilitaslingkungan' | 'users' | 'supabase' | 'backup'>('entities');
   const navTabsRef = useDragScroll<HTMLDivElement>();
 
   // Supabase State & Handlers
@@ -937,7 +938,7 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
             }`}
           >
             <Globe className="w-4 h-4 text-emerald-700" />
-            <span>Logo Web & Tab Navbar</span>
+            <span>Pengaturan Beranda</span>
           </button>
 
           <button
@@ -1050,6 +1051,20 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
           >
             <Church className="w-4 h-4 text-emerald-700" />
             <span>DKM Masjid</span>
+          </button>
+
+          <button
+            onClick={() => {
+              setActiveTab('fasilitaslingkungan');
+            }}
+            className={`flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-semibold border-b-2 transition-all whitespace-nowrap ${
+              activeTab === 'fasilitaslingkungan'
+                ? 'border-emerald-700 text-emerald-900 bg-emerald-50/50 rounded-t-lg'
+                : 'border-transparent text-stone-600 hover:text-stone-900'
+            }`}
+          >
+            <Trees className="w-4 h-4 text-emerald-700" />
+            <span>Fasilitas Lingkungan</span>
           </button>
 
           <button
@@ -2253,10 +2268,10 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
                   </div>
                   <div>
                     <h3 className="font-extrabold text-stone-900 text-base sm:text-lg">
-                      Pengaturan Logo Website & Navbar
+                      Pengaturan Beranda & Tampilan Website
                     </h3>
                     <p className="text-xs text-stone-500">
-                      Kelola idkomunitas visual logo web, Favicon, OG Image, serta posisi dan nama tab navigasi navbar.
+                      Kelola logo, judul, dan deskripsi website, susunan menu navbar, tampilan Kanal komunitas, serta daftar Media Partner yang tampil di halaman Beranda.
                     </p>
                   </div>
                 </div>
@@ -2348,7 +2363,7 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
                     {/* Judul Website / Homepage Title */}
                     <div className="space-y-1.5 pt-2 border-t border-stone-200">
                       <label className="text-xs font-bold text-stone-800 block">
-                        Judul Utama Website (Home Page Title):
+                        Judul Utama Website (Beranda):
                       </label>
                       <input
                         type="text"
@@ -2362,7 +2377,7 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
                     {/* Deskripsi Website / Homepage Description */}
                     <div className="space-y-1.5">
                       <label className="text-xs font-bold text-stone-800 block">
-                        Deskripsi Penjelasan Homepage:
+                        Deskripsi Singkat Website (Beranda):
                       </label>
                       <textarea
                         rows={2}
@@ -2384,7 +2399,7 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
                       className="inline-flex items-center gap-1.5 text-xs text-stone-600 hover:text-stone-900 bg-stone-100 hover:bg-stone-200 px-3 py-1.5 rounded-lg border border-stone-200 font-medium transition-colors cursor-pointer"
                     >
                       <RefreshCw className="w-3.5 h-3.5 text-stone-500" />
-                      <span>Kembalikan ke Idkomunitas Default</span>
+                      <span>Kembalikan ke Pengaturan Awal</span>
                     </button>
                   </div>
 
@@ -2926,6 +2941,10 @@ const [activeTab, setActiveTab] = useState<'entities' | 'announcements' | 'setti
 
           {activeTab === 'dkmmasjid' && (
             <DkmMasjidCMS siteSettings={siteSettings} onSaveSiteSettings={onSaveSiteSettings} />
+          )}
+
+          {activeTab === 'fasilitaslingkungan' && (
+            <FasilitasLingkunganCMS siteSettings={siteSettings} onSaveSiteSettings={onSaveSiteSettings} />
           )}
 
           {/* TAB: USER MANAGEMENT */}

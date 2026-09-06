@@ -1,4 +1,4 @@
-import { Entity, Announcement, SiteSettings, CategoryHeaderConfig, User, RtRwPageConfig, BankSampahConfig, DkmMasjidConfig } from '../types';
+import { Entity, Announcement, SiteSettings, CategoryHeaderConfig, User, RtRwPageConfig, BankSampahConfig, DkmMasjidConfig, FasilitasLingkunganConfig } from '../types';
 import { INITIAL_ENTITIES, INITIAL_ANNOUNCEMENTS } from '../data/initialData';
 import { BJP_LOGO_URL } from '../assets/logo';
 import { updateSiteFaviconAndOgImage } from './meta';
@@ -480,6 +480,14 @@ export const DEFAULT_DKM_MASJID_CONFIG: DkmMasjidConfig = {
   struktur: [],
 };
 
+export const DEFAULT_FASILITAS_LINGKUNGAN_CONFIG: FasilitasLingkunganConfig = {
+  enabled: true,
+  pageTitle: 'Fasilitas Lingkungan',
+  pageDescription:
+    'Data fasilitas umum dan sarana lingkungan warga Komplek Bintara Jaya Permai (RW 11), diperbarui berkala oleh pengurus.',
+  items: [],
+};
+
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   logoUrl: BJP_LOGO_URL,
   siteTitle: 'BJP.hub Bintara Jaya Permai',
@@ -624,6 +632,7 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   rtRwConfig: DEFAULT_RTRW_CONFIG,
   bankSampahConfig: DEFAULT_BANK_SAMPAH_CONFIG,
   dkmMasjidConfig: DEFAULT_DKM_MASJID_CONFIG,
+  fasilitasLingkunganConfig: DEFAULT_FASILITAS_LINGKUNGAN_CONFIG,
 };
 
 // ---------------------------------------------------------------------------
@@ -729,6 +738,16 @@ export function getSiteSettings(): SiteSettings {
               struktur: mergeListById(DEFAULT_DKM_MASJID_CONFIG.struktur, parsed.dkmMasjidConfig.struktur),
             }
           : DEFAULT_DKM_MASJID_CONFIG,
+        fasilitasLingkunganConfig: parsed.fasilitasLingkunganConfig
+          ? {
+              ...DEFAULT_FASILITAS_LINGKUNGAN_CONFIG,
+              ...parsed.fasilitasLingkunganConfig,
+              items: mergeListById(
+                DEFAULT_FASILITAS_LINGKUNGAN_CONFIG.items,
+                parsed.fasilitasLingkunganConfig.items
+              ),
+            }
+          : DEFAULT_FASILITAS_LINGKUNGAN_CONFIG,
       };
     }
   } catch (err) {
@@ -777,7 +796,7 @@ export function getEntities(): Entity[] {
         return {
           ...e,
           category: normalizedCategory,
-          image: e.id === 'ent-4' ? initMatch.image : e.image,
+          image: e.id === 'ent-4' || e.id === 'ent-3' ? initMatch.image : e.image,
           productPhotos:
             e.id === 'ent-4' || !e.productPhotos || e.productPhotos.length === 0
               ? initMatch.productPhotos

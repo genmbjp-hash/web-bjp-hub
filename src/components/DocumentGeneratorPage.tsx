@@ -55,12 +55,12 @@ export const DocumentGeneratorPage: React.FC<DocumentGeneratorPageProps> = ({ te
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>(defaultTemplateList[0]?.id || '');
   const [fullName, setFullName] = useState<string>('');
   const [nik, setNik] = useState<string>('');
-  const [address, setAddress] = useState<string>('Komplek Bintara Jaya Permai Blok C / RT 03 RW 11, Bekasi');
+  const [address, setAddress] = useState<string>('');
   const [requestDate, setRequestDate] = useState<string>(
     new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })
   );
-  const [purpose, setPurpose] = useState<string>('Pengurusan Administrasi Kependudukan / Kelurahan');
-  const [phone, setPhone] = useState<string>('081234567890');
+  const [purpose, setPurpose] = useState<string>('');
+  const [phone, setPhone] = useState<string>('');
 
   const [generatedLetter, setGeneratedLetter] = useState<{
     letterNumber: string;
@@ -152,14 +152,16 @@ Terverifikasi Sistem BJP HUB RW 11
       )}
 
       {/* Header Banner */}
-      <Card radius="3xl" padding="none" className="p-6 sm:p-8 flex items-center justify-between flex-wrap gap-4 no-print">
+      <Card radius="3xl" padding="none" className="p-6 sm:p-8 flex items-start gap-4 no-print">
+        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-emerald-50 border border-emerald-200/80 flex items-center justify-center shrink-0">
+          <FileText className="w-6 h-6 sm:w-7 sm:h-7 text-emerald-700" />
+        </div>
         <div className="space-y-2">
           <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200/80">
             Layanan Warga Mandiri
           </span>
-          <h1 className="text-xl sm:text-2xl font-black tracking-tight text-stone-900 flex items-center gap-2">
-            <FileText className="w-6 h-6 text-emerald-700" />
-            <span>Generator Surat Menyurat Online</span>
+          <h1 className="text-xl sm:text-3xl font-black tracking-tight leading-tight text-stone-900">
+            Generator Surat Menyurat Online
           </h1>
           <p className="text-xs sm:text-sm text-stone-600 max-w-2xl leading-relaxed">
             Buat surat keterangan resmi secara mandiri — lengkap dengan nomor surat otomatis.
@@ -171,17 +173,17 @@ Terverifikasi Sistem BJP HUB RW 11
         {/* Form Column */}
         <Card radius="3xl" padding="none" className="lg:col-span-5 p-6 shadow-xs space-y-5 no-print">
           <div className="border-b border-stone-100 pb-3">
-            <h2 className="font-extrabold text-stone-900 text-base sm:text-lg flex items-center gap-2">
+            <h2 className="font-extrabold text-stone-900 text-lg sm:text-xl flex items-center gap-2">
               <UserCheck className="w-5 h-5 text-emerald-700" />
               <span>Formulir Permohonan Surat</span>
             </h2>
             <p className="text-xs text-stone-500 mt-0.5">Isi data identitas diri untuk menerbitkan dokumen.</p>
           </div>
 
-          <form onSubmit={handleGenerateSubmit} className="space-y-4 text-xs sm:text-sm">
+          <form onSubmit={handleGenerateSubmit} className="space-y-4 text-xs">
             {/* Template Selector */}
             <div>
-              <label className="block font-bold text-stone-800 mb-1">Pilih Jenis Dokumen Surat</label>
+              <label className="block text-sm font-bold text-stone-800 mb-1">Pilih Jenis Dokumen Surat</label>
               <select
                 value={selectedTemplateId}
                 onChange={(e) => setSelectedTemplateId(e.target.value)}
@@ -224,73 +226,75 @@ Terverifikasi Sistem BJP HUB RW 11
 
             {/* Nama Lengkap */}
             <div>
-              <label className="block font-bold text-stone-800 mb-1">Nama Lengkap Warga *</label>
+              <label className="block text-sm font-bold text-stone-800 mb-1">Nama Lengkap Warga *</label>
               <input
                 type="text"
                 required
                 placeholder="Contoh: Budi Santoso"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="w-full px-3.5 py-2 bg-stone-50 border border-stone-300 rounded-xl font-medium text-stone-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white"
+                className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-300 rounded-xl font-medium text-stone-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white"
               />
             </div>
 
             {/* NIK */}
             <div>
-              <label className="block font-bold text-stone-800 mb-1">Nomor NIK / KTP (Opsional)</label>
+              <label className="block text-sm font-bold text-stone-800 mb-1">Nomor NIK / KTP (Opsional)</label>
               <input
                 type="text"
                 placeholder="Contoh: 3275012304850002"
                 value={nik}
                 onChange={(e) => setNik(e.target.value)}
-                className="w-full px-3.5 py-2 bg-stone-50 border border-stone-300 rounded-xl font-medium text-stone-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white"
+                className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-300 rounded-xl font-medium text-stone-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white"
               />
             </div>
 
             {/* Alamat */}
             <div>
-              <label className="block font-bold text-stone-800 mb-1">Alamat Lengkap *</label>
+              <label className="block text-sm font-bold text-stone-800 mb-1">Alamat Lengkap *</label>
               <textarea
                 rows={2}
                 required
+                placeholder="Contoh: Komplek Bintara Jaya Permai Blok C / RT 03 RW 11, Bekasi"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
-                className="w-full px-3.5 py-2 bg-stone-50 border border-stone-300 rounded-xl font-medium text-stone-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white"
+                className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-300 rounded-xl font-medium text-stone-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white"
               />
             </div>
 
             {/* Keperluan */}
             <div>
-              <label className="block font-bold text-stone-800 mb-1">Keperluan Permohonan *</label>
+              <label className="block text-sm font-bold text-stone-800 mb-1">Keperluan Permohonan *</label>
               <input
                 type="text"
                 required
                 placeholder="Contoh: Syarat pembuatan E-KTP Kelurahan"
                 value={purpose}
                 onChange={(e) => setPurpose(e.target.value)}
-                className="w-full px-3.5 py-2 bg-stone-50 border border-stone-300 rounded-xl font-medium text-stone-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white"
+                className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-300 rounded-xl font-medium text-stone-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white"
               />
             </div>
 
             {/* Tanggal Request & WA */}
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block font-bold text-stone-800 mb-1">Tanggal Surat</label>
+                <label className="block text-sm font-bold text-stone-800 mb-1">Tanggal Surat</label>
                 <input
                   type="text"
                   value={requestDate}
                   onChange={(e) => setRequestDate(e.target.value)}
-                  className="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded-xl font-medium text-stone-900"
+                  className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-300 rounded-xl font-medium text-stone-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-stone-800 mb-1">No. WA / Kontak</label>
+                <label className="block text-sm font-bold text-stone-800 mb-1">No. WA / Kontak</label>
                 <input
                   type="text"
+                  placeholder="Contoh: 0812-3456-7890"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  className="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded-xl font-medium text-stone-900"
+                  className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-300 rounded-xl font-medium text-stone-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white"
                 />
               </div>
             </div>
@@ -422,7 +426,7 @@ Terverifikasi Sistem BJP HUB RW 11
                 <FileText className="w-8 h-8" />
               </div>
               <div>
-                <h3 className="font-extrabold text-stone-900 text-lg">Pratinjau Dokumen Surat</h3>
+                <h3 className="text-sm font-bold text-stone-800">Pratinjau Dokumen Surat</h3>
                 <p className="text-xs text-stone-500 max-w-md mx-auto mt-1">
                   Lengkapi formulir di sebelah kiri dan klik "Generate Surat & Nomor Resmi" untuk menerbitkan dokumen formal secara langsung.
                 </p>

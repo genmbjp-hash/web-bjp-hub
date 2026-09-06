@@ -53,6 +53,21 @@ const SosialKeagamaanPage = lazy(() =>
 const DkmMasjidPage = lazy(() =>
   import('./pages/DkmMasjidPage').then((m) => ({ default: m.DkmMasjidPage }))
 );
+const SportsBjpPage = lazy(() =>
+  import('./pages/SportsBjpPage').then((m) => ({ default: m.SportsBjpPage }))
+);
+const PkkPage = lazy(() =>
+  import('./pages/PkkPage').then((m) => ({ default: m.PkkPage }))
+);
+const PosyanduPage = lazy(() =>
+  import('./pages/PosyanduPage').then((m) => ({ default: m.PosyanduPage }))
+);
+const FasilitasLingkunganPage = lazy(() =>
+  import('./pages/FasilitasLingkunganPage').then((m) => ({ default: m.FasilitasLingkunganPage }))
+);
+const FasilitasLingkunganDetailPage = lazy(() =>
+  import('./pages/FasilitasLingkunganDetailPage').then((m) => ({ default: m.FasilitasLingkunganDetailPage }))
+);
 
 // Custom Hooks
 import { useEntities, useAnnouncements, useAuth } from './hooks';
@@ -382,6 +397,53 @@ export default function App() {
                 entity={entities.find((e) => e.name.toLowerCase().includes('dkm masjid'))}
                 config={siteSettings.dkmMasjidConfig}
                 onBack={() => navigate('/sosial-keagamaan')}
+              />
+            </Suspense>
+          } />
+
+          <Route path="/sports-bjp" element={
+            <Suspense fallback={null}>
+              <SportsBjpPage
+                entities={entities}
+                onSelectEntity={setSelectedEntityForModal}
+                onBack={() => navigate('/')}
+              />
+            </Suspense>
+          } />
+
+          <Route path="/pkk" element={
+            <Suspense fallback={null}>
+              <PkkPage
+                entities={entities}
+                onSelectEntity={setSelectedEntityForModal}
+                onBack={() => navigate('/')}
+              />
+            </Suspense>
+          } />
+
+          <Route path="/posyandu" element={
+            <Suspense fallback={null}>
+              <PosyanduPage
+                entities={entities}
+                onSelectEntity={setSelectedEntityForModal}
+                onBack={() => navigate('/')}
+              />
+            </Suspense>
+          } />
+
+          <Route path="/fasilitas-lingkungan" element={
+            <Suspense fallback={null}>
+              <FasilitasLingkunganPage
+                config={siteSettings.fasilitasLingkunganConfig}
+                onBack={() => navigate('/')}
+              />
+            </Suspense>
+          } />
+
+          <Route path="/fasilitas-lingkungan/:slug" element={
+            <Suspense fallback={null}>
+              <FasilitasLingkunganDetailPage
+                config={siteSettings.fasilitasLingkunganConfig}
               />
             </Suspense>
           } />

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Menu, X, LayoutGrid, Megaphone, Home, Settings, Building, FileText, Vote, ChevronDown, Recycle, Coffee, Images, Store, Church } from 'lucide-react';
+import { Menu, X, LayoutGrid, Megaphone, Home, Settings, Building, FileText, Vote, ChevronDown, Recycle, Coffee, Images, Store, Trophy, HeartHandshake, HeartPulse, Trees } from 'lucide-react';
+import { MosqueIcon } from './MosqueIcon';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { BJP_LOGO_URL } from '../assets/logo';
 import { NavbarTabConfig } from '../types';
@@ -93,19 +94,62 @@ export const Header: React.FC<HeaderProps> = ({
     { id: 'home', path: '/', label: 'Beranda', icon: Home },
     ...allTabItems.filter((t) => PRIMARY_TAB_IDS.includes(t.id)),
   ];
-  const moreItems = [
-    ...allTabItems.filter((t) => !PRIMARY_TAB_IDS.includes(t.id)),
-    { id: 'dokumentasi', path: '/dokumentasi', label: 'Dokumentasi', icon: Images },
-    { id: 'sosial-keagamaan', path: '/sosial-keagamaan', label: 'Sosial Keagamaan', icon: Church },
-    { id: 'bank-sampah', path: '/bank-sampah', label: 'Bank Sampah KMS', icon: Recycle },
-    { id: 'pendaftaran-sentra-usaha', path: '/pendaftaran-sentra-usaha', label: 'Pendaftaran Sentra Usaha', icon: Store },
-    { id: 'podjok-santai', path: '/podjok-santai', label: 'Podjok Santai BJP', icon: Coffee },
+
+  type NavLeaf = { id: string; path: string; label: string; icon: React.ComponentType<{ className?: string }> };
+
+  // Ambil satu menu dari navbarTabs (id RT/RW, polling, dst.) — null bila tab itu
+  // dinonaktifkan pengurus, sehingga otomatis hilang dari dropdown.
+  const tabLeaf = (id: string): NavLeaf | null => allTabItems.find((t) => t.id === id) ?? null;
+
+  // Isi dropdown "Lainnya" dikelompokkan meniru struktur situs BJP.hub agar rapi
+  // walau menu terus bertambah. Sub-nav antar halaman detail dilakukan di dalam
+  // halaman masing-masing, jadi navbar tetap datar (tanpa menu hover bertingkat).
+  const PLACED_TAB_IDS = ['rtrw', 'polling', 'document_service'];
+  const leftoverTabs = allTabItems.filter(
+    (t) => !PRIMARY_TAB_IDS.includes(t.id) && !PLACED_TAB_IDS.includes(t.id)
+  );
+
+  const moreGroups: { label: string; items: NavLeaf[] }[] = [
+    {
+      label: 'Sosial & Bina Warga',
+      items: [
+        { id: 'sosial-keagamaan', path: '/sosial-keagamaan', label: 'Sosial Keagamaan', icon: MosqueIcon },
+        { id: 'pkk', path: '/pkk', label: 'PKK BJP', icon: HeartHandshake },
+        { id: 'posyandu', path: '/posyandu', label: 'Posyandu BJP', icon: HeartPulse },
+      ],
+    },
+    {
+      label: 'Lingkungan & RT/RW',
+      items: [
+        tabLeaf('rtrw'),
+        { id: 'fasilitas-lingkungan', path: '/fasilitas-lingkungan', label: 'Fasilitas Lingkungan', icon: Trees },
+        { id: 'bank-sampah', path: '/bank-sampah', label: 'Bank Sampah KMS', icon: Recycle },
+      ].filter(Boolean) as NavLeaf[],
+    },
+    {
+      label: 'Ekonomi & Olahraga',
+      items: [
+        { id: 'pendaftaran-sentra-usaha', path: '/pendaftaran-sentra-usaha', label: 'Pendaftaran Sentra Usaha', icon: Store },
+        { id: 'sports-bjp', path: '/sports-bjp', label: 'Sports BJP', icon: Trophy },
+      ],
+    },
+    {
+      label: 'Info & Layanan',
+      items: [
+        tabLeaf('polling'),
+        tabLeaf('document_service'),
+        { id: 'dokumentasi', path: '/dokumentasi', label: 'Dokumentasi', icon: Images },
+        { id: 'podjok-santai', path: '/podjok-santai', label: 'Podjok Santai BJP', icon: Coffee },
+      ].filter(Boolean) as NavLeaf[],
+    },
+    ...(leftoverTabs.length > 0 ? [{ label: 'Lainnya', items: leftoverTabs as NavLeaf[] }] : []),
   ];
-  const NAV_ITEMS = [...primaryItems, ...moreItems];
+
+  const moreLeaves = moreGroups.flatMap((g) => g.items);
 
   const isItemActive = (path: string) =>
     path === '/' ? location.pathname === '/' : location.pathname.startsWith(path);
-  const isMoreActive = moreItems.some((t) => isItemActive(t.path));
+  const isMoreActive = moreLeaves.some((t) => isItemActive(t.path));
 
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-stone-200 shadow-sm">
@@ -150,8 +194,8 @@ export const Header: React.FC<HeaderProps> = ({
               );
             })}
 
-            {/* "Lainnya" dropdown groups the less-frequent tabs to keep the bar tidy */}
-            {moreItems.length > 0 && (
+            {/* "Lainnya" — dropdown berkelompok agar rapi walau menu bertambah */}
+            {moreLeaves.length > 0 && (
               <div className="relative h-full" ref={moreMenuRef}>
                 <button
                   onClick={() => setMoreMenuOpen((v) => !v)}
@@ -167,23 +211,30 @@ export const Header: React.FC<HeaderProps> = ({
                 </button>
 
                 {moreMenuOpen && (
-                  <div className="absolute top-full right-0 mt-2 w-56 bg-white rounded-xl border border-stone-200 shadow-lg py-1.5 z-50">
-                    {moreItems.map(({ id, path, label, icon: Icon }) => {
-                      const isActive = isItemActive(path);
-                      return (
-                        <Link
-                          key={id}
-                          to={path}
-                          onClick={() => setMoreMenuOpen(false)}
-                          className={`flex items-center gap-2.5 px-4 py-2 text-xs font-semibold transition-colors ${
-                            isActive ? 'text-emerald-700 bg-emerald-50' : 'text-stone-700 hover:bg-stone-50'
-                          }`}
-                        >
-                          <Icon className="w-4 h-4" />
-                          <span>{label}</span>
-                        </Link>
-                      );
-                    })}
+                  <div className="absolute top-full right-0 mt-2 w-64 bg-white rounded-xl border border-stone-200 shadow-lg py-1.5 z-50 max-h-[70vh] overflow-y-auto">
+                    {moreGroups.map((group) => (
+                      <div key={group.label} className="py-1 first:pt-0">
+                        <p className="px-4 pt-1.5 pb-1 text-[10px] font-bold uppercase tracking-wider text-stone-400">
+                          {group.label}
+                        </p>
+                        {group.items.map(({ id, path, label, icon: Icon }) => {
+                          const isActive = isItemActive(path);
+                          return (
+                            <Link
+                              key={id}
+                              to={path}
+                              onClick={() => setMoreMenuOpen(false)}
+                              className={`flex items-center gap-2.5 px-4 py-2 text-xs font-semibold transition-colors ${
+                                isActive ? 'text-emerald-700 bg-emerald-50' : 'text-stone-700 hover:bg-stone-50'
+                              }`}
+                            >
+                              <Icon className="w-4 h-4" />
+                              <span>{label}</span>
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
@@ -219,9 +270,9 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div ref={mobileDrawerRef} className="md:hidden border-t border-stone-100 bg-white py-3 px-4">
+        <div ref={mobileDrawerRef} className="md:hidden border-t border-stone-100 bg-white py-3 px-4 max-h-[75vh] overflow-y-auto">
           <div className="flex flex-col gap-1">
-            {NAV_ITEMS.map(({ id, path, label, icon: Icon }) => {
+            {primaryItems.map(({ id, path, label, icon: Icon }) => {
               const isActive = path === '/' ? location.pathname === '/' : location.pathname.startsWith(path);
               return (
                 <Link
@@ -229,9 +280,7 @@ export const Header: React.FC<HeaderProps> = ({
                   to={path}
                   onClick={() => setMobileMenuOpen(false)}
                   className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40 ${
-                    isActive
-                      ? 'bg-emerald-700 text-white'
-                      : 'text-stone-700 hover:bg-stone-100'
+                    isActive ? 'bg-emerald-700 text-white' : 'text-stone-700 hover:bg-stone-100'
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -239,6 +288,30 @@ export const Header: React.FC<HeaderProps> = ({
                 </Link>
               );
             })}
+
+            {moreGroups.map((group) => (
+              <div key={group.label} className="pt-2">
+                <p className="px-3 pb-1 text-[10px] font-bold uppercase tracking-wider text-stone-400">
+                  {group.label}
+                </p>
+                {group.items.map(({ id, path, label, icon: Icon }) => {
+                  const isActive = location.pathname.startsWith(path);
+                  return (
+                    <Link
+                      key={id}
+                      to={path}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40 ${
+                        isActive ? 'bg-emerald-700 text-white' : 'text-stone-700 hover:bg-stone-100'
+                      }`}
+                    >
+                      <Icon className="w-4 h-4" />
+                      <span>{label}</span>
+                    </Link>
+                  );
+                })}
+              </div>
+            ))}
           </div>
         </div>
       )}

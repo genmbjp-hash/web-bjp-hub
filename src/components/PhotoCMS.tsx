@@ -93,7 +93,7 @@ export const PhotoCMS: React.FC<PhotoCMSProps> = ({ siteSettings, onSaveSiteSett
                 <input
                   type="text"
                   value={p.imageUrl}
-                  onChange={(e) => updatePhoto(p.id, { imageUrl: e.target.value })}
+                  onChange={(e) => updatePhoto(p.id, { imageUrl: e.target.value, aspectRatio: undefined })}
                   placeholder="URL Gambar (contoh: https://drive.google.com/file/d/.../view)"
                   className="flex-1 px-2.5 py-1.5 bg-white border border-stone-300 rounded-lg text-xs font-mono focus:outline-none focus:ring-2 focus:ring-emerald-600"
                 />
@@ -110,7 +110,18 @@ export const PhotoCMS: React.FC<PhotoCMSProps> = ({ siteSettings, onSaveSiteSett
                         const reader = new FileReader();
                         reader.onload = (evt) => {
                           const result = evt.target?.result as string;
-                          if (result) updatePhoto(p.id, { imageUrl: result });
+                          if (!result) return;
+                          // Rekam rasio gambar asli agar ukurannya menyesuaikan di halaman Dokumentasi.
+                          const probe = new Image();
+                          probe.onload = () => {
+                            const ratio =
+                              probe.naturalWidth && probe.naturalHeight
+                                ? probe.naturalWidth / probe.naturalHeight
+                                : undefined;
+                            updatePhoto(p.id, { imageUrl: result, aspectRatio: ratio });
+                          };
+                          probe.onerror = () => updatePhoto(p.id, { imageUrl: result });
+                          probe.src = result;
                         };
                         reader.readAsDataURL(file);
                       }
@@ -123,6 +134,15 @@ export const PhotoCMS: React.FC<PhotoCMSProps> = ({ siteSettings, onSaveSiteSett
                       src={formatImageUrl(p.imageUrl)}
                       alt={p.caption || 'Preview'}
                       className="w-full h-full object-cover"
+                      onLoad={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                        // Rekam rasio gambar (termasuk saat URL ditempel) agar ukuran menyesuaikan di halaman Dokumentasi.
+                        const img = e.currentTarget;
+                        if (!img.naturalWidth || !img.naturalHeight) return;
+                        const ratio = img.naturalWidth / img.naturalHeight;
+                        if (!p.aspectRatio || Math.abs(p.aspectRatio - ratio) > 0.01) {
+                          updatePhoto(p.id, { aspectRatio: ratio });
+                        }
+                      }}
                       onError={(e) => {
                         (e.target as HTMLImageElement).src =
                           'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=600&q=80';

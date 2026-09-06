@@ -150,7 +150,7 @@ export const AlbumFoto: React.FC<AlbumFotoProps> = ({ entities, featuredPhotos =
       {/* Lightbox */}
       {lightboxSrc && (
         <div
-          className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-center justify-center p-4"
           onClick={closeLightbox}
         >
           <button
